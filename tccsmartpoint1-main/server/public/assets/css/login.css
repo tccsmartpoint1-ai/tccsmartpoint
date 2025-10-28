@@ -1,0 +1,130 @@
+:root{
+  --blue-600:#1E88E5;
+  --blue-700:#1565C0;
+  --blue-300:#90CAF9;
+  --ink-900:#0f172a;
+  --ink-600:#475569;
+  --bg-50:#f8fafc;
+  --white:#ffffff;
+  --red-600:#dc2626;
+  --ring:#1E88E5;
+  --radius:14px;
+  --shadow: 0 10px 30px rgba(21,101,192,.15);
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  font-family: system-ui, sans-serif;
+  margin:0;
+  color:var(--ink-900);
+  background: radial-gradient(1200px 800px at 80% -10%, rgba(30,136,229,.15), transparent 60%) , var(--bg-50);
+}
+
+.wrapper{
+  min-height:100%;
+  display:grid;
+  grid-template-rows: 1fr auto;
+  place-items:center;
+  padding:24px;
+}
+
+.card{
+  width:100%;
+  max-width:420px;
+  background:var(--white);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  padding:28px;
+}
+
+.brand-centered{
+  display:flex;
+  justify-content:center;
+  margin-bottom:12px;
+}
+.logo{width:230px; height:auto;}
+
+.subtitle{margin:6px 0 0; color:var(--ink-600); font-size:14px; text-align:center}
+
+.field{margin-top:16px}
+label{display:block; font-size:14px; margin-bottom:6px}
+input[type="text"], input[type="password"]{
+  width:100%;
+  padding:12px 14px;
+  border:1px solid var(--blue-300);
+  border-radius:10px;
+  background:var(--white);
+  outline:none;
+  transition:border-color .15s, box-shadow .15s;
+}
+input:focus{
+  border-color:var(--ring);
+  box-shadow:0 0 0 3px color-mix(in oklab, var(--ring) 25%, transparent);
+}
+
+.password-wrap{position:relative}
+.password-wrap input{padding-right:45px}
+.toggle-pwd{
+  position:absolute;
+  right:10px; top:50%;
+  transform:translateY(-50%);
+  cursor:pointer;
+  color:var(--blue-700);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:30px;
+  height:30px;
+  border:none;
+  background:transparent;
+}
+.toggle-pwd svg{
+  width:22px;
+  height:22px;
+  fill:currentColor;
+}
+
+.toggle-pwd:hover{color:var(--blue-600)}
+
+.error{color:var(--red-600); min-height:18px; display:block; margin-top:6px; font-size:12px}
+
+.row{
+  margin:12px 0 4px;
+  display:flex; align-items:center; justify-content:space-between; gap:8px;
+}
+.checkbox{display:flex; align-items:center; gap:8px; font-size:14px}
+.checkbox input{width:16px; height:16px}
+
+.link{color:var(--blue-700); text-decoration:none; font-size:14px}
+.link:hover{text-decoration:underline}
+
+.btn-primary{
+  width:100%; margin-top:12px;
+  display:inline-flex; align-items:center; justify-content:center; gap:10px;
+  height:44px; border:none; border-radius:10px; cursor:pointer;
+  background:linear-gradient(135deg,var(--blue-600),var(--blue-700));
+  color:var(--white); font-weight:600; letter-spacing:.2px;
+  transition: filter .15s, transform .02s;
+}
+.btn-primary[disabled]{opacity:.6; cursor:not-allowed; filter:grayscale(.2)}
+.btn-primary:not([disabled]):active{transform:translateY(1px)}
+
+.spinner{
+  width:16px; height:16px; border-radius:999px;
+  border:2px solid rgba(255,255,255,.4);
+  border-top-color: var(--white);
+  animation: spin 1s linear infinite;
+  display:none;
+}
+.btn-primary.loading .spinner{display:inline-block}
+
+.form-message{margin-top:12px; font-size:14px}
+
+.legal{margin-top:16px; color:var(--ink-600); font-size:12px; text-align:center}
+
+@keyframes spin{to{transform:rotate(360deg)}}
+button:focus-visible{
+  outline: 3px solid color-mix(in oklab, var(--ring) 40%, transparent);
+  outline-offset: 2px;
+}

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Configurações | Smart Point</title>
+  <link rel="stylesheet" href="../public/assets/css/configuracoes.css" />
+
+  <!-- Autenticação (mesmo modelo anterior) -->
+  <script>
+    (function () {
+      const token = localStorage.getItem("token");
+      if (!token) window.location.replace("../pages/login.html");
+    })();
+  </script>
+</head>
+
+<body>
+  <header class="top-bar">
+    <h2>Smart Point — Configurações</h2>
+    <nav>
+      <a class="btn-voltar" href="../public/dashboard.html">⬅ Voltar</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <!-- Status do Sistema -->
+    <section class="card">
+      <h3>Status do Sistema</h3>
+      <div id="statusLinha" class="status-msg">
+        <div class="loader"></div>
+        <span>Verificando status da API…</span>
+      </div>
+      <div class="grid-2">
+        <div>
+          <label>API Base em uso</label>
+          <div id="apiBaseEmUso" class="pill"></div>
+        </div>
+        <div>
+          <label>Conectividade</label>
+          <div id="apiStatus" class="pill pill-off">Offline</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Configurações da API -->
+    <section class="card">
+      <h3>Configurações da API</h3>
+      <form id="formApi">
+        <div class="form-row">
+          <label for="apiBase">URL Base da API</label>
+          <input id="apiBase" type="text" placeholder="http://localhost:3000/api" />
+        </div>
+        <div class="actions">
+          <button type="submit" id="btnSalvarApi">Salvar</button>
+          <button type="button" id="btnTestarApi">Testar Conexão</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Dispositivos -->
+    <section class="card">
+      <h3>Dispositivos</h3>
+      <div class="actions">
+        <button type="button" id="btnRecarregarDispositivos">Recarregar Lista</button>
+      </div>
+      <div class="tabela-wrapper">
+        <table id="tblDispositivos">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nome</th>
+              <th>IP</th>
+              <th>Status</th>
+              <th>Ação</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- preenchido via JS -->
+          </tbody>
+        </table>
+      </div>
+      <small class="hint">Ação “Ativar/Desativar” usa PATCH /dispositivos/:id com {"ativo": true|false}.</small>
+    </section>
+
+    <!-- Parâmetros Operacionais -->
+    <section class="card">
+      <h3>Parâmetros Operacionais</h3>
+      <form id="formParams">
+        <div class="grid-3">
+          <div class="form-row">
+            <label for="intervaloAtualizacao">Atualização automática (s)</label>
+            <input id="intervaloAtualizacao" type="number" min="0" step="1" placeholder="Ex.: 60" />
+          </div>
+          <div class="form-row">
+            <label for="tempoMinimoLeitura">Tempo mínimo entre leituras (s)</label>
+            <input id="tempoMinimoLeitura" type="number" min="0" step="1" placeholder="Ex.: 2" />
+          </div>
+          <div class="form-row">
+            <label for="modoOperacao">Modo de operação</label>
+            <select id="modoOperacao">
+              <option value="tempo_real">Tempo real</option>
+              <option value="buffer">Buffer</option>
+            </select>
+          </div>
+        </div>
+        <div class="actions">
+          <button type="submit" id="btnSalvarParams">Salvar Parâmetros</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Segurança e Manutenção -->
+    <section class="card">
+      <h3>Segurança e Manutenção</h3>
+      <form id="formSenha">
+        <div class="grid-3">
+          <div class="form-row">
+            <label for="senhaAtual">Senha atual</label>
+            <input id="senhaAtual" type="password" autocomplete="current-password" />
+          </div>
+          <div class="form-row">
+            <label for="novaSenha">Nova senha</label>
+            <input id="novaSenha" type="password" autocomplete="new-password" />
+          </div>
+          <div class="form-row">
+            <label for="confirmaSenha">Confirmar nova senha</label>
+            <input id="confirmaSenha" type="password" autocomplete="new-password" />
+          </div>
+        </div>
+        <div class="actions">
+          <button type="submit" id="btnAlterarSenha">Alterar Senha</button>
+        </div>
+      </form>
+
+      <div class="actions mt-8">
+        <button type="button" id="btnExportarCSV">Exportar Leituras (CSV)</button>
+        <button type="button" id="btnResetar" class="btn-danger">Resetar Sistema (desativado)</button>
+        <button type="button" id="btnLogout" class="btn-outline">Sair</button>
+      </div>
+      <small class="hint">Reset está desativado nesta etapa. Nenhuma chamada DELETE será enviada.</small>
+    </section>
+  </main>
+
+  <script src="../public/assets/js/configuracoes.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,5 @@
+https://supreme-spork-7v476qr44rrpcxg5v-3000.app.github.dev/login.html
+
+git add .
+git commit -m "ajuste: atualização no login.js apontando para API do Railway"
+git push origin main

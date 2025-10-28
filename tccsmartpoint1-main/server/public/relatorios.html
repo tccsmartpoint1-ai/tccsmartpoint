@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Relatórios | Smart Point</title>
+  <link rel="stylesheet" href="../assets/css/relatorios.css"/>
+</head>
+<body>
+  <header class="top-bar">
+    <h2>Smart Point — Relatórios</h2>
+    <nav>
+      <a class="btn-voltar" href="../public/dashboard.html">⬅ Voltar</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="filtros">
+      <h3>Relatórios Consolidados</h3>
+      <p>Gere resumos analíticos das leituras armazenadas.</p>
+
+      <form id="formRelatorios">
+        <div class="filtro-grupo">
+          <label for="relColaborador">Colaborador</label>
+          <input id="relColaborador" type="text" placeholder="Nome ou CPF"/>
+        </div>
+
+        <div class="filtro-grupo">
+          <label for="relDispositivo">Dispositivo</label>
+          <input id="relDispositivo" type="text" placeholder="Ex: ESP32-01"/>
+        </div>
+
+        <div class="filtro-grupo">
+          <label for="relInicio">Data início</label>
+          <input id="relInicio" type="date"/>
+        </div>
+
+        <div class="filtro-grupo">
+          <label for="relFim">Data fim</label>
+          <input id="relFim" type="date"/>
+        </div>
+
+        <div class="botoes">
+          <button type="submit" id="btnGerar">Gerar Relatório</button>
+          <button type="button" id="btnAtualizar">Atualizar</button>
+          <button type="button" id="btnCsv">Exportar CSV</button>
+          <button type="button" id="btnPdf">Exportar PDF</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="status-area">
+      <div id="statusRel" class="status-msg">
+        <div class="loader"></div>
+        <span>Pronto para gerar.</span>
+      </div>
+    </section>
+
+    <section class="bloco" id="blocoResumo">
+      <h4>Resumo Geral</h4>
+      <div class="tabela-wrapper">
+        <table id="tblResumo">
+          <thead>
+            <tr>
+              <th>Total Leituras</th>
+              <th>Autorizadas</th>
+              <th>Negadas</th>
+              <th>Período</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="bloco" id="blocoColab">
+      <h4>Leituras por Colaborador</h4>
+      <div class="tabela-wrapper">
+        <table id="tblColab">
+          <thead>
+            <tr>
+              <th>Colaborador</th>
+              <th>CPF</th>
+              <th>Leituras</th>
+              <th>Autorizadas</th>
+              <th>Negadas</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="bloco" id="blocoDisp">
+      <h4>Leituras por Dispositivo</h4>
+      <div class="tabela-wrapper">
+        <table id="tblDisp">
+          <thead>
+            <tr>
+              <th>Dispositivo</th>
+              <th>Leituras</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="bloco" id="blocoAuth">
+      <h4>Autorizadas vs Negadas</h4>
+      <div class="tabela-wrapper">
+        <table id="tblAuth">
+          <thead>
+            <tr>
+              <th>Status</th>
+              <th>Quantidade</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <!-- PDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+
+  <script src="../assets/js/relatorios.js"></script>
+</body>
+</html>

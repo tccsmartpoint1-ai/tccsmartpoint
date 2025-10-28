@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Login — Smart Point</title>
+  <link rel="stylesheet" href="/assets/css/login.css" />
+</head>
+<body>
+  <main class="wrapper">
+    <section class="card">
+      <header class="card-header">
+        <div class="brand-centered">
+          <img src="../assets/img/logo.png" alt="Logo Smart Point" class="logo">
+        </div>
+        <p class="subtitle">Acesse sua conta administrativa</p>
+      </header>
+
+      <form id="loginForm" novalidate>
+        <div class="field">
+          <label for="cpf">CPF</label>
+          <input
+            id="cpf"
+            name="cpf"
+            type="text"
+            inputmode="numeric"
+            maxlength="14"
+            placeholder="000.000.000-00"
+            required
+          />
+          <small class="error" id="cpfError"></small>
+        </div>
+
+        <div class="field">
+          <label for="password">Senha</label>
+          <div class="password-wrap">
+            <input
+              id="password"
+              name="password"
+              type="password"
+              placeholder="Mínimo 6 caracteres e 1 especial"
+              required
+            />
+
+            <button id="togglePwd" class="toggle-pwd" type="button" aria-label="Mostrar/ocultar senha">
+              <!-- Ícone inicial -->
+              <svg class="icon-eye" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
+          </div>
+          <small class="error" id="passwordError"></small>
+        </div>
+
+        <div class="row">
+          <label class="checkbox">
+            <input id="remember" type="checkbox" checked />
+            <span>Lembrar login</span>
+          </label>
+          <a href="#" class="link">Esqueci minha senha</a>
+        </div>
+
+        <button id="submitBtn" class="btn-primary" type="submit">
+          <span class="spinner" aria-hidden="true"></span>
+          <span>Entrar</span>
+        </button>
+
+        <div class="form-message" id="formMessage" role="alert" aria-live="polite"></div>
+      </form>
+    </section>
+
+    <footer class="legal">
+      © <span id="year"></span> Smart Point — Sistema de controle de frequência
+    </footer>
+  </main>
+
+  <script src="/assets/js/login.js" defer></script>
+</body>
+</html>
