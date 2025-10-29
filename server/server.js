@@ -13,8 +13,6 @@ const tagsRoutes = require('./src/routes/tags');
 
 const app = express();
 const server = http.createServer(app);
-
-
 const { Server } = require('socket.io');
 const io = new Server(server, { cors: { origin: '*' } });
 app.set('io', io);
@@ -37,10 +35,25 @@ app.use('/api/leituras', leiturasRoutes);
 app.use('/api/rfid', rfidRoutes);
 app.use('/api/tags', tagsRoutes);
 
+// ===== Rota raiz =====
+app.get('/', (req, res) => {
+  res.send('Smart Point API online');
+});
+
 // ===== Teste =====
 app.get('/ping', (_req, res) => {
   console.log('Rota /ping chamada');
   res.json({ status: 'API rodando' });
+});
+
+// ===== Rota de status do banco =====
+app.get('/status', async (_req, res) => {
+  try {
+    await sequelize.authenticate();
+    res.json({ status: 'Banco conectado com sucesso!' });
+  } catch (error) {
+    res.status(500).json({ status: 'Erro ao conectar ao banco', erro: error.message });
+  }
 });
 
 // ===== Banco e inicialização =====
@@ -54,7 +67,6 @@ async function start() {
 
     server.listen(PORT, "0.0.0.0", () => {
       console.log(`API + Front rodando na porta ${PORT}`);
-      console.log(`Acesse: https://supreme-spork-7v476qr44rrpcxg5v-3000.app.github.dev/login.html`);
     });
   } catch (err) {
     console.error('Erro ao iniciar:', err);
