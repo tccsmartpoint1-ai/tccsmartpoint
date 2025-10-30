@@ -36,15 +36,15 @@ module.exports = (io) => {
         return res.status(400).json({ error: 'Campo rfid é obrigatório' });
       }
 
-      // Tenta localizar colaborador pelo RFID
-      const colaborador = await Colaboradores.findOne({
-        include: [{ model: require('../models').Tag, where: { uid: rfid } }]
+      // === Localiza colaborador pela TAG ===
+      const colaborador = await Colaborador.findOne({
+        include: [{ model: Tag, where: { uid: rfid } }]
       });
 
-      // Tenta localizar o dispositivo pelo nome
-      const disp = await Dispositivos.findOne({ where: { nome: dispositivo } });
+      // === Localiza dispositivo pelo nome ===
+      const disp = await Dispositivo.findOne({ where: { nome: dispositivo } });
 
-      // Cria o registro
+      // === Cria registro da leitura ===
       const leitura = await LeiturasReais.create({
         tag_uid: rfid,
         colaborador_id: colaborador ? colaborador.id : null,
@@ -57,17 +57,16 @@ module.exports = (io) => {
       });
 
       io.emit('novaLeitura', leitura);
-
       res.status(201).json({ ok: true, id: leitura.id });
 
     } catch (err) {
       console.error('=== ERRO AO SALVAR LEITURA DO ARDUINO ===');
       console.error('Mensagem:', err.message);
       console.error('Stack:', err.stack);
-      res.status(500).json({ 
-        error: 'Erro ao salvar leitura do Arduino', 
+      res.status(500).json({
+        error: 'Erro ao salvar leitura do Arduino',
         details: err.message,
-        stack: err.stack 
+        stack: err.stack
       });
     }
   });
@@ -81,13 +80,18 @@ module.exports = (io) => {
 
       const { count, rows } = await LeiturasReais.findAndCountAll({
         where,
-        include: [{ model: Colaboradores }, { model: Dispositivos }],
+        include: [{ model: Colaborador }, { model: Dispositivo }],
         order: [['id', 'DESC']],
         offset: parseInt(offset),
         limit: parseInt(limit)
       });
 
-      res.json({ data: rows, total: count, page: Number(page), lastPage: Math.ceil(count / limit) });
+      res.json({
+        data: rows,
+        total: count,
+        page: Number(page),
+        lastPage: Math.ceil(count / limit)
+      });
 
     } catch (err) {
       console.error('Erro ao listar leituras reais:', err);
@@ -101,7 +105,7 @@ module.exports = (io) => {
       const where = buildWhere(req.query);
       const rows = await LeiturasReais.findAll({
         where,
-        include: [{ model: Colaboradores }, { model: Dispositivos }],
+        include: [{ model: Colaborador }, { model: Dispositivo }],
         order: [['id', 'DESC']]
       });
 
@@ -112,7 +116,7 @@ module.exports = (io) => {
         tag_uid: r.tag_uid,
         tipo_batida: r.tipo_batida,
         autorizado: r.autorizado,
-        colaborador: r.Colaboradore?.nome || '',
+        colaborador: r.Colaborador?.nome || '',
         dispositivo: r.Dispositivo?.nome || '',
         mensagem: r.mensagem || ''
       }));
