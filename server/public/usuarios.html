@@ -1,42 +1,110 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Usuários e Tags</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Point — Usuários & Tags</title>
   <link rel="stylesheet" href="../assets/css/usuarios.css">
 </head>
+
 <body>
-  <header>
-    <h2>Smart Point - Usuários & Tags</h2>
-    <a href="../public/dashboard.html">⬅ Voltar</a>
+  <!-- ===== TOPO ===== -->
+  <header class="topbar">
+    <button id="toggleSidebar" aria-label="Alternar menu lateral">☰</button>
+    <h1>Smart Point — Usuários & Tags</h1>
+    <div class="user-area">
+      <img src="../assets/img/icons/usuario.png" alt="Perfil" class="profile-icon">
+      <button id="logoutBtn">Sair</button>
+    </div>
   </header>
 
-  <main>
-    <h3>Cadastro de Usuários</h3>
-    <form>
-      <input type="text" placeholder="CPF" required>
-      <input type="text" placeholder="Nome Completo" required>
-      <input type="text" placeholder="Tag RFID" required>
-      <button type="submit">Cadastrar</button>
-    </form>
+  <!-- ===== MENU LATERAL ===== -->
+  <aside class="sidebar">
+    <nav>
+      <ul>
+        <li>
+          <a href="dashboard.html">
+            <img src="../assets/img/icons/home.png" alt="Dashboard" />
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li>
+          <a href="leituras.html">
+            <img src="../assets/img/icons/leitura.png" alt="Leituras" />
+            <span>Leituras</span>
+          </a>
+        </li>
+        <li>
+          <a href="usuarios.html" class="active">
+            <img src="../assets/img/icons/usuario.png" alt="Usuários" />
+            <span>Usuários</span>
+          </a>
+        </li>
+        <li>
+          <a href="relatorios.html">
+            <img src="../assets/img/icons/relatorio.png" alt="Relatórios" />
+            <span>Relatórios</span>
+          </a>
+        </li>
+        <li>
+          <a href="configuracoes.html">
+            <img src="../assets/img/icons/cnfg.png" alt="Configurações" />
+            <span>Configurações</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </aside>
 
-    <h3>Usuários Cadastrados</h3>
-    <table border="1" width="100%">
-      <thead>
-        <tr>
-          <th>CPF</th>
-          <th>Nome</th>
-          <th>Tag</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>111.111.111-11</td>
-          <td>Maria Silva</td>
-          <td>TAG-01A2</td>
-        </tr>
-      </tbody>
-    </table>
+  <!-- ===== CONTEÚDO ===== -->
+  <main class="content">
+    <section class="cadastro">
+      <h2>Cadastro de Usuários</h2>
+      <form id="formCadastro">
+        <div class="grid-3">
+          <div class="form-grupo">
+            <label for="cpf">CPF</label>
+            <input id="cpf" type="text" placeholder="000.000.000-00" required>
+          </div>
+          <div class="form-grupo">
+            <label for="nome">Nome Completo</label>
+            <input id="nome" type="text" placeholder="Ex: Maria Silva" required>
+          </div>
+          <div class="form-grupo">
+            <label for="tag">Tag RFID</label>
+            <input id="tag" type="text" placeholder="Ex: TAG-01A2" required>
+          </div>
+        </div>
+        <div class="botoes">
+          <button type="submit" id="btnCadastrar">Cadastrar</button>
+          <button type="reset">Limpar</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="tabela">
+      <h2>Usuários Cadastrados</h2>
+      <div class="tabela-wrapper">
+        <table id="tabelaUsuarios">
+          <thead>
+            <tr>
+              <th>CPF</th>
+              <th>Nome</th>
+              <th>Tag</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>111.111.111-11</td>
+              <td>Maria Silva</td>
+              <td>TAG-01A2</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
   </main>
+
+  <script src="../assets/js/usuarios.js"></script>
 </body>
 </html>

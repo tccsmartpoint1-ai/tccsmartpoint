@@ -1,231 +1,79 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Leituras — Smart Point</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Point — Leituras</title>
 
+  <!-- Socket.IO -->
   <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 
-  <style>
-    * {
-      box-sizing: border-box;
-      font-family: "Inter", sans-serif;
-    }
-
-    body {
-      margin: 0;
-      display: flex;
-      height: 100vh;
-      background: #f4f6f8;
-      color: #222;
-    }
-
-    .sidebar {
-      width: 240px;
-      background: #0d6efd;
-      color: #fff;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      position: fixed;
-      left: 0;
-      top: 0;
-      bottom: 0;
-    }
-
-    .sidebar .logo {
-      text-align: center;
-      padding: 20px 0;
-      font-weight: 700;
-      font-size: 1.2rem;
-      background: rgba(255, 255, 255, 0.1);
-      letter-spacing: 1px;
-    }
-
-    .sidebar nav {
-      flex: 1;
-      padding: 20px 0;
-    }
-
-    .sidebar nav a {
-      display: block;
-      color: #fff;
-      text-decoration: none;
-      padding: 12px 20px;
-      transition: background 0.2s;
-    }
-
-    .sidebar nav a:hover,
-    .sidebar nav a.active {
-      background: rgba(255, 255, 255, 0.2);
-    }
-
-    .sidebar .footer {
-      text-align: center;
-      font-size: 0.8rem;
-      padding: 10px;
-      background: rgba(255, 255, 255, 0.1);
-    }
-
-    .main {
-      flex: 1;
-      margin-left: 240px;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-    }
-
-    .topbar {
-      background: #fff;
-      border-bottom: 1px solid #ddd;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 20px;
-      height: 60px;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-
-    .topbar h1 {
-      font-size: 1.2rem;
-      margin: 0;
-    }
-
-    .user-menu {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
-
-    .user-menu img {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      border: 2px solid #007bff;
-    }
-
-    .btn-sair {
-      background: #dc3545;
-      color: #fff;
-      border: none;
-      padding: 8px 14px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 0.9rem;
-    }
-
-    .btn-sair:hover {
-      background: #bb2d3b;
-    }
-
-    .content {
-      flex: 1;
-      padding: 20px;
-      overflow-y: auto;
-    }
-
-    .status {
-      padding: 6px 12px;
-      border-radius: 8px;
-      font-size: 0.9rem;
-      color: #fff;
-      background: #c0392b;
-      display: inline-block;
-    }
-
-    .status.online {
-      background: #27ae60;
-    }
-
-    .controls {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin: 15px 0;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .controls input[type="text"],
-    .controls input[type="date"],
-    .controls select {
-      padding: 8px 10px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 0.9rem;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background: #fff;
-      border-radius: 10px;
-      overflow: hidden;
-    }
-
-    thead {
-      background: #007bff;
-      color: #fff;
-    }
-
-    th, td {
-      text-align: left;
-      padding: 10px 12px;
-    }
-
-    tbody tr:nth-child(even) {
-      background: #f2f2f2;
-    }
-
-    tbody tr.highlight {
-      background: #d1f0d1;
-      transition: background 1s ease;
-    }
-
-    .tipo {
-      font-weight: 600;
-      text-transform: capitalize;
-    }
-
-    .tipo.entrada { color: #27ae60; }
-    .tipo.saida { color: #e74c3c; }
-    .tipo.almoco { color: #f1c40f; }
-    .tipo.retorno { color: #2980b9; }
-  </style>
+  <!-- Estilos padronizados -->
+  <link rel="stylesheet" href="../assets/css/leituras.css" />
 </head>
 
 <body>
-  <aside class="sidebar">
-    <div>
-      <div class="logo">Smart Point</div>
-      <nav>
-        <a href="dashboard.html">Dashboard</a>
-        <a href="leituras.html" class="active">Leituras</a>
-        <a href="usuarios.html">Usuários</a>
-        <a href="relatorios.html">Relatórios</a>
-        <a href="configuracoes.html">Configurações</a>
-      </nav>
+  <!-- ===== TOPO ===== -->
+  <header class="topbar">
+    <button id="toggleSidebar" aria-label="Alternar menu lateral">☰</button>
+    <h1>Leituras em Tempo Real</h1>
+    <div class="user-area">
+      <img src="../assets/img/icons/usuario.png" alt="Perfil" class="profile-icon" />
+      <button id="logoutBtn">Sair</button>
     </div>
-    <div class="footer">© 2025 Smart Point</div>
+  </header>
+
+  <!-- ===== MENU LATERAL ===== -->
+  <aside class="sidebar expanded">
+    <nav>
+      <ul>
+        <li>
+          <a href="dashboard.html">
+            <img src="../assets/img/icons/home.png" alt="Dashboard" />
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li>
+          <a href="leituras.html" class="active">
+            <img src="../assets/img/icons/leitura.png" alt="Leituras" />
+            <span>Leituras</span>
+          </a>
+        </li>
+        <li>
+          <a href="usuarios.html">
+            <img src="../assets/img/icons/usuario.png" alt="Usuários" />
+            <span>Usuários</span>
+          </a>
+        </li>
+        <li>
+          <a href="relatorios.html">
+            <img src="../assets/img/icons/relatorio.png" alt="Relatórios" />
+            <span>Relatórios</span>
+          </a>
+        </li>
+        <li>
+          <a href="configuracoes.html">
+            <img src="../assets/img/icons/cnfg.png" alt="Configurações" />
+            <span>Configurações</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
   </aside>
 
-  <div class="main">
-    <header class="topbar">
-      <h1>Leituras em Tempo Real</h1>
-      <div class="user-menu">
-        <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Perfil">
-        <button class="btn-sair" id="btnSair">Sair</button>
-      </div>
-    </header>
-
-    <section class="content">
+  <!-- ===== CONTEÚDO PRINCIPAL ===== -->
+  <main class="content">
+    <section class="leituras-section">
+      <!-- STATUS CONEXÃO -->
       <div class="status" id="status">Desconectado</div>
 
+      <!-- CONTROLES DE FILTRO E BUSCA -->
       <div class="controls">
-        <input type="text" id="search" placeholder="Buscar colaborador, CPF ou tag...">
+        <input
+          type="text"
+          id="search"
+          placeholder="Buscar colaborador, CPF ou tag..."
+        />
         <div class="filters">
           <select id="filterTipo">
             <option value="">Todos os tipos</option>
@@ -234,23 +82,27 @@
             <option value="almoco">Almoço</option>
             <option value="retorno">Retorno</option>
           </select>
-          <input type="date" id="filterData">
+          <input type="date" id="filterData" />
         </div>
       </div>
 
-      <table>
-        <thead>
-          <tr>
-            <th>Data/Hora</th>
-            <th>Tag RFID</th>
-            <th>Autorizado</th>
-          </tr>
-        </thead>
-        <tbody id="leiturasBody"></tbody>
-      </table>
+      <!-- TABELA DE LEITURAS -->
+      <div class="tabela-wrapper">
+        <table id="tabelaLeituras">
+          <thead>
+            <tr>
+              <th>Data/Hora</th>
+              <th>Tag RFID</th>
+              <th>Autorizado</th>
+            </tr>
+          </thead>
+          <tbody id="leiturasBody"></tbody>
+        </table>
+      </div>
     </section>
-  </div>
+  </main>
 
+  <!-- ===== SCRIPT ===== -->
   <script>
     const API_URL = "https://supreme-spork-7v476qr44rrpcxg5v-3000.app.github.dev/api";
     const socket = io(API_URL.replace("/api", ""), { transports: ["websocket"] });
@@ -258,6 +110,7 @@
     const statusEl = document.getElementById("status");
     const tbody = document.getElementById("leiturasBody");
 
+    // ===== STATUS DE CONEXÃO =====
     socket.on("connect", () => {
       statusEl.textContent = "Conectado";
       statusEl.classList.add("online");
@@ -268,23 +121,26 @@
       statusEl.classList.remove("online");
     });
 
+    // ===== NOVAS LEITURAS =====
     socket.on("novaLeitura", (leitura) => {
       adicionarLeitura(leitura);
     });
 
+    // ===== CARREGAR LEITURAS INICIAIS =====
     async function carregarLeiturasIniciais() {
       try {
         const token = localStorage.getItem("token");
         const res = await fetch(`${API_URL}/leituras?limit=20`, {
-          headers: { Authorization: `Bearer ${token}` }
+          headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
-        data.data.forEach(l => adicionarLeitura(l));
+        data.data.forEach((l) => adicionarLeitura(l));
       } catch (err) {
         console.error("Erro ao carregar leituras:", err);
       }
     }
 
+    // ===== ADICIONAR LINHA À TABELA =====
     function adicionarLeitura(leitura) {
       const tr = document.createElement("tr");
       tr.innerHTML = `
@@ -298,6 +154,20 @@
     }
 
     carregarLeiturasIniciais();
+
+    // ===== LOGOUT =====
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      localStorage.removeItem("token");
+      window.location.href = "index.html";
+    });
+
+    // ===== CONTROLE DA SIDEBAR =====
+    const sidebar = document.querySelector(".sidebar");
+    const toggleBtn = document.getElementById("toggleSidebar");
+
+    toggleBtn.addEventListener("click", () => {
+      sidebar.classList.toggle("collapsed");
+    });
   </script>
 </body>
 </html>

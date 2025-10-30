@@ -3,19 +3,24 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Login — Smart Point</title>
-  <link rel="stylesheet" href="/assets/css/login.css" />
+  <title>Smart Point — Login</title>
+
+  <!-- Estilos padronizados -->
+  <link rel="stylesheet" href="../assets/css/login.css" />
 </head>
+
 <body>
   <main class="wrapper">
     <section class="card">
+      <!-- ===== CABEÇALHO ===== -->
       <header class="card-header">
         <div class="brand-centered">
-          <img src="../assets/img/logo.png" alt="Logo Smart Point" class="logo">
+          <img src="../assets/img/logo.png" alt="Logo Smart Point" class="logo" />
         </div>
         <p class="subtitle">Acesse sua conta administrativa</p>
       </header>
 
+      <!-- ===== FORMULÁRIO ===== -->
       <form id="loginForm" novalidate>
         <div class="field">
           <label for="cpf">CPF</label>
@@ -41,12 +46,15 @@
               placeholder="Mínimo 6 caracteres e 1 especial"
               required
             />
-
-            <button id="togglePwd" class="toggle-pwd" type="button" aria-label="Mostrar/ocultar senha">
-              <!-- Ícone inicial -->
+            <button
+              id="togglePwd"
+              class="toggle-pwd"
+              type="button"
+              aria-label="Mostrar/ocultar senha"
+            >
               <svg class="icon-eye" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/>
-                <circle cx="12" cy="12" r="3"/>
+                <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z" />
+                <circle cx="12" cy="12" r="3" />
               </svg>
             </button>
           </div>
@@ -70,11 +78,12 @@
       </form>
     </section>
 
+    <!-- ===== RODAPÉ ===== -->
     <footer class="legal">
       © <span id="year"></span> Smart Point — Sistema de controle de frequência
     </footer>
   </main>
 
-  <script src="/assets/js/login.js" defer></script>
+  <script src="assets/js/login.js" defer></script>
 </body>
 </html>

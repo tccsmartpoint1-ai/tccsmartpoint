@@ -1,31 +1,63 @@
 <!DOCTYPE html>
-<html lang="pt-br">
-
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Configurações | Smart Point</title>
-  <link rel="stylesheet" href="../public/assets/css/configuracoes.css" />
-
-  <!-- Autenticação (mesmo modelo anterior) -->
-  <script>
-    (function () {
-      const token = localStorage.getItem("token");
-      if (!token) window.location.replace("../pages/login.html");
-    })();
-  </script>
+  <title>Smart Point — Configurações</title>
+  <link rel="stylesheet" href="assets/css/dashboard.css" />
+  <link rel="stylesheet" href="assets/css/configuracoes.css" />
 </head>
-
 <body>
-  <header class="top-bar">
-    <h2>Smart Point — Configurações</h2>
-    <nav>
-      <a class="btn-voltar" href="../public/dashboard.html">⬅ Voltar</a>
-    </nav>
+  <!-- ===== TOPO ===== -->
+  <header class="topbar">
+    <button id="toggleSidebar" aria-label="Alternar menu lateral">☰</button>
+    <h1>Smart Point</h1>
+    <div class="user-area">
+      <img src="assets/img/icons/usuario.png" alt="Perfil" class="profile-icon" />
+      <button id="logoutBtn">Sair</button>
+    </div>
   </header>
 
-  <main class="container">
-    <!-- Status do Sistema -->
+  <!-- ===== MENU LATERAL ===== -->
+  <aside class="sidebar expanded">
+    <nav>
+      <ul>
+        <li>
+          <a href="leituras.html">
+            <img src="assets/img/icons/leitura.png" alt="Leituras" />
+            <span>Leituras</span>
+          </a>
+        </li>
+        <li>
+          <a href="usuarios.html">
+            <img src="assets/img/icons/usuario.png" alt="Usuários" />
+            <span>Usuários</span>
+          </a>
+        </li>
+        <li>
+          <a href="relatorios.html">
+            <img src="assets/img/icons/relatorio.png" alt="Relatórios" />
+            <span>Relatórios</span>
+          </a>
+        </li>
+        <li class="active">
+          <a href="configuracoes.html">
+            <img src="assets/img/icons/cnfg.png" alt="Configurações" />
+            <span>Configurações</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- ===== CONTEÚDO PRINCIPAL ===== -->
+  <main class="content">
+    <section class="page-header">
+      <h2>Configurações do Sistema</h2>
+      <p class="subtitle">Gerencie parâmetros, dispositivos e segurança</p>
+    </section>
+
+    <!-- ===== STATUS DO SISTEMA ===== -->
     <section class="card">
       <h3>Status do Sistema</h3>
       <div id="statusLinha" class="status-msg">
@@ -44,7 +76,7 @@
       </div>
     </section>
 
-    <!-- Configurações da API -->
+    <!-- ===== CONFIGURAÇÕES DA API ===== -->
     <section class="card">
       <h3>Configurações da API</h3>
       <form id="formApi">
@@ -59,7 +91,7 @@
       </form>
     </section>
 
-    <!-- Dispositivos -->
+    <!-- ===== DISPOSITIVOS ===== -->
     <section class="card">
       <h3>Dispositivos</h3>
       <div class="actions">
@@ -77,14 +109,14 @@
             </tr>
           </thead>
           <tbody>
-            <!-- preenchido via JS -->
+            <!-- Preenchido via JS -->
           </tbody>
         </table>
       </div>
       <small class="hint">Ação “Ativar/Desativar” usa PATCH /dispositivos/:id com {"ativo": true|false}.</small>
     </section>
 
-    <!-- Parâmetros Operacionais -->
+    <!-- ===== PARÂMETROS OPERACIONAIS ===== -->
     <section class="card">
       <h3>Parâmetros Operacionais</h3>
       <form id="formParams">
@@ -111,7 +143,7 @@
       </form>
     </section>
 
-    <!-- Segurança e Manutenção -->
+    <!-- ===== SEGURANÇA E MANUTENÇÃO ===== -->
     <section class="card">
       <h3>Segurança e Manutenção</h3>
       <form id="formSenha">
@@ -143,7 +175,7 @@
     </section>
   </main>
 
-  <script src="../public/assets/js/configuracoes.js"></script>
+  <script src="../assets/js/dashboard.js"></script>
+  <script src="../assets/js/configuracoes.js"></script>
 </body>
-
 </html>

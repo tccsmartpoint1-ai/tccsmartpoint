@@ -1,43 +1,90 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Relatórios | Smart Point</title>
-  <link rel="stylesheet" href="../assets/css/relatorios.css"/>
+  <title>Smart Point — Relatórios</title>
+
+  <link rel="stylesheet" href="../assets/css/relatorios.css" />
 </head>
+
 <body>
-  <header class="top-bar">
-    <h2>Smart Point — Relatórios</h2>
-    <nav>
-      <a class="btn-voltar" href="../public/dashboard.html">⬅ Voltar</a>
-    </nav>
+  <!-- ===== TOPO ===== -->
+  <header class="topbar">
+    <button id="toggleSidebar" aria-label="Alternar menu lateral">☰</button>
+    <h1>Smart Point — Relatórios</h1>
+    <div class="user-area">
+      <img src="../assets/img/icons/usuario.png" alt="Perfil" class="profile-icon">
+      <button id="logoutBtn">Sair</button>
+    </div>
   </header>
 
-  <main class="container">
+  <!-- ===== MENU LATERAL ===== -->
+  <aside class="sidebar">
+    <nav>
+      <ul>
+        <li>
+          <a href="dashboard.html">
+            <img src="../assets/img/icons/home.png" alt="Dashboard" />
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li>
+          <a href="leituras.html">
+            <img src="../assets/img/icons/leitura.png" alt="Leituras" />
+            <span>Leituras</span>
+          </a>
+        </li>
+        <li>
+          <a href="usuarios.html">
+            <img src="../assets/img/icons/usuario.png" alt="Usuários" />
+            <span>Usuários</span>
+          </a>
+        </li>
+        <li>
+          <a href="relatorios.html" class="active">
+            <img src="../assets/img/icons/relatorio.png" alt="Relatórios" />
+            <span>Relatórios</span>
+          </a>
+        </li>
+        <li>
+          <a href="configuracoes.html">
+            <img src="../assets/img/icons/cnfg.png" alt="Configurações" />
+            <span>Configurações</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- ===== CONTEÚDO ===== -->
+  <main class="content">
+    <!-- FILTROS -->
     <section class="filtros">
-      <h3>Relatórios Consolidados</h3>
+      <h2>Relatórios Consolidados</h2>
       <p>Gere resumos analíticos das leituras armazenadas.</p>
 
       <form id="formRelatorios">
-        <div class="filtro-grupo">
-          <label for="relColaborador">Colaborador</label>
-          <input id="relColaborador" type="text" placeholder="Nome ou CPF"/>
-        </div>
+        <div class="grid-4">
+          <div class="filtro-grupo">
+            <label for="relColaborador">Colaborador</label>
+            <input id="relColaborador" type="text" placeholder="Nome ou CPF" />
+          </div>
 
-        <div class="filtro-grupo">
-          <label for="relDispositivo">Dispositivo</label>
-          <input id="relDispositivo" type="text" placeholder="Ex: ESP32-01"/>
-        </div>
+          <div class="filtro-grupo">
+            <label for="relDispositivo">Dispositivo</label>
+            <input id="relDispositivo" type="text" placeholder="Ex: ESP32-01" />
+          </div>
 
-        <div class="filtro-grupo">
-          <label for="relInicio">Data início</label>
-          <input id="relInicio" type="date"/>
-        </div>
+          <div class="filtro-grupo">
+            <label for="relInicio">Data início</label>
+            <input id="relInicio" type="date" />
+          </div>
 
-        <div class="filtro-grupo">
-          <label for="relFim">Data fim</label>
-          <input id="relFim" type="date"/>
+          <div class="filtro-grupo">
+            <label for="relFim">Data fim</label>
+            <input id="relFim" type="date" />
+          </div>
         </div>
 
         <div class="botoes">
@@ -49,6 +96,7 @@
       </form>
     </section>
 
+    <!-- STATUS -->
     <section class="status-area">
       <div id="statusRel" class="status-msg">
         <div class="loader"></div>
@@ -56,8 +104,9 @@
       </div>
     </section>
 
+    <!-- BLOCO: RESUMO GERAL -->
     <section class="bloco" id="blocoResumo">
-      <h4>Resumo Geral</h4>
+      <h3>Resumo Geral</h3>
       <div class="tabela-wrapper">
         <table id="tblResumo">
           <thead>
@@ -73,8 +122,9 @@
       </div>
     </section>
 
+    <!-- BLOCO: COLABORADORES -->
     <section class="bloco" id="blocoColab">
-      <h4>Leituras por Colaborador</h4>
+      <h3>Leituras por Colaborador</h3>
       <div class="tabela-wrapper">
         <table id="tblColab">
           <thead>
@@ -91,8 +141,9 @@
       </div>
     </section>
 
+    <!-- BLOCO: DISPOSITIVOS -->
     <section class="bloco" id="blocoDisp">
-      <h4>Leituras por Dispositivo</h4>
+      <h3>Leituras por Dispositivo</h3>
       <div class="tabela-wrapper">
         <table id="tblDisp">
           <thead>
@@ -106,8 +157,9 @@
       </div>
     </section>
 
+    <!-- BLOCO: AUTORIZAÇÕES -->
     <section class="bloco" id="blocoAuth">
-      <h4>Autorizadas vs Negadas</h4>
+      <h3>Autorizadas vs Negadas</h3>
       <div class="tabela-wrapper">
         <table id="tblAuth">
           <thead>
@@ -122,10 +174,9 @@
     </section>
   </main>
 
-  <!-- PDF -->
+  <!-- ===== DEPENDÊNCIAS ===== -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
-
   <script src="../assets/js/relatorios.js"></script>
 </body>
 </html>
