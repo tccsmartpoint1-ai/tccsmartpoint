@@ -1,20 +1,21 @@
 const express = require('express');
 const router = express.Router();
-const { Leitura, Colaborador, Dispositivo } = require('../models/index');
+const { LeiturasReais, Colaboradores, Dispositivos } = require('../models/index');
 const auth = require('../middleware/auth');
 const { Parser } = require('json2csv');
 const { Op } = require('sequelize');
 
+// ==== FILTROS DE CONSULTA ====
 function buildWhere(query) {
   const { from, to, tag, colaboradorId, status } = query;
   const where = {};
   if (from) {
     const d = new Date(from);
-    if (!isNaN(d.getTime())) where.hora = { [Op.gte]: d };
+    if (!isNaN(d.getTime())) where.data = { [Op.gte]: d };
   }
   if (to) {
     const d = new Date(to);
-    if (!isNaN(d.getTime())) where.hora = { ...(where.hora || {}), [Op.lte]: d };
+    if (!isNaN(d.getTime())) where.data = { ...(where.data || {}), [Op.lte]: d };
   }
   if (tag) where.tag_uid = tag;
   if (colaboradorId) where.colaborador_id = colaboradorId;
@@ -23,59 +24,59 @@ function buildWhere(query) {
   return where;
 }
 
-// Função principal exportada com io
+// ==== EXPORTAÇÃO DO MÓDULO COM SOCKET ====
 module.exports = (io) => {
- // === ROTA PÚBLICA PARA ARDUINO (sem token) ===
-router.post('/arduino', async (req, res) => {
-  try {
-    const { uid, nome, autorizado, timestamp, ip } = req.body;
 
-    if (!uid || !timestamp) {
-      return res.status(400).json({ error: 'UID e timestamp são obrigatórios' });
+  // === ROTA PÚBLICA PARA O ARDUINO (sem token) ===
+  router.post('/arduino', async (req, res) => {
+    try {
+      const { rfid, nome, dispositivo, autorizado } = req.body;
+
+      if (!rfid) {
+        return res.status(400).json({ error: 'Campo rfid é obrigatório' });
+      }
+
+      // Tenta localizar colaborador pelo RFID
+      const colaborador = await Colaboradores.findOne({
+        include: [{ model: require('../models').Tags, where: { uid: rfid } }]
+      });
+
+      // Tenta localizar o dispositivo pelo nome (ou usa 1)
+      const disp = await Dispositivos.findOne({ where: { nome: dispositivo } });
+
+      // Cria o registro
+      const leitura = await LeiturasReais.create({
+        tag_uid: rfid,
+        colaborador_id: colaborador ? colaborador.id : null,
+        dispositivo_id: disp ? disp.id : null,
+        autorizado: autorizado ?? !!colaborador,
+        tipo_batida: 'entrada',
+        mensagem: colaborador ? 'Acesso permitido' : 'Cartão não reconhecido',
+        raw_payload: req.body,
+        ip: req.ip
+      });
+
+      // Emite evento em tempo real
+      io.emit('novaLeitura', leitura);
+
+      res.status(201).json({ ok: true, id: leitura.id });
+    } catch (err) {
+      console.error('Erro ao salvar leitura do Arduino:', err);
+      res.status(500).json({ error: 'Erro ao salvar leitura do Arduino' });
     }
+  });
 
-    // tenta achar o colaborador pela tag UID
-    const colaborador = await Colaborador.findOne({ where: { tag_uid: uid } });
-
-    // cria a leitura vinculando colaborador e dispositivo (se aplicável)
-    const leitura = await Leitura.create({
-      tag_uid: uid,
-      colaborador_id: colaborador ? colaborador.id : null,
-      autorizado,
-      hora: new Date(timestamp),
-      ip,
-      raw_payload: { nome, origem: 'arduino' }
-    });
-
-    console.log(`Leitura do Arduino: ${uid} - ${colaborador ? colaborador.nome : 'Sem vínculo'} (${autorizado ? 'LIBERADO' : 'NEGADO'})`);
-
-    // busca a leitura já com joins (colaborador + dispositivo)
-    const leituraCompleta = await Leitura.findByPk(leitura.id, {
-      include: [{ model: Colaborador }, { model: Dispositivo }]
-    });
-
-    // envia para todos os navegadores conectados
-    io.emit('novaLeitura', leituraCompleta);
-
-    res.status(201).json({ ok: true, id: leitura.id });
-  } catch (err) {
-    console.error('Erro ao salvar leitura do Arduino:', err);
-    res.status(500).json({ error: 'Erro ao salvar leitura do Arduino' });
-  }
-});
-
-
-  // === ROTAS PROTEGIDAS ===
+  // === ROTA PROTEGIDA (listagem) ===
   router.get('/', auth, async (req, res) => {
     try {
       const { page = 1, limit = 50 } = req.query;
       const offset = (page - 1) * limit;
       const where = buildWhere(req.query);
 
-      const { count, rows } = await Leitura.findAndCountAll({
+      const { count, rows } = await LeiturasReais.findAndCountAll({
         where,
-        include: [{ model: Colaborador }, { model: Dispositivo }],
-        order: [['hora', 'DESC']],
+        include: [{ model: Colaboradores }, { model: Dispositivos }],
+        order: [['id', 'DESC']],
         offset: parseInt(offset),
         limit: parseInt(limit)
       });
@@ -83,7 +84,7 @@ router.post('/arduino', async (req, res) => {
       res.json({ data: rows, total: count, page: Number(page), lastPage: Math.ceil(count / limit) });
     } catch (err) {
       console.error(err);
-      res.status(500).json({ error: 'Erro ao listar leituras' });
+      res.status(500).json({ error: 'Erro ao listar leituras reais' });
     }
   });
 
@@ -91,33 +92,33 @@ router.post('/arduino', async (req, res) => {
   router.get('/export', auth, async (req, res) => {
     try {
       const where = buildWhere(req.query);
-
-      const rows = await Leitura.findAll({
+      const rows = await LeiturasReais.findAll({
         where,
-        include: [{ model: Colaborador }, { model: Dispositivo }],
-        order: [['hora', 'DESC']]
+        include: [{ model: Colaboradores }, { model: Dispositivos }],
+        order: [['id', 'DESC']]
       });
 
       const flat = rows.map(r => ({
         id: r.id,
+        data: r.data,
         hora: r.hora,
         tag_uid: r.tag_uid,
+        tipo_batida: r.tipo_batida,
         autorizado: r.autorizado,
-        colaborador: r.colaborador?.nome || '',
-        dispositivo: r.dispositivo?.nome || '',
-        ip: r.ip || '',
-        raw_payload: r.raw_payload ? JSON.stringify(r.raw_payload) : ''
+        colaborador: r.Colaboradore?.nome || '',
+        dispositivo: r.Dispositivo?.nome || '',
+        mensagem: r.mensagem || ''
       }));
 
       const parser = new Parser();
       const csv = parser.parse(flat);
 
       res.header('Content-Type', 'text/csv');
-      res.attachment('leituras_export.csv');
+      res.attachment('leituras_reais.csv');
       return res.send(csv);
     } catch (err) {
       console.error(err);
-      res.status(500).json({ error: 'Erro ao exportar leituras' });
+      res.status(500).json({ error: 'Erro ao exportar leituras reais' });
     }
   });
 

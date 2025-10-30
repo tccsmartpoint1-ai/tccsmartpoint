@@ -24,7 +24,7 @@ const Admin = sequelize.define('admins', {
 const Colaborador = sequelize.define('colaboradores', {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   nome: { type: DataTypes.STRING(150), allowNull: false },
-  cpf: { type: DataTypes.STRING(11), unique: true }, // só números
+  cpf: { type: DataTypes.STRING(11), unique: true },
   email: { type: DataTypes.STRING(255) },
   ativo: { type: DataTypes.BOOLEAN, defaultValue: true },
   criado_em: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
@@ -36,7 +36,6 @@ const Colaborador = sequelize.define('colaboradores', {
     beforeUpdate: (colab) => { colab.atualizado_em = new Date(); }
   }
 });
-
 
 // =====================
 // Tag
@@ -68,7 +67,7 @@ const Dispositivo = sequelize.define('dispositivos', {
 });
 
 // =====================
-// Leitura
+// Leitura (tabela antiga)
 // =====================
 const Leitura = sequelize.define('leituras', {
   id: { type: DataTypes.BIGINT, primaryKey: true, autoIncrement: true },
@@ -84,8 +83,30 @@ const Leitura = sequelize.define('leituras', {
   timestamps: false
 });
 
-/// =====================
-// Associações com regras de integridade
+// =====================
+// Leituras Reais (nova tabela)
+// =====================
+const LeiturasReais = sequelize.define('leituras_reais', {
+  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+  tag_uid: { type: DataTypes.STRING(20), allowNull: false },
+  colaborador_id: { type: DataTypes.INTEGER, allowNull: true },
+  dispositivo_id: { type: DataTypes.INTEGER, allowNull: true },
+  autorizado: { type: DataTypes.BOOLEAN, defaultValue: false },
+  tipo_batida: { type: DataTypes.STRING(20) },
+  data: { type: DataTypes.DATEONLY, defaultValue: DataTypes.NOW },
+  hora: { type: DataTypes.TIME, defaultValue: DataTypes.NOW },
+  origem: { type: DataTypes.STRING(50), defaultValue: 'arduino' },
+  mensagem: { type: DataTypes.TEXT },
+  raw_payload: { type: DataTypes.JSONB },
+  ip: { type: DataTypes.STRING(45) },
+  criado_em: { type: DataTypes.DATE, defaultValue: DataTypes.NOW }
+}, { 
+  tableName: 'leituras_reais',
+  timestamps: false
+});
+
+// =====================
+// Associações
 // =====================
 Colaborador.hasMany(Tag, { foreignKey: 'colaborador_id' });
 Tag.belongsTo(Colaborador, { foreignKey: 'colaborador_id', onDelete: 'SET NULL' });
@@ -96,11 +117,22 @@ Leitura.belongsTo(Colaborador, { foreignKey: 'colaborador_id', onDelete: 'SET NU
 Dispositivo.hasMany(Leitura, { foreignKey: 'dispositivo_id' });
 Leitura.belongsTo(Dispositivo, { foreignKey: 'dispositivo_id', onDelete: 'CASCADE' });
 
+// Associações da nova tabela
+Colaborador.hasMany(LeiturasReais, { foreignKey: 'colaborador_id' });
+LeiturasReais.belongsTo(Colaborador, { foreignKey: 'colaborador_id', onDelete: 'SET NULL' });
+
+Dispositivo.hasMany(LeiturasReais, { foreignKey: 'dispositivo_id' });
+LeiturasReais.belongsTo(Dispositivo, { foreignKey: 'dispositivo_id', onDelete: 'CASCADE' });
+
+// =====================
+// Exportação
+// =====================
 module.exports = {
   sequelize,
   Admin,
   Colaborador,
   Tag,
   Dispositivo,
-  Leitura
+  Leitura,
+  LeiturasReais
 };
