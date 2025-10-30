@@ -157,3 +157,37 @@ document.addEventListener("DOMContentLoaded", () => {
 
   setStatus("Pronto para gerar.");
 });
+// ======== EDIÇÃO DE FOLHA DE PONTO ======== //
+window.addEventListener("load", () => {
+  const tabela = document.querySelector("#tblFolha");
+  if (!tabela) return;
+
+  tabela.addEventListener("click", (e) => {
+    const btn = e.target.closest("button");
+    if (!btn) return;
+
+    const linha = btn.closest("tr");
+    const celulas = linha.querySelectorAll("td:not(:last-child)");
+
+    // Modo editar
+    if (btn.classList.contains("btn-edit")) {
+      linha.classList.add("editavel");
+      celulas.forEach(td => td.setAttribute("contenteditable", "true"));
+      linha.querySelector(".btn-edit").style.display = "none";
+      linha.querySelector(".btn-save").style.display = "inline-block";
+    }
+
+    // Modo salvar
+    if (btn.classList.contains("btn-save")) {
+      linha.classList.remove("editavel");
+      celulas.forEach(td => td.removeAttribute("contenteditable"));
+      linha.querySelector(".btn-edit").style.display = "inline-block";
+      linha.querySelector(".btn-save").style.display = "none";
+
+      // Destaque visual
+      linha.style.transition = "background 0.5s";
+      linha.style.background = "#e8f5e9";
+      setTimeout(() => (linha.style.background = ""), 1500);
+    }
+  });
+});

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Smart Point </title>
 
-  <link rel="stylesheet" href="../assets/css/relatorios.css" />
+  <link rel="stylesheet" href="assets/css/relatorios.css" />
 </head>
 
 <body>
@@ -14,7 +14,7 @@
     <button id="toggleSidebar" aria-label="Alternar menu lateral">☰</button>
     <h1>Smart Point — Relatórios</h1>
     <div class="user-area">
-      <img src="../assets/img/icons/usuario.png" alt="Perfil" class="profile-icon">
+      <img src="assets/img/icons/usuario.png" alt="Perfil" class="profile-icon">
       <button id="logoutBtn">Sair</button>
     </div>
   </header>
@@ -25,31 +25,31 @@
       <ul>
         <li>
           <a href="dashboard.html">
-            <img src="../assets/img/icons/home.png" alt="Dashboard" />
+            <img src="assets/img/icons/home.png" alt="Dashboard" />
             <span>Dashboard</span>
           </a>
         </li>
         <li>
           <a href="leituras.html">
-            <img src="../assets/img/icons/leitura.png" alt="Leituras" />
+            <img src="assets/img/icons/leitura.png" alt="Leituras" />
             <span>Leituras</span>
           </a>
         </li>
         <li>
           <a href="usuarios.html">
-            <img src="../assets/img/icons/usuario.png" alt="Usuários" />
+            <img src="assets/img/icons/usuario.png" alt="Usuários" />
             <span>Usuários</span>
           </a>
         </li>
         <li>
           <a href="relatorios.html" class="active">
-            <img src="../assets/img/icons/relatorio.png" alt="Relatórios" />
+            <img src="assets/img/icons/relatorio.png" alt="Relatórios" />
             <span>Relatórios</span>
           </a>
         </li>
         <li>
           <a href="configuracoes.html">
-            <img src="../assets/img/icons/cnfg.png" alt="Configurações" />
+            <img src="assets/img/icons/cnfg.png" alt="Configurações" />
             <span>Configurações</span>
           </a>
         </li>
@@ -96,83 +96,79 @@
       </form>
     </section>
 
-    <!-- STATUS -->
-    <section class="status-area">
-      <div id="statusRel" class="status-msg">
-        <div class="loader"></div>
-        <span>Pronto para gerar.</span>
-      </div>
-    </section>
 
-    <!-- BLOCO: RESUMO GERAL -->
-    <section class="bloco" id="blocoResumo">
-      <h3>Resumo Geral</h3>
-      <div class="tabela-wrapper">
-        <table id="tblResumo">
-          <thead>
-            <tr>
-              <th>Total Leituras</th>
-              <th>Autorizadas</th>
-              <th>Negadas</th>
-              <th>Período</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
-    </section>
+  <!-- NOVO BLOCO: FOLHA DE PONTO -->
+  <section class="bloco" id="blocoFolhaPonto">
+    <h3>Registro de Ponto Diário</h3>
+    <div class="tabela-wrapper">
+      <table id="tblFolha">
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>CPF</th>
+            <th>Cargo</th>
+            <th>Setor</th>
+            <th>Data</th>
+            <th>Entrada</th>
+            <th>Saída Almoço</th>
+            <th>Retorno</th>
+            <th>Saída Final</th>
+            <th>Total Horas</th>
+            <th>Extras</th>
+            <th>Faltas</th>
+            <th>Atrasos</th>
+            <th>Banco de Horas</th>
+            <th>Observações</th>
+          </tr>
+        </thead>
+   <tbody>
+  <tr>
+    <td>João Silva</td>
+    <td>111.111.111-11</td>
+    <td>Operador</td>
+    <td>Produção</td>
+    <td>01/10/2025</td>
+    <td>08:00</td>
+    <td>12:00</td>
+    <td>13:00</td>
+    <td>17:00</td>
+    <td>8h</td>
+    <td class="extra">1h</td>
+    <td>-</td>
+    <td>-</td>
+    <td>+1h</td>
+    <td>
+      <button class="btn-edit" title="Editar">&#9998;</button>
+      <button class="btn-save" title="Salvar" style="display:none;">💾</button>
+    </td>
+  </tr>
 
-    <!-- BLOCO: COLABORADORES -->
-    <section class="bloco" id="blocoColab">
-      <h3>Leituras por Colaborador</h3>
-      <div class="tabela-wrapper">
-        <table id="tblColab">
-          <thead>
-            <tr>
-              <th>Colaborador</th>
-              <th>CPF</th>
-              <th>Leituras</th>
-              <th>Autorizadas</th>
-              <th>Negadas</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
-    </section>
+  <tr>
+    <td>Maria Oliveira</td>
+    <td>222.222.222-22</td>
+    <td>RH</td>
+    <td>Administrativo</td>
+    <td>04/10/2025</td>
+    <td>08:10</td>
+    <td>12:00</td>
+    <td>13:00</td>
+    <td>17:00</td>
+    <td>7h50</td>
+    <td>-</td>
+    <td>-</td>
+    <td class="atraso">10min</td>
+    <td>-0.10h</td>
+    <td>
+      <button class="btn-edit" title="Editar">&#9998;</button>
+      <button class="btn-save" title="Salvar" style="display:none;">💾</button>
+    </td>
+  </tr>
+</tbody>
+      </table>
+    </div>
+  </section>
+</main>
 
-    <!-- BLOCO: DISPOSITIVOS -->
-    <section class="bloco" id="blocoDisp">
-      <h3>Leituras por Dispositivo</h3>
-      <div class="tabela-wrapper">
-        <table id="tblDisp">
-          <thead>
-            <tr>
-              <th>Dispositivo</th>
-              <th>Leituras</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
-    </section>
-
-    <!-- BLOCO: AUTORIZAÇÕES -->
-    <section class="bloco" id="blocoAuth">
-      <h3>Autorizadas vs Negadas</h3>
-      <div class="tabela-wrapper">
-        <table id="tblAuth">
-          <thead>
-            <tr>
-              <th>Status</th>
-              <th>Quantidade</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
-    </section>
-  </main>
 
   <!-- ===== DEPENDÊNCIAS ===== -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
