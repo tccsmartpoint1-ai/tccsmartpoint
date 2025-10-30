@@ -44,17 +44,24 @@ module.exports = (io) => {
       // === Localiza dispositivo pelo nome ===
       const disp = await Dispositivo.findOne({ where: { nome: dispositivo } });
 
-      // === Cria registro da leitura ===
-      const leitura = await LeiturasReais.create({
-        tag_uid: rfid,
-        colaborador_id: colaborador ? colaborador.id : null,
-        dispositivo_id: disp ? disp.id : null,
-        autorizado: autorizado ?? !!colaborador,
-        tipo_batida: 'entrada',
-        mensagem: colaborador ? 'Acesso permitido' : 'Cartão não reconhecido',
-        raw_payload: req.body,
-        ip: req.ip
-      });
+      // Gera data e hora corretas para PostgreSQL
+const agora = new Date();
+const dataFormatada = agora.toISOString().split('T')[0]; // "YYYY-MM-DD"
+const horaFormatada = agora.toTimeString().split(' ')[0]; // "HH:MM:SS"
+
+const leitura = await LeiturasReais.create({
+  tag_uid: rfid,
+  colaborador_id: colaborador ? colaborador.id : null,
+  dispositivo_id: disp ? disp.id : null,
+  autorizado: autorizado ?? !!colaborador,
+  tipo_batida: 'entrada',
+  data: dataFormatada,
+  hora: horaFormatada,
+  mensagem: colaborador ? 'Acesso permitido' : 'Cartão não reconhecido',
+  raw_payload: req.body,
+  ip: req.ip
+});
+
 
       io.emit('novaLeitura', leitura);
       res.status(201).json({ ok: true, id: leitura.id });
