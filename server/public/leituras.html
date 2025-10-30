@@ -8,8 +8,8 @@
   <!-- Socket.IO -->
   <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 
-  <!-- Estilos padronizados -->
-  <link rel="stylesheet" href="assets/css/leituras.css" />
+  <!-- Estilos -->
+  <link rel="stylesheet" href="../assets/css/leituras.css" />
 </head>
 
 <body>
@@ -64,16 +64,10 @@
   <!-- ===== CONTEÚDO PRINCIPAL ===== -->
   <main class="content">
     <section class="leituras-section">
-      <!-- STATUS CONEXÃO -->
       <div class="status" id="status">Desconectado</div>
 
-      <!-- CONTROLES DE FILTRO E BUSCA -->
       <div class="controls">
-        <input
-          type="text"
-          id="search"
-          placeholder="Buscar colaborador, CPF ou tag..."
-        />
+        <input type="text" id="search" placeholder="Buscar colaborador, CPF ou tag..." />
         <div class="filters">
           <select id="filterTipo">
             <option value="">Todos os tipos</option>
@@ -86,14 +80,17 @@
         </div>
       </div>
 
-      <!-- TABELA DE LEITURAS -->
       <div class="tabela-wrapper">
         <table id="tabelaLeituras">
           <thead>
             <tr>
-              <th>Data/Hora</th>
+              <th>Data</th>
+              <th>Hora</th>
+              <th>Colaborador</th>
+              <th>Dispositivo</th>
               <th>Tag RFID</th>
               <th>Autorizado</th>
+              <th>Mensagem</th>
             </tr>
           </thead>
           <tbody id="leiturasBody"></tbody>
@@ -104,7 +101,7 @@
 
   <!-- ===== SCRIPT ===== -->
   <script>
-    const API_URL = "https://supreme-spork-7v476qr44rrpcxg5v-3000.app.github.dev/api";
+    const API_URL = "https://tccsmartpoint.onrender.com/api"; // ✅ usa sua API do Render
     const socket = io(API_URL.replace("/api", ""), { transports: ["websocket"] });
 
     const statusEl = document.getElementById("status");
@@ -121,10 +118,8 @@
       statusEl.classList.remove("online");
     });
 
-    // ===== NOVAS LEITURAS =====
-    socket.on("novaLeitura", (leitura) => {
-      adicionarLeitura(leitura);
-    });
+    // ===== NOVAS LEITURAS EM TEMPO REAL =====
+    socket.on("novaLeitura", (leitura) => adicionarLeitura(leitura));
 
     // ===== CARREGAR LEITURAS INICIAIS =====
     async function carregarLeiturasIniciais() {
@@ -134,19 +129,26 @@
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
-        data.data.forEach((l) => adicionarLeitura(l));
+        if (data.data) data.data.forEach((l) => adicionarLeitura(l));
       } catch (err) {
         console.error("Erro ao carregar leituras:", err);
       }
     }
 
-    // ===== ADICIONAR LINHA À TABELA =====
+    // ===== INSERE UMA NOVA LINHA NA TABELA =====
     function adicionarLeitura(leitura) {
       const tr = document.createElement("tr");
+      const data = leitura.data || new Date(leitura.hora).toLocaleDateString("pt-BR");
+      const hora = leitura.hora ? leitura.hora.split(".")[0] : "--:--:--";
+
       tr.innerHTML = `
-        <td>${new Date(leitura.hora).toLocaleString("pt-BR")}</td>
+        <td>${data}</td>
+        <td>${hora}</td>
+        <td>${leitura.Colaborador ? leitura.Colaborador.nome : "-"}</td>
+        <td>${leitura.Dispositivo ? leitura.Dispositivo.nome : "-"}</td>
         <td>${leitura.tag_uid}</td>
-        <td>${leitura.autorizado ? "✅ Autorizado" : "❌ Negado"}</td>
+        <td>${leitura.autorizado ? "✅ Sim" : "❌ Não"}</td>
+        <td>${leitura.mensagem || ""}</td>
       `;
       tbody.prepend(tr);
       tr.classList.add("highlight");
@@ -161,11 +163,9 @@
       window.location.href = "index.html";
     });
 
-    // ===== CONTROLE DA SIDEBAR =====
+    // ===== SIDEBAR =====
     const sidebar = document.querySelector(".sidebar");
-    const toggleBtn = document.getElementById("toggleSidebar");
-
-    toggleBtn.addEventListener("click", () => {
+    document.getElementById("toggleSidebar").addEventListener("click", () => {
       sidebar.classList.toggle("collapsed");
     });
   </script>
