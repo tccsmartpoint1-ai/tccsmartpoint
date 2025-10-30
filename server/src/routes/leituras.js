@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { LeiturasReais, Colaboradores, Dispositivos } = require('../models/index');
+const { LeiturasReais, Colaborador, Dispositivo, Tag } = require('../models/index');
 const auth = require('../middleware/auth');
 const { Parser } = require('json2csv');
 const { Op } = require('sequelize');
