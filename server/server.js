@@ -35,9 +35,9 @@ app.use('/api/leituras', leiturasRoutes);
 app.use('/api/rfid', rfidRoutes);
 app.use('/api/tags', tagsRoutes);
 
-// ===== Rota raiz =====
+// ===== Rota raiz (abre o front) =====
 app.get('/', (req, res) => {
-  res.send('Smart Point API online');
+  res.sendFile(path.join(__dirname, 'public', 'login.html'));
 });
 
 // ===== Teste =====
