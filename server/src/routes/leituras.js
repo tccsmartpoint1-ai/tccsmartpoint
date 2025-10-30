@@ -36,32 +36,39 @@ module.exports = (io) => {
         return res.status(400).json({ error: 'Campo rfid é obrigatório' });
       }
 
-      // === Localiza colaborador pela TAG ===
-      const colaborador = await Colaborador.findOne({
-        include: [{ model: Tag, where: { uid: rfid } }]
+      // === Busca a tag e o colaborador associado ===
+      const tag = await Tag.findOne({ where: { uid: rfid } });
+      const colaborador = tag ? await Colaborador.findByPk(tag.colaborador_id) : null;
+
+      // === Busca (ou cria) o dispositivo ===
+      let disp = await Dispositivo.findOne({ where: { nome: dispositivo } });
+      if (!disp) {
+        disp = await Dispositivo.create({
+          nome: dispositivo,
+          identificador: dispositivo.toLowerCase().replace(/\s+/g, '_'),
+          descricao: 'Criado automaticamente via Arduino'
+        });
+      }
+
+      // === Gera data e hora compatíveis com PostgreSQL ===
+      const agora = new Date();
+      const dataFormatada = agora.toISOString().split('T')[0];
+      const horaFormatada = agora.toTimeString().split(' ')[0];
+
+      // === Cria a leitura ===
+      const leitura = await LeiturasReais.create({
+        tag_uid: rfid,
+        colaborador_id: colaborador ? colaborador.id : null,
+        dispositivo_id: disp.id,
+        autorizado: autorizado ?? !!colaborador,
+        tipo_batida: 'entrada',
+        data: dataFormatada,
+        hora: horaFormatada,
+        origem: 'arduino',
+        mensagem: colaborador ? `Acesso permitido: ${colaborador.nome}` : 'Cartão não reconhecido',
+        raw_payload: req.body,
+        ip: req.ip
       });
-
-      // === Localiza dispositivo pelo nome ===
-      const disp = await Dispositivo.findOne({ where: { nome: dispositivo } });
-
-      // Gera data e hora corretas para PostgreSQL
-const agora = new Date();
-const dataFormatada = agora.toISOString().split('T')[0]; // "YYYY-MM-DD"
-const horaFormatada = agora.toTimeString().split(' ')[0]; // "HH:MM:SS"
-
-const leitura = await LeiturasReais.create({
-  tag_uid: rfid,
-  colaborador_id: colaborador ? colaborador.id : null,
-  dispositivo_id: disp ? disp.id : null,
-  autorizado: autorizado ?? !!colaborador,
-  tipo_batida: 'entrada',
-  data: dataFormatada,
-  hora: horaFormatada,
-  mensagem: colaborador ? 'Acesso permitido' : 'Cartão não reconhecido',
-  raw_payload: req.body,
-  ip: req.ip
-});
-
 
       io.emit('novaLeitura', leitura);
       res.status(201).json({ ok: true, id: leitura.id });
@@ -72,8 +79,7 @@ const leitura = await LeiturasReais.create({
       console.error('Stack:', err.stack);
       res.status(500).json({
         error: 'Erro ao salvar leitura do Arduino',
-        details: err.message,
-        stack: err.stack
+        details: err.message
       });
     }
   });
