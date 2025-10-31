@@ -32,6 +32,12 @@ body {
   z-index: 1000;
 }
 
+.left-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .topbar h1 {
   font-size: 20px;
   font-weight: 600;
@@ -202,6 +208,88 @@ body {
   color: #0d47a1;
 }
 
+/* ===== PAINÉIS DE PRÉ-VISUALIZAÇÃO ===== */
+.previews {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+  margin-top: 40px;
+}
+
+.preview-card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e3e7eb;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.preview-header {
+  background: #1976d2;
+  color: white;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.preview-header h3 {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.btn-link {
+  color: #fff;
+  font-size: 13px;
+  text-decoration: underline;
+  transition: opacity 0.2s ease;
+}
+
+.btn-link:hover {
+  opacity: 0.8;
+}
+
+/* Tabelas de pré-visualização */
+.preview-card table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.preview-card thead {
+  background: #e3f2fd;
+  color: #1565c0;
+}
+
+.preview-card th,
+.preview-card td {
+  padding: 8px 12px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.preview-card tbody tr:hover {
+  background: #f1f7ff;
+}
+
+/* Lista de status */
+.status-list {
+  list-style: none;
+  padding: 12px 16px;
+  font-size: 14px;
+}
+
+.status-list li {
+  margin-bottom: 8px;
+}
+
+.status-indicador {
+  font-weight: 600;
+  color: #1565c0;
+}
+
 /* ===== LOADER ===== */
 #loader {
   text-align: center;
@@ -237,5 +325,9 @@ body::-webkit-scrollbar-thumb {
 
   .widgets {
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+
+  .previews {
+    grid-template-columns: 1fr;
   }
 }

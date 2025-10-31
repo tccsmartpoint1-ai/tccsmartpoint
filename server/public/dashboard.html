@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -11,16 +10,18 @@
 <body>
   <!-- ===== TOPO ===== -->
   <header class="topbar">
-    <button id="toggleSidebar" aria-label="Alternar menu lateral">☰</button>
-    <h1>Smart Point</h1>
+    <div class="left-controls">
+      <button id="toggleSidebar" aria-label="Alternar menu lateral">☰</button>
+      <h1>Smart Point</h1>
+    </div>
     <div class="user-area">
       <img src="../assets/img/icons/usuario.png" alt="Perfil" class="profile-icon" />
-      <button id="logoutBtn">Sair</button>
+      <button id="logoutBtn" class="logout-btn">Sair</button>
     </div>
   </header>
 
   <!-- ===== MENU LATERAL ===== -->
-  <aside class="sidebar expanded">
+  <aside class="sidebar expanded" id="sidebar">
     <nav>
       <ul>
         <li>
@@ -53,8 +54,8 @@
 
   <!-- ===== CONTEÚDO PRINCIPAL ===== -->
   <main class="content">
+    <!-- ===== WIDGETS ===== -->
     <section class="widgets">
-      <!-- Linha 1 -->
       <div class="widget" id="statusArduino">
         <img src="../assets/img/icons/arduino.png" alt="Arduino" class="widget-icon" />
         <div class="info">
@@ -79,7 +80,6 @@
         </div>
       </div>
 
-      <!-- Linha 2 -->
       <div class="widget" id="leiturasTotais">
         <img src="../assets/img/icons/total.png" alt="Leituras Totais" class="widget-icon" />
         <div class="info">
@@ -105,26 +105,85 @@
       </div>
     </section>
 
-    <!-- Loader -->
+    <!-- ===== PAINÉIS DE PRÉ-VISUALIZAÇÃO ===== -->
+    <section class="previews">
+      <div class="preview-card" id="preview-leituras">
+        <div class="preview-header">
+          <h3>Leituras Recentes</h3>
+          <a href="leituras.html" class="btn-link">Ver todas</a>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Data/Hora</th>
+              <th>Tag</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="ultimasLeituras">
+            <tr><td colspan="3">Carregando...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="preview-card" id="preview-colaboradores">
+        <div class="preview-header">
+          <h3>Colaboradores Ativos</h3>
+          <a href="usuarios.html" class="btn-link">Ver todos</a>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>CPF</th>
+              <th>Última Leitura</th>
+            </tr>
+          </thead>
+          <tbody id="colaboradoresAtivos">
+            <tr><td colspan="3">Carregando...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="preview-card" id="preview-sistema">
+        <div class="preview-header">
+          <h3>Status do Sistema</h3>
+          <a href="configuracoes.html" class="btn-link">Detalhar</a>
+        </div>
+        <ul class="status-list" id="statusSistema">
+          <li>API: <span class="status-indicador">Verificando...</span></li>
+          <li>Banco de Dados: <span class="status-indicador">Verificando...</span></li>
+          <li>Dispositivo: <span class="status-indicador">Verificando...</span></li>
+        </ul>
+      </div>
+    </section>
+
     <div id="loader" class="loader">Carregando dados...</div>
   </main>
 
-  <!-- ===== PROTEÇÃO E CONTROLE ===== -->
+  <!-- ===== CONTROLE DE LOGIN / LOGOUT / HISTÓRICO ===== -->
   <script>
-    // ===== Proteção de acesso =====
+    // Proteção de acesso
     const token = localStorage.getItem("token");
     if (!token) window.location.href = "index.html";
 
-    // ===== Bloqueio de histórico (impede voltar após logout) =====
+    // Bloqueio de histórico (não permite voltar após logout)
     window.history.pushState(null, null, window.location.href);
-    window.onpopstate = function () {
+    window.onpopstate = () => {
       window.history.pushState(null, null, window.location.href);
     };
 
-    // ===== Logout seguro =====
+    // Logout seguro
     document.getElementById("logoutBtn").addEventListener("click", () => {
       localStorage.removeItem("token");
       window.location.replace("index.html");
+    });
+
+    // Controle da sidebar (corrigido)
+    const sidebar = document.getElementById("sidebar");
+    const toggleSidebar = document.getElementById("toggleSidebar");
+    toggleSidebar.addEventListener("click", () => {
+      sidebar.classList.toggle("collapsed");
     });
   </script>
 
