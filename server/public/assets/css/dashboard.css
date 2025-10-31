@@ -57,12 +57,28 @@ body {
   gap: 12px;
 }
 
+.user-area button {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 8px;
+  padding: 6px 12px;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.user-area button:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
 .profile-icon {
   width: 35px;
   height: 35px;
   border-radius: 50%;
   background: white;
   object-fit: cover;
+  border: 2px solid #90caf9;
 }
 
 /* ===== SIDEBAR ===== */

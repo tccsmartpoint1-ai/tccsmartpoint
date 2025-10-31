@@ -1,11 +1,19 @@
 // ===== PROTEÇÃO DE ACESSO =====
 const token = localStorage.getItem("token");
-if (!token) window.location.href = "index.html";
+if (!token) {
+  window.location.replace("index.html");
+}
 
-// ===== LOGOUT =====
+// ===== BLOQUEIO DE HISTÓRICO (impede retorno após logout) =====
+window.history.pushState(null, null, window.location.href);
+window.onpopstate = function () {
+  window.history.pushState(null, null, window.location.href);
+};
+
+// ===== LOGOUT SEGURO =====
 document.getElementById("logoutBtn").addEventListener("click", () => {
   localStorage.removeItem("token");
-  window.location.href = "index.html";
+  window.location.replace("index.html");
 });
 
 // ===== CONTROLE DA SIDEBAR =====
@@ -15,7 +23,6 @@ const toggleBtn = document.getElementById("toggleSidebar");
 // Alterna o estado da sidebar (expandida/recolhida)
 toggleBtn.addEventListener("click", () => {
   sidebar.classList.toggle("collapsed");
-  // (Opcional) salvar estado no localStorage
   localStorage.setItem(
     "sidebarState",
     sidebar.classList.contains("collapsed") ? "collapsed" : "expanded"
@@ -34,26 +41,26 @@ async function atualizarStatus() {
   loader.style.display = "block";
 
   try {
-    // Substitua pela rota real do seu backend
-    const res = await fetch("http://localhost:3000/api/status");
-    if (!res.ok) throw new Error("Erro na resposta do servidor");
+    // ===== Substitua pela rota real da sua API backend =====
+    const response = await fetch("http://localhost:3000/api/status", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!response.ok) throw new Error("Erro na resposta do servidor");
 
-    const data = await res.json();
+    const data = await response.json();
 
     // Arduino
-    document.getElementById("arduinoStatus").textContent = data?.arduino?.online
-      ? "Conectado"
-      : "Desconectado";
+    document.getElementById("arduinoStatus").textContent =
+      data?.arduino?.online ? "Conectado" : "Desconectado";
 
     // RFID
-    document.getElementById("rfidStatus").textContent = data?.rfid?.online
-      ? "Operando"
-      : "Offline";
+    document.getElementById("rfidStatus").textContent =
+      data?.rfid?.online ? "Operando" : "Offline";
 
     // Porta / Canal
     document.getElementById("portaStatus").textContent = data?.porta || "—";
 
-    // Leituras Totais
+    // Leituras Totais (Hoje)
     document.getElementById("totalLeituras").textContent =
       data?.leiturasHoje ?? 0;
 
@@ -65,7 +72,7 @@ async function atualizarStatus() {
       data?.recusadas ?? 0;
   } catch (err) {
     console.error("❌ Erro ao buscar status:", err);
-    // Exibe fallback visual
+    // Fallback visual
     document.getElementById("arduinoStatus").textContent = "Erro de conexão";
     document.getElementById("rfidStatus").textContent = "Erro de conexão";
     document.getElementById("portaStatus").textContent = "—";
@@ -80,7 +87,7 @@ async function atualizarStatus() {
 // ===== ATUALIZAÇÃO AUTOMÁTICA =====
 document.addEventListener("DOMContentLoaded", () => {
   atualizarStatus();
-  setInterval(atualizarStatus, 10000); // a cada 10 segundos
+  setInterval(atualizarStatus, 10000); // Atualiza a cada 10s
 });
 
 // ===== VERIFICAÇÃO DE SESSÃO EXPIRADA =====
@@ -89,14 +96,14 @@ function checkSession() {
     const payload = JSON.parse(atob(token.split(".")[1]));
     if (payload.exp && payload.exp < Date.now() / 1000) {
       localStorage.removeItem("token");
-      window.location.href = "index.html";
+      window.location.replace("index.html");
     }
   } catch {
     localStorage.removeItem("token");
-    window.location.href = "index.html";
+    window.location.replace("index.html");
   }
 }
-setInterval(checkSession, 600000); // a cada 10 minutos
+setInterval(checkSession, 600000); // Verifica a cada 10min
 
 // ===== FECHAR MENU AO CLICAR EM LINK (modo mobile) =====
 document.querySelectorAll(".sidebar nav ul li a").forEach((link) => {
