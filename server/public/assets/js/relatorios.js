@@ -1,3 +1,36 @@
+// ===== PROTEÇÃO DE ACESSO =====
+const token = localStorage.getItem("token");
+if (!token) window.location.replace("index.html");
+
+// ===== BLOQUEIO DE HISTÓRICO =====
+window.history.pushState(null, null, window.location.href);
+window.onpopstate = () => window.history.pushState(null, null, window.location.href);
+
+// ===== LOGOUT =====
+document.getElementById("logoutBtn").addEventListener("click", () => {
+  localStorage.removeItem("token");
+  window.location.replace("index.html");
+});
+
+// ===== CONTROLE DA SIDEBAR =====
+const sidebar = document.querySelector(".sidebar");
+const toggleBtn = document.getElementById("toggleSidebar");
+
+toggleBtn.addEventListener("click", () => {
+  sidebar.classList.toggle("collapsed");
+  localStorage.setItem(
+    "sidebarState",
+    sidebar.classList.contains("collapsed") ? "collapsed" : "expanded"
+  );
+});
+
+// Mantém o estado entre recarregamentos
+document.addEventListener("DOMContentLoaded", () => {
+  const savedState = localStorage.getItem("sidebarState");
+  if (savedState === "collapsed") sidebar.classList.add("collapsed");
+});
+
+
 document.addEventListener("DOMContentLoaded", () => {
   const API = "http://localhost:3000/api";
 
@@ -8,9 +41,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnPdf = document.getElementById("btnPdf");
 
   const tblResumo = document.querySelector("#tblResumo tbody");
-  const tblColab  = document.querySelector("#tblColab tbody");
-  const tblDisp   = document.querySelector("#tblDisp tbody");
-  const tblAuth   = document.querySelector("#tblAuth tbody");
+  const tblColab = document.querySelector("#tblColab tbody");
+  const tblDisp = document.querySelector("#tblDisp tbody");
+  const tblAuth = document.querySelector("#tblAuth tbody");
 
   const colaboradores = {
     1: { nome: "João Silva", cpf: "111.111.111-11" },
@@ -19,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
   const dispositivos = { 1: "Entrada Principal" };
 
-  function setStatus(msg, tipo="info", load=false) {
+  function setStatus(msg, tipo = "info", load = false) {
     statusRel.querySelector("span").textContent = msg;
     statusRel.className = `status-msg ${tipo}`;
     statusRel.querySelector(".loader").style.display = load ? "inline-block" : "none";

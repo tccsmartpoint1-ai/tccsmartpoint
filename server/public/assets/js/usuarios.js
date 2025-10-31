@@ -6,7 +6,7 @@ if (!token) window.location.replace("index.html");
 window.history.pushState(null, null, window.location.href);
 window.onpopstate = () => window.history.pushState(null, null, window.location.href);
 
-// ===== LOGOUT SEGURO =====
+// ===== LOGOUT =====
 document.getElementById("logoutBtn").addEventListener("click", () => {
   localStorage.removeItem("token");
   window.location.replace("index.html");
@@ -24,12 +24,11 @@ toggleBtn.addEventListener("click", () => {
   );
 });
 
-// Mantém o estado da sidebar
+// Mantém o estado entre recarregamentos
 document.addEventListener("DOMContentLoaded", () => {
   const savedState = localStorage.getItem("sidebarState");
   if (savedState === "collapsed") sidebar.classList.add("collapsed");
 });
-
 // ===== FUNCIONALIDADES DA PÁGINA =====
 document.addEventListener("DOMContentLoaded", () => {
   console.log("📘 Página de usuários carregada.");

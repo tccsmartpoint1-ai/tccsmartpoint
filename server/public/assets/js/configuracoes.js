@@ -1,3 +1,36 @@
+// ===== PROTEÇÃO DE ACESSO =====
+const token = localStorage.getItem("token");
+if (!token) window.location.replace("index.html");
+
+// ===== BLOQUEIO DE HISTÓRICO =====
+window.history.pushState(null, null, window.location.href);
+window.onpopstate = () => window.history.pushState(null, null, window.location.href);
+
+// ===== LOGOUT =====
+document.getElementById("logoutBtn").addEventListener("click", () => {
+  localStorage.removeItem("token");
+  window.location.replace("index.html");
+});
+
+// ===== CONTROLE DA SIDEBAR =====
+const sidebar = document.querySelector(".sidebar");
+const toggleBtn = document.getElementById("toggleSidebar");
+
+toggleBtn.addEventListener("click", () => {
+  sidebar.classList.toggle("collapsed");
+  localStorage.setItem(
+    "sidebarState",
+    sidebar.classList.contains("collapsed") ? "collapsed" : "expanded"
+  );
+});
+
+// Mantém o estado entre recarregamentos
+document.addEventListener("DOMContentLoaded", () => {
+  const savedState = localStorage.getItem("sidebarState");
+  if (savedState === "collapsed") sidebar.classList.add("collapsed");
+});
+
+
 document.addEventListener("DOMContentLoaded", () => {
   // Token e API base
   const token = localStorage.getItem("token");

@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Smart Point </title>
 
   <link rel="stylesheet" href="assets/css/relatorios.css" />
@@ -12,12 +13,13 @@
   <!-- ===== TOPO ===== -->
   <header class="topbar">
     <button id="toggleSidebar" aria-label="Alternar menu lateral">☰</button>
-    <h1>Smart Point — Relatórios</h1>
+    <h1>Smart Point</h1>
     <div class="user-area">
-      <img src="assets/img/icons/usuario.png" alt="Perfil" class="profile-icon">
+      <img src="../assets/img/icons/usuario.png" alt="Perfil" class="profile-icon">
       <button id="logoutBtn">Sair</button>
     </div>
   </header>
+
 
   <!-- ===== MENU LATERAL ===== -->
   <aside class="sidebar">
@@ -97,77 +99,77 @@
     </section>
 
 
-  <!-- NOVO BLOCO: FOLHA DE PONTO -->
-  <section class="bloco" id="blocoFolhaPonto">
-    <h3>Registro de Ponto Diário</h3>
-    <div class="tabela-wrapper">
-      <table id="tblFolha">
-        <thead>
-          <tr>
-            <th>Nome</th>
-            <th>CPF</th>
-            <th>Cargo</th>
-            <th>Setor</th>
-            <th>Data</th>
-            <th>Entrada</th>
-            <th>Saída Almoço</th>
-            <th>Retorno</th>
-            <th>Saída Final</th>
-            <th>Total Horas</th>
-            <th>Extras</th>
-            <th>Faltas</th>
-            <th>Atrasos</th>
-            <th>Banco de Horas</th>
-            <th>Observações</th>
-          </tr>
-        </thead>
-   <tbody>
-  <tr>
-    <td>João Silva</td>
-    <td>111.111.111-11</td>
-    <td>Operador</td>
-    <td>Produção</td>
-    <td>01/10/2025</td>
-    <td>08:00</td>
-    <td>12:00</td>
-    <td>13:00</td>
-    <td>17:00</td>
-    <td>8h</td>
-    <td class="extra">1h</td>
-    <td>-</td>
-    <td>-</td>
-    <td>+1h</td>
-    <td>
-      <button class="btn-edit" title="Editar">&#9998;</button>
-      <button class="btn-save" title="Salvar" style="display:none;">💾</button>
-    </td>
-  </tr>
+    <!-- NOVO BLOCO: FOLHA DE PONTO -->
+    <section class="bloco" id="blocoFolhaPonto">
+      <h3>Registro de Ponto Diário</h3>
+      <div class="tabela-wrapper">
+        <table id="tblFolha">
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>CPF</th>
+              <th>Cargo</th>
+              <th>Setor</th>
+              <th>Data</th>
+              <th>Entrada</th>
+              <th>Saída Almoço</th>
+              <th>Retorno</th>
+              <th>Saída Final</th>
+              <th>Total Horas</th>
+              <th>Extras</th>
+              <th>Faltas</th>
+              <th>Atrasos</th>
+              <th>Banco de Horas</th>
+              <th>Observações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>João Silva</td>
+              <td>111.111.111-11</td>
+              <td>Operador</td>
+              <td>Produção</td>
+              <td>01/10/2025</td>
+              <td>08:00</td>
+              <td>12:00</td>
+              <td>13:00</td>
+              <td>17:00</td>
+              <td>8h</td>
+              <td class="extra">1h</td>
+              <td>-</td>
+              <td>-</td>
+              <td>+1h</td>
+              <td>
+                <button class="btn-edit" title="Editar">&#9998;</button>
+                <button class="btn-save" title="Salvar" style="display:none;">💾</button>
+              </td>
+            </tr>
 
-  <tr>
-    <td>Maria Oliveira</td>
-    <td>222.222.222-22</td>
-    <td>RH</td>
-    <td>Administrativo</td>
-    <td>04/10/2025</td>
-    <td>08:10</td>
-    <td>12:00</td>
-    <td>13:00</td>
-    <td>17:00</td>
-    <td>7h50</td>
-    <td>-</td>
-    <td>-</td>
-    <td class="atraso">10min</td>
-    <td>-0.10h</td>
-    <td>
-      <button class="btn-edit" title="Editar">&#9998;</button>
-      <button class="btn-save" title="Salvar" style="display:none;">💾</button>
-    </td>
-  </tr>
-</tbody>
-      </table>
-    </div>
-  </section>
-</main>
+            <tr>
+              <td>Maria Oliveira</td>
+              <td>222.222.222-22</td>
+              <td>RH</td>
+              <td>Administrativo</td>
+              <td>04/10/2025</td>
+              <td>08:10</td>
+              <td>12:00</td>
+              <td>13:00</td>
+              <td>17:00</td>
+              <td>7h50</td>
+              <td>-</td>
+              <td>-</td>
+              <td class="atraso">10min</td>
+              <td>-0.10h</td>
+              <td>
+                <button class="btn-edit" title="Editar">&#9998;</button>
+                <button class="btn-save" title="Salvar" style="display:none;">💾</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
 
 
   <!-- ===== DEPENDÊNCIAS ===== -->
@@ -175,4 +177,5 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
   <script src="../assets/js/relatorios.js"></script>
 </body>
+
 </html>

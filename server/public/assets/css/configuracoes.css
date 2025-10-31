@@ -15,7 +15,7 @@ body {
   overflow-x: hidden;
 }
 
-/* ===== TOPO (TOPBAR) ===== */
+/* ===== TOPO (PADRÃO GLOBAL) ===== */
 .topbar {
   position: fixed;
   top: 0;
@@ -32,26 +32,22 @@ body {
   z-index: 1000;
 }
 
-.topbar h1,
-.topbar h2 {
+.topbar h1 {
   font-size: 20px;
   font-weight: 600;
   letter-spacing: 0.5px;
 }
 
-.topbar button,
-.topbar a {
+#toggleSidebar {
   background: none;
   border: none;
   color: white;
-  font-size: 16px;
+  font-size: 22px;
   cursor: pointer;
   transition: transform 0.2s ease;
-  text-decoration: none;
 }
 
-.topbar button:hover,
-.topbar a:hover {
+#toggleSidebar:hover {
   transform: scale(1.1);
 }
 
@@ -67,6 +63,22 @@ body {
   border-radius: 50%;
   background: white;
   object-fit: cover;
+  border: 2px solid #90caf9;
+}
+
+#logoutBtn {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 8px;
+  padding: 6px 12px;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+#logoutBtn:hover {
+  background: rgba(255, 255, 255, 0.25);
 }
 
 /* ===== SIDEBAR ===== */
@@ -137,7 +149,7 @@ body {
   transition: margin-left 0.3s ease;
 }
 
-.sidebar.collapsed ~ .content {
+.sidebar.collapsed~.content {
   margin-left: 80px;
 }
 

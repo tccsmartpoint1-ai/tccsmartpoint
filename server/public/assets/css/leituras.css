@@ -13,7 +13,7 @@ body {
   overflow-x: hidden;
 }
 
-/* ===== TOPO (TOPBAR) ===== */
+/* ===== TOPO (PADRÃO GLOBAL) ===== */
 .topbar {
   position: fixed;
   top: 0;
@@ -33,18 +33,19 @@ body {
 .topbar h1 {
   font-size: 20px;
   font-weight: 600;
+  letter-spacing: 0.5px;
 }
 
-.topbar button {
+#toggleSidebar {
   background: none;
   border: none;
-  color: #fff;
+  color: white;
   font-size: 22px;
   cursor: pointer;
   transition: transform 0.2s ease;
 }
 
-.topbar button:hover {
+#toggleSidebar:hover {
   transform: scale(1.1);
 }
 
@@ -60,6 +61,22 @@ body {
   border-radius: 50%;
   background: white;
   object-fit: cover;
+  border: 2px solid #90caf9;
+}
+
+#logoutBtn {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 8px;
+  padding: 6px 12px;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+#logoutBtn:hover {
+  background: rgba(255, 255, 255, 0.25);
 }
 
 /* ===== SIDEBAR ===== */
@@ -131,7 +148,7 @@ body {
   transition: margin-left 0.3s ease;
 }
 
-.sidebar.collapsed ~ .content {
+.sidebar.collapsed~.content {
   margin-left: 80px;
 }
 
@@ -225,12 +242,15 @@ tbody tr.highlight {
 .tipo.entrada {
   color: #43a047;
 }
+
 .tipo.saida {
   color: #e53935;
 }
+
 .tipo.almoco {
   color: #fbc02d;
 }
+
 .tipo.retorno {
   color: #1e88e5;
 }
@@ -239,6 +259,7 @@ tbody tr.highlight {
 body::-webkit-scrollbar {
   width: 8px;
 }
+
 body::-webkit-scrollbar-thumb {
   background: #90caf9;
   border-radius: 10px;

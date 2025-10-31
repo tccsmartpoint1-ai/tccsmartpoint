@@ -27,12 +27,14 @@ body {
   overflow-x: hidden;
 }
 
-/* ===== TOPO ===== */
+/* ===== TOPO (PADRÃO GLOBAL) ===== */
 .topbar {
   position: fixed;
-  top: 0; left: 0; right: 0;
+  top: 0;
+  left: 0;
+  right: 0;
   height: 60px;
-  background: linear-gradient(90deg, var(--blue-700), var(--blue-600));
+  background: linear-gradient(90deg, #1976d2, #2196f3);
   color: #fff;
   display: flex;
   align-items: center;
@@ -45,6 +47,20 @@ body {
 .topbar h1 {
   font-size: 20px;
   font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+#toggleSidebar {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 22px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+#toggleSidebar:hover {
+  transform: scale(1.1);
 }
 
 .user-area {
@@ -59,7 +75,7 @@ body {
   border-radius: 50%;
   background: white;
   object-fit: cover;
-  border: 2px solid var(--blue-300);
+  border: 2px solid #90caf9;
 }
 
 #logoutBtn {
@@ -72,10 +88,10 @@ body {
   cursor: pointer;
   transition: background 0.2s ease;
 }
+
 #logoutBtn:hover {
   background: rgba(255, 255, 255, 0.25);
 }
-
 
 /* ===== SIDEBAR ===== */
 .sidebar {
@@ -146,7 +162,7 @@ body {
   transition: margin-left 0.3s ease;
 }
 
-.sidebar.collapsed ~ .content {
+.sidebar.collapsed~.content {
   margin-left: 80px;
 }
 
@@ -223,8 +239,13 @@ body {
   transition: opacity 0.2s, transform 0.1s;
 }
 
-.botoes button:hover { opacity: 0.9; }
-.botoes button:active { transform: translateY(1px); }
+.botoes button:hover {
+  opacity: 0.9;
+}
+
+.botoes button:active {
+  transform: translateY(1px);
+}
 
 /* ===== TABELA ===== */
 .tabela {
@@ -255,7 +276,8 @@ thead {
   color: var(--white);
 }
 
-th, td {
+th,
+td {
   padding: 10px 12px;
   border-bottom: 1px solid #e0e0e0;
   text-align: left;
@@ -269,6 +291,7 @@ tbody tr:hover {
 body::-webkit-scrollbar {
   width: 8px;
 }
+
 body::-webkit-scrollbar-thumb {
   background: var(--blue-300);
   border-radius: 10px;
@@ -280,9 +303,11 @@ body::-webkit-scrollbar-thumb {
     margin-left: 0;
     padding: 20px;
   }
+
   .sidebar {
     transform: translateX(-100%);
   }
+
   .sidebar.active {
     transform: translateX(0);
   }
