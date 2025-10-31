@@ -59,6 +59,7 @@ body {
   border-radius: 50%;
   background: white;
   object-fit: cover;
+  border: 2px solid var(--blue-300);
 }
 
 #logoutBtn {
@@ -69,9 +70,9 @@ body {
   border-radius: 8px;
   cursor: pointer;
   font-size: 14px;
-  transition: 0.2s;
+  transition: background 0.2s ease;
 }
-#logoutBtn:hover { opacity: 0.85; }
+#logoutBtn:hover { background: #b91c1c; }
 
 /* ===== SIDEBAR ===== */
 .sidebar {
@@ -85,6 +86,7 @@ body {
   padding-top: 20px;
   transition: all 0.3s ease;
   overflow: hidden;
+  z-index: 900;
 }
 
 .sidebar nav ul {
@@ -123,7 +125,11 @@ body {
 .sidebar.collapsed {
   width: 80px;
 }
-.sidebar.collapsed nav ul li a span { display: none; }
+
+.sidebar.collapsed nav ul li a span {
+  display: none;
+}
+
 .sidebar.collapsed nav ul li a {
   justify-content: center;
   padding: 12px 0;
@@ -192,7 +198,7 @@ body {
   gap: 12px;
 }
 
-.botoes button {
+.botoes .btn-primary {
   background: linear-gradient(135deg, var(--blue-600), var(--blue-700));
   color: var(--white);
   border: none;
@@ -202,6 +208,18 @@ body {
   font-weight: 600;
   transition: opacity 0.2s, transform 0.1s;
 }
+
+.botoes .btn-secondary {
+  background: #e0e0e0;
+  color: var(--ink-900);
+  border: none;
+  padding: 10px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: opacity 0.2s, transform 0.1s;
+}
+
 .botoes button:hover { opacity: 0.9; }
 .botoes button:active { transform: translateY(1px); }
 
@@ -221,7 +239,6 @@ body {
 .tabela-wrapper {
   overflow-x: auto;
   border-radius: var(--radius);
-  box-shadow: var(--shadow);
 }
 
 table {

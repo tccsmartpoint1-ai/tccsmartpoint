@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Smart Point — Usuários & Tags</title>
-  <link rel="stylesheet" href="assets/css/usuarios.css">
+  <link rel="stylesheet" href="../assets/css/usuarios.css" />
 </head>
 
 <body>
@@ -13,13 +13,13 @@
     <button id="toggleSidebar" aria-label="Alternar menu lateral">☰</button>
     <h1>Smart Point — Usuários & Tags</h1>
     <div class="user-area">
-      <img src="../assets/img/icons/usuario.png" alt="Perfil" class="profile-icon">
+      <img src="../assets/img/icons/usuario.png" alt="Perfil" class="profile-icon" />
       <button id="logoutBtn">Sair</button>
     </div>
   </header>
 
   <!-- ===== MENU LATERAL ===== -->
-  <aside class="sidebar">
+  <aside class="sidebar expanded">
     <nav>
       <ul>
         <li>
@@ -34,8 +34,8 @@
             <span>Leituras</span>
           </a>
         </li>
-        <li>
-          <a href="usuarios.html" class="active">
+        <li class="active">
+          <a href="usuarios.html">
             <img src="../assets/img/icons/usuario.png" alt="Usuários" />
             <span>Usuários</span>
           </a>
@@ -56,7 +56,7 @@
     </nav>
   </aside>
 
-  <!-- ===== CONTEÚDO ===== -->
+  <!-- ===== CONTEÚDO PRINCIPAL ===== -->
   <main class="content">
     <section class="cadastro">
       <h2>Cadastro de Usuários</h2>
@@ -64,20 +64,21 @@
         <div class="grid-3">
           <div class="form-grupo">
             <label for="cpf">CPF</label>
-            <input id="cpf" type="text" placeholder="000.000.000-00" required>
+            <input id="cpf" type="text" placeholder="000.000.000-00" required />
           </div>
           <div class="form-grupo">
             <label for="nome">Nome Completo</label>
-            <input id="nome" type="text" placeholder="Ex: Maria Silva" required>
+            <input id="nome" type="text" placeholder="Ex: Maria Silva" required />
           </div>
           <div class="form-grupo">
             <label for="tag">Tag RFID</label>
-            <input id="tag" type="text" placeholder="Ex: TAG-01A2" required>
+            <input id="tag" type="text" placeholder="Ex: TAG-01A2" required />
           </div>
         </div>
+
         <div class="botoes">
-          <button type="submit" id="btnCadastrar">Cadastrar</button>
-          <button type="reset">Limpar</button>
+          <button type="submit" id="btnCadastrar" class="btn-primary">Cadastrar</button>
+          <button type="reset" class="btn-secondary">Limpar</button>
         </div>
       </form>
     </section>
@@ -99,12 +100,50 @@
               <td>Maria Silva</td>
               <td>TAG-01A2</td>
             </tr>
+            <tr>
+              <td>222.222.222-22</td>
+              <td>João Souza</td>
+              <td>TAG-09F8</td>
+            </tr>
           </tbody>
         </table>
       </div>
     </section>
   </main>
 
-  <script src="../assets/js/usuarios.js"></script>
+  <!-- ===== SEGURANÇA E CONTROLE ===== -->
+  <script>
+    // Proteção de acesso
+    const token = localStorage.getItem("token");
+    if (!token) window.location.replace("index.html");
+
+    // Bloqueio de histórico após logout
+    window.history.pushState(null, null, window.location.href);
+    window.onpopstate = () => window.history.pushState(null, null, window.location.href);
+
+    // Logout seguro
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      localStorage.removeItem("token");
+      window.location.replace("index.html");
+    });
+
+    // Controle da sidebar
+    const sidebar = document.querySelector(".sidebar");
+    const toggleBtn = document.getElementById("toggleSidebar");
+
+    toggleBtn.addEventListener("click", () => {
+      sidebar.classList.toggle("collapsed");
+      localStorage.setItem(
+        "sidebarState",
+        sidebar.classList.contains("collapsed") ? "collapsed" : "expanded"
+      );
+    });
+
+    // Mantém o estado da sidebar
+    document.addEventListener("DOMContentLoaded", () => {
+      const savedState = localStorage.getItem("sidebarState");
+      if (savedState === "collapsed") sidebar.classList.add("collapsed");
+    });
+  </script>
 </body>
 </html>
