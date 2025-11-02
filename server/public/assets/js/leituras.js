@@ -84,7 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
       atualizarStatus("Carregando leituras...", "info", true);
 
       const params = new URLSearchParams(filtros);
-      const res = await fetch(`${API}/leituras?${params}`, {
+      const res = await fetch(`${API}/leituras?limit=20&sort=desc`, {
         headers: { Authorization: `Bearer ${token}`, Accept: "application/json" }
       });
 
