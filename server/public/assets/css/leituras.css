@@ -1,9 +1,5 @@
-.nao-autorizado {
-  background-color: #ffe5e5;
-  color: #b30000;
-  font-weight: 500;
-}
-
+ tr.negado { background-color: #ffe5e5; }
+tr.permitido { background-color: #e9ffe9; }
 /* ===== RESET ===== */
 * {
   margin: 0;
