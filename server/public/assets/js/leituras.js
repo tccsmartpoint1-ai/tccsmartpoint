@@ -30,7 +30,6 @@ document.addEventListener("DOMContentLoaded", () => {
   if (savedState === "collapsed") sidebar.classList.add("collapsed");
 });
 
-
 document.addEventListener("DOMContentLoaded", () => {
   // Configuração da API e token
   const API = "http://localhost:3000/api";
@@ -114,6 +113,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // ====== FUNÇÃO MODIFICADA ======
   function renderizarPagina() {
     tabelaBody.innerHTML = "";
 
@@ -128,12 +128,18 @@ document.addEventListener("DOMContentLoaded", () => {
         const c = colaboradores[l.colaborador_id] || { nome: "-", cpf: "-" };
         const d = dispositivos[l.dispositivo_id] || "-";
         const tr = document.createElement("tr");
+
+        // 🔴 aplica cor vermelha se não autorizado
+        if (!l.autorizado) tr.classList.add("nao-autorizado");
+
         tr.innerHTML = `
           <td>${c.cpf}</td>
           <td>${c.nome}</td>
           <td>${l.tag_uid || "-"}</td>
           <td>${d}</td>
           <td>${formatarData(l.hora)}</td>
+          <td>${l.autorizado ? "✅ Sim" : "❌ Não"}</td>
+          <td>${l.mensagem || (l.autorizado ? "" : "Cartão não reconhecido")}</td>
         `;
         tr.addEventListener("click", () => abrirModal(l));
         tabelaBody.appendChild(tr);

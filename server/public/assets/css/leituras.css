@@ -1,3 +1,9 @@
+.nao-autorizado {
+  background-color: #ffe5e5;
+  color: #b30000;
+  font-weight: 500;
+}
+
 /* ===== RESET ===== */
 * {
   margin: 0;
