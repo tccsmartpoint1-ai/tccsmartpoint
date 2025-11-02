@@ -56,17 +56,31 @@ document.addEventListener("DOMContentLoaded", () => {
   // ===== BUSCA INICIAL =====
   async function carregarLeituras() {
     try {
-      const res = await fetch(`${API}/leituras?limit=20`, {
+      const res = await fetch(`${API}/leituras?limit=20&sort=desc`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
       if (!res.ok) throw new Error(`Erro HTTP ${res.status}`);
 
-      const data = await res.json();
+      const json = await res.json();
+
+      // Garante compatibilidade com ambos formatos da API
+      const leituras = Array.isArray(json)
+        ? json
+        : Array.isArray(json.data)
+        ? json.data
+        : [];
+
       tabelaBody.innerHTML = "";
-      (data.data || []).forEach((l) => adicionarLeitura(l));
+      if (leituras.length === 0) {
+        tabelaBody.innerHTML = "<tr><td colspan='7'>Nenhum registro encontrado.</td></tr>";
+        return;
+      }
+
+      leituras.forEach((l) => adicionarLeitura(l));
     } catch (err) {
       console.error("Erro ao carregar leituras:", err);
+      tabelaBody.innerHTML = "<tr><td colspan='7'>Erro ao carregar leituras.</td></tr>";
     }
   }
 
@@ -75,8 +89,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const tr = document.createElement("tr");
 
     const data = l.data || new Date(l.hora).toLocaleDateString("pt-BR");
-    const hora = l.hora ? l.hora.split(".")[0] : "--:--:--";
-    const colaborador = l.Colaborador ? l.Colaborador.nome : "-";
+    const hora = l.hora
+      ? new Date(l.hora).toLocaleTimeString("pt-BR")
+      : "--:--:--";
+
+    const colaborador = l.Colaborador
+      ? l.Colaborador.nome
+      : l.mensagem?.includes("Acesso permitido:")
+      ? l.mensagem.replace("Acesso permitido:", "").trim()
+      : "-";
+
     const dispositivo = l.Dispositivo ? l.Dispositivo.nome : "-";
 
     const mensagem = l.mensagem?.includes("Acesso permitido")
