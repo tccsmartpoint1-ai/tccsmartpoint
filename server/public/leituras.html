@@ -102,76 +102,8 @@
   </main>
 
   <!-- ===== SCRIPT ===== -->
-  <script>
-    const API_URL = "https://tccsmartpoint.onrender.com/api"; // ✅ usa sua API do Render
-    const socket = io(API_URL.replace("/api", ""), { transports: ["websocket"] });
-
-    const statusEl = document.getElementById("status");
-    const tbody = document.getElementById("leiturasBody");
-
-    // ===== STATUS DE CONEXÃO =====
-    socket.on("connect", () => {
-      statusEl.textContent = "Conectado";
-      statusEl.classList.add("online");
-    });
-
-    socket.on("disconnect", () => {
-      statusEl.textContent = "Desconectado";
-      statusEl.classList.remove("online");
-    });
-
-    // ===== NOVAS LEITURAS EM TEMPO REAL =====
-    socket.on("novaLeitura", (leitura) => adicionarLeitura(leitura));
-
-    // ===== CARREGAR LEITURAS INICIAIS =====
-    async function carregarLeiturasIniciais() {
-      try {
-        const token = localStorage.getItem("token");
-        const res = await fetch(`${API_URL}/leituras?limit=20`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const data = await res.json();
-        if (data.data) data.data.forEach((l) => adicionarLeitura(l));
-      } catch (err) {
-        console.error("Erro ao carregar leituras:", err);
-      }
-    }
-
-    // ===== INSERE UMA NOVA LINHA NA TABELA =====
-    function adicionarLeitura(leitura) {
-      const tr = document.createElement("tr");
-      const data = leitura.data || new Date(leitura.hora).toLocaleDateString("pt-BR");
-      const hora = leitura.hora ? leitura.hora.split(".")[0] : "--:--:--";
-
-      tr.innerHTML = `
-        <td>${data}</td>
-        <td>${hora}</td>
-        <td>${leitura.Colaborador ? leitura.Colaborador.nome : "-"}</td>
-        <td>${leitura.Dispositivo ? leitura.Dispositivo.nome : "-"}</td>
-        <td>${leitura.tag_uid}</td>
-        <td>${leitura.autorizado ? "✅ Sim" : "❌ Não"}</td>
-        <td>${leitura.mensagem || ""}</td>
-      `;
-      tbody.prepend(tr);
-      tr.classList.add("highlight");
-      setTimeout(() => tr.classList.remove("highlight"), 2000);
-    }
-
-    carregarLeiturasIniciais();
-
-    // ===== LOGOUT =====
-    document.getElementById("logoutBtn").addEventListener("click", () => {
-      localStorage.removeItem("token");
-      window.location.href = "index.html";
-    });
-
-    // ===== SIDEBAR =====
-    const sidebar = document.querySelector(".sidebar");
-    document.getElementById("toggleSidebar").addEventListener("click", () => {
-      sidebar.classList.toggle("collapsed");
-    });
-  </script>
-  <script src="../public/assets/js/leituras.js">
+   
+   <script src="../public/assets/js/leituras.js">
     
   </script>
 </body>

@@ -96,7 +96,15 @@ module.exports = (io) => {
 
       io.emit('novaLeitura', leituraCompleta);
 
-      res.status(201).json({ ok: true, id: leitura.id });
+      res.status(201).json({
+       ok: true,
+       id: leitura.id,
+       autorizado,
+       mensagem,
+       colaborador: colaborador ? colaborador.nome : null,
+       tag: rfid
+      });
+
 
     } catch (err) {
       console.error('=== ERRO AO SALVAR LEITURA DO ARDUINO ===');
