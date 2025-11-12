@@ -81,7 +81,7 @@ loginForm.addEventListener("submit", async (e) => {
   submitBtn.disabled = true;
 
   try {
-    const response = await fetch("https://tccsmartpoint1-production.up.railway.app/api/auth/login", {
+    const response = await fetch("https://tccsmartpoint.onrender.com/api/auth/login", {
       method: "POST",
       mode: "cors",
       headers: { "Content-Type": "application/json" },
