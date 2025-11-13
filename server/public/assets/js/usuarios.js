@@ -1,10 +1,9 @@
-// =========================================
-//              PROTEÇÃO DE ACESSO
-// =========================================
+// ===============================
+//      PROTEÇÃO DE ACESSO
+// ===============================
 const token = localStorage.getItem("token");
 if (!token) window.location.replace("index.html");
 
-// Bloqueio de histórico
 window.history.pushState(null, null, window.location.href);
 window.onpopstate = () => window.history.pushState(null, null, window.location.href);
 
@@ -14,12 +13,9 @@ document.getElementById("logoutBtn").addEventListener("click", () => {
   window.location.replace("index.html");
 });
 
-// =========================================
-//              SIDEBAR
-// =========================================
+// Sidebar
 const sidebar = document.querySelector(".sidebar");
 const toggleBtn = document.getElementById("toggleSidebar");
-
 toggleBtn.addEventListener("click", () => {
   sidebar.classList.toggle("collapsed");
   localStorage.setItem(
@@ -27,211 +23,275 @@ toggleBtn.addEventListener("click", () => {
     sidebar.classList.contains("collapsed") ? "collapsed" : "expanded"
   );
 });
-
 document.addEventListener("DOMContentLoaded", () => {
   const savedState = localStorage.getItem("sidebarState");
   if (savedState === "collapsed") sidebar.classList.add("collapsed");
 });
 
-// =========================================
-//              MODAL
-// =========================================
+// ===============================
+//        MODAL
+// ===============================
 const modalOverlay = document.getElementById("modalOverlay");
-const modalClose = document.getElementById("modalClose");
-const modalCancel = document.getElementById("modalCancel");
+const modal = document.getElementById("modalColaborador");
 const btnNovo = document.getElementById("btnNovo");
+const btnClose = document.getElementById("modalClose");
+const btnCancel = document.getElementById("modalCancel");
+const form = document.getElementById("formUsuariosModal");
 
 function abrirModal() {
   modalOverlay.style.display = "flex";
 }
-
 function fecharModal() {
   modalOverlay.style.display = "none";
+  delete form.dataset.editId;
+  form.reset();
 }
 
 btnNovo.addEventListener("click", abrirModal);
-modalClose.addEventListener("click", fecharModal);
+btnClose.addEventListener("click", fecharModal);
+btnCancel.addEventListener("click", fecharModal);
+
 modalOverlay.addEventListener("click", (e) => {
   if (e.target === modalOverlay) fecharModal();
 });
 
-// =========================================
-//           CAMPOS DO FORMULÁRIO
-// =========================================
+// ===============================
+//         API + FORMULÁRIO
+// ===============================
+document.addEventListener("DOMContentLoaded", () => {
+  const API = "https://tccsmartpoint.onrender.com/api";
 
-const form = document.getElementById("formUsuariosModal");
+  const tabelaBody = document.querySelector("#tblUsuarios tbody");
+  const inputBuscar = document.getElementById("buscar");
 
-const fNome         = document.getElementById("m_nome");
-const fCPF          = document.getElementById("m_cpf");
-const fEmail        = document.getElementById("m_email");
-const fAdmissao     = document.getElementById("m_admissao");
-const fFuncao       = document.getElementById("m_funcao");
-const fDepartamento = document.getElementById("m_departamento");
-const fJornada      = document.getElementById("m_jornada");
-const fEscala       = document.getElementById("m_escala");
-const fTag          = document.getElementById("m_tag");
-const fStatus       = document.getElementById("m_status");
-const fBancoHoras   = document.getElementById("m_bancoHoras");
+  // Campos do modal
+  const fNome = document.getElementById("m_nome");
+  const fCPF = document.getElementById("m_cpf");
+  const fEmail = document.getElementById("m_email");
+  const fTag = document.getElementById("m_tag");
+  const fStatus = document.getElementById("m_status");
 
-const inputBuscar   = document.getElementById("buscar");
-const tabelaBody    = document.querySelector("#tblUsuarios tbody");
+  let listaColaboradores = [];
+  let mapaTags = {};
 
-// =========================================
-//              MÁSCARA CPF
-// =========================================
-fCPF.addEventListener("input", (e) => {
-  let v = e.target.value.replace(/\D/g, "").slice(0, 11);
-  v = v.replace(/(\d{3})(\d)/, "$1.$2");
-  v = v.replace(/(\d{3})(\d)/, "$1.$2");
-  v = v.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
-  e.target.value = v;
-});
+  // ===============================
+  //     MÁSCARA CPF
+  // ===============================
+  function mascaraCPF(v) {
+    v = v.replace(/\D/g, "").slice(0, 11);
+    let out = "";
+    if (v.length > 0) out = v.slice(0, 3);
+    if (v.length > 3) out += "." + v.slice(3, 6);
+    if (v.length > 6) out += "." + v.slice(6, 9);
+    if (v.length > 9) out += "-" + v.slice(9, 11);
+    return out;
+  }
 
-// =========================================
-//              API + LISTAGEM
-// =========================================
-const API = "https://tccsmartpoint.onrender.com/api";
+  fCPF.addEventListener("input", (e) => {
+    e.target.value = mascaraCPF(e.target.value);
+  });
 
-let listaColaboradores = [];
-let mapaTags = {};
+  // ===============================
+  // CARREGAR COLABORADORES + TAGS
+  // ===============================
+  async function carregarDados() {
+    try {
+      const [resColab, resTags] = await Promise.all([
+        fetch(`${API}/colaboradores`, { headers: { Authorization: `Bearer ${token}` } }),
+        fetch(`${API}/tags`, { headers: { Authorization: `Bearer ${token}` } })
+      ]);
 
-async function carregarDados() {
-  try {
-    const [resColab, resTags] = await Promise.all([
-      fetch(`${API}/colaboradores`, { headers: { Authorization: `Bearer ${token}` } }),
-      fetch(`${API}/tags`, { headers: { Authorization: `Bearer ${token}` } })
-    ]);
+      listaColaboradores = await resColab.json();
+      const tags = await resTags.json();
 
-    const colabs = await resColab.json();
-    const tags = await resTags.json();
-
-    listaColaboradores = Array.isArray(colabs) ? colabs : [];
-
-    mapaTags = {};
-    if (Array.isArray(tags)) {
+      mapaTags = {};
       tags.forEach(t => {
         if (t.colaborador_id) mapaTags[t.colaborador_id] = t.uid;
       });
+
+      renderTabela();
+    } catch (err) {
+      tabelaBody.innerHTML = "<tr><td colspan='8'>Erro ao carregar colaboradores.</td></tr>";
     }
-
-    renderTabela();
-  } catch (err) {
-    tabelaBody.innerHTML = "<tr><td colspan='8'>Erro ao carregar dados.</td></tr>";
-  }
-}
-
-function renderTabela(filtro = "") {
-  tabelaBody.innerHTML = "";
-
-  const termo = filtro.toLowerCase();
-
-  const dados = listaColaboradores.filter(c =>
-    c.nome?.toLowerCase().includes(termo) ||
-    c.cpf?.toLowerCase().includes(termo)
-  );
-
-  if (dados.length === 0) {
-    tabelaBody.innerHTML = "<tr><td colspan='8'>Nenhum colaborador encontrado.</td></tr>";
-    return;
   }
 
-  dados.forEach(c => {
-    const tag = mapaTags[c.id] || "-";
+  // ===============================
+  //     RENDER TABELA
+  // ===============================
+  function renderTabela(filtro = "") {
+    tabelaBody.innerHTML = "";
+    const termo = filtro.trim().toLowerCase();
 
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>
-        <div class="action-buttons">
-          <button class="action-edit" data-id="${c.id}">✎</button>
-          <button class="action-lock" data-id="${c.id}">🔒</button>
-          <button class="action-delete" data-id="${c.id}">✖</button>
-        </div>
-      </td>
-      <td>${c.nome}</td>
-      <td>${c.cpf}</td>
-      <td>${c.departamento || "-"}</td>
-      <td>${c.funcao || "-"}</td>
-      <td>${tag}</td>
-      <td><span class="badge ${c.ativo ? "badge-success" : "badge-muted"}">${c.ativo ? "Ativo" : "Inativo"}</span></td>
-      <td>${c.data_admissao || "-"}</td>
-    `;
-    tabelaBody.appendChild(tr);
-  });
-}
-
-inputBuscar.addEventListener("input", (e) => {
-  renderTabela(e.target.value);
-});
-
-// =========================================
-//          CADASTRAR COLABORADOR
-// =========================================
-form.addEventListener("submit", async (e) => {
-  e.preventDefault();
-
-  const nome = fNome.value.trim();
-  const cpf = fCPF.value.replace(/\D/g, "");
-  const tag = fTag.value.trim().toUpperCase();
-
-  if (!nome || !cpf || !tag) {
-    alert("Preencha Nome, CPF e Tag RFID.");
-    return;
-  }
-
-  try {
-    // Criar colaborador
-    const res = await fetch(`${API}/colaboradores`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`
-      },
-      body: JSON.stringify({
-        nome,
-        cpf,
-        email: fEmail.value.trim(),
-        data_admissao: fAdmissao.value,
-        funcao: fFuncao.value,
-        departamento: fDepartamento.value,
-        jornada: fJornada.value,
-        escala: fEscala.value,
-        ativo: fStatus.value === "true",
-        banco_horas_ativo: fBancoHoras.value === "true"
-      })
+    const dados = listaColaboradores.filter(c => {
+      if (!termo) return true;
+      return (c.nome || "").toLowerCase().includes(termo) ||
+             (c.cpf || "").toLowerCase().includes(termo);
     });
 
-    const colab = await res.json();
-
-    if (!colab.id) {
-      alert("Erro ao cadastrar colaborador.");
+    if (dados.length === 0) {
+      tabelaBody.innerHTML = "<tr><td colspan='8'>Nenhum colaborador encontrado.</td></tr>";
       return;
     }
 
-    // Registrar TAG
-    await fetch(`${API}/tags`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`
-      },
-      body: JSON.stringify({
-        uid: tag,
-        colaborador_id: colab.id,
-        ativo: true
-      })
-    });
+    dados.forEach(c => {
+      const tr = document.createElement("tr");
+      const tag = mapaTags[c.id] || "-";
 
-    alert("Colaborador cadastrado com sucesso.");
+      tr.innerHTML = `
+        <td>
+          <div class="action-buttons">
+            <button class="action-edit" data-id="${c.id}">✎</button>
+            <button class="action-lock" data-id="${c.id}">🔒</button>
+            <button class="action-delete" data-id="${c.id}">✖</button>
+          </div>
+        </td>
+        <td>${c.nome}</td>
+        <td>${c.cpf}</td>
+        <td>-</td>
+        <td>-</td>
+        <td>${tag}</td>
+        <td>
+          <span class="badge ${c.ativo ? "badge-success" : "badge-muted"}">
+            ${c.ativo ? "Ativo" : "Inativo"}
+          </span>
+        </td>
+        <td>${c.criado_em ? c.criado_em.split("T")[0] : "-"}</td>
+      `;
+
+      tabelaBody.appendChild(tr);
+    });
+  }
+
+  inputBuscar.addEventListener("input", (e) => {
+    renderTabela(e.target.value);
+  });
+
+  // ===============================
+  //      AÇÕES DA TABELA
+  // ===============================
+  tabelaBody.addEventListener("click", async (e) => {
+    const btn = e.target;
+    const id = btn.dataset.id;
+    if (!id) return;
+
+    // EXCLUIR
+    if (btn.classList.contains("action-delete")) {
+      if (!confirm("Deseja excluir este colaborador?")) return;
+
+      await fetch(`${API}/colaboradores/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      carregarDados();
+      return;
+    }
+
+    // ATIVAR / INATIVAR
+    if (btn.classList.contains("action-lock")) {
+      await fetch(`${API}/colaboradores/${id}/toggle`, {
+        method: "PUT",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      carregarDados();
+      return;
+    }
+
+    // EDITAR
+    if (btn.classList.contains("action-edit")) {
+      const colab = listaColaboradores.find(c => c.id == id);
+      if (!colab) return;
+
+      fNome.value = colab.nome;
+      fCPF.value = mascaraCPF(colab.cpf);
+      fEmail.value = colab.email || "";
+      fStatus.value = colab.ativo ? "true" : "false";
+      fTag.value = mapaTags[colab.id] || "";
+
+      form.dataset.editId = id;
+
+      abrirModal();
+    }
+  });
+
+  // ===============================
+  //    SALVAR (NOVO + EDITAR)
+  // ===============================
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const payload = {
+      nome: fNome.value.trim(),
+      cpf: fCPF.value.replace(/\D/g, ""),
+      email: fEmail.value.trim(),
+      ativo: fStatus.value === "true"
+    };
+
+    const tagUid = fTag.value.trim().toUpperCase();
+    const editId = form.dataset.editId;
+
+    if (!payload.nome || !payload.cpf || !tagUid) {
+      alert("Preencha Nome, CPF e Tag RFID.");
+      return;
+    }
+
+    let colab;
+
+    // EDITAR
+    if (editId) {
+      const res = await fetch(`${API}/colaboradores/${editId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+      });
+      colab = await res.json();
+
+      // atualizar TAG existente
+      await fetch(`${API}/tags/updateByColab/${editId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ uid: tagUid })
+      });
+    }
+
+    // CADASTRAR NOVO
+    else {
+      const res = await fetch(`${API}/colaboradores`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+      });
+      colab = await res.json();
+
+      await fetch(`${API}/tags`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          uid: tagUid,
+          colaborador_id: colab.id,
+          ativo: true
+        })
+      });
+    }
+
     form.reset();
+    delete form.dataset.editId;
     fecharModal();
     carregarDados();
+  });
 
-  } catch (err) {
-    alert("Erro ao cadastrar colaborador.");
-  }
+  carregarDados();
 });
-
-// =========================================
-//     INICIAR CARREGAMENTO AO ABRIR
-// =========================================
-carregarDados();
