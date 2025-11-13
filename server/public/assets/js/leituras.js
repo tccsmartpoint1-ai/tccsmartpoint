@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 document.addEventListener("DOMContentLoaded", () => {
-  const API_URL = "https://tccsmartpoint.onrender.com/api";
+  const API_URL = "https://tccsmartpoint1-production.up.railway.app/api";
   const token = localStorage.getItem("token");
   if (!token) return window.location.replace("index.html");
 
@@ -52,7 +52,14 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // ===== NOVAS LEITURAS EM TEMPO REAL =====
-  socket.on("novaLeitura", (leitura) => adicionarLeitura(leitura));
+  socket.on("novaLeitura", (payload) => {
+    const leitura =
+      payload && payload.leitura // retorno da rota Arduino
+        ? payload.leitura
+        : payload; // retorno direto do socket do backend
+
+    adicionarLeitura(leitura);
+  });
 
   // ===== CARREGAR LEITURAS INICIAIS =====
   async function carregarLeiturasIniciais() {
@@ -64,11 +71,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!res.ok) throw new Error(`Erro HTTP ${res.status}`);
 
       const json = await res.json();
-      const leituras = Array.isArray(json)
-        ? json
-        : Array.isArray(json.data)
-        ? json.data
-        : [];
+      const leituras = Array.isArray(json.data) ? json.data : [];
 
       tbody.innerHTML = "";
       if (leituras.length === 0) {
@@ -78,30 +81,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
       leituras.forEach((l) => adicionarLeitura(l));
     } catch (err) {
-      console.error("Erro ao carregar leituras:", err);
       tbody.innerHTML = "<tr><td colspan='7'>Erro ao carregar leituras.</td></tr>";
     }
   }
 
   // ===== INSERE UMA NOVA LINHA NA TABELA =====
   function adicionarLeitura(leitura) {
+    if (!leitura) return;
+
     const tr = document.createElement("tr");
 
-    const data = leitura.data || new Date(leitura.hora).toLocaleDateString("pt-BR");
-    const hora = leitura.hora
-      ? new Date(leitura.hora).toLocaleTimeString("pt-BR")
-      : "--:--:--";
+    const data = leitura.data || "-";
+
+    const hora = leitura.hora || "--:--:--";
 
     const colaborador = leitura.Colaborador
       ? leitura.Colaborador.nome
-      : leitura.mensagem?.includes("Acesso permitido:")
-      ? leitura.mensagem.replace("Acesso permitido:", "").trim()
       : "-";
 
-    const dispositivo = leitura.Dispositivo ? leitura.Dispositivo.nome : "-";
-    const mensagem = leitura.mensagem?.includes("Acesso permitido")
-      ? "Acesso permitido"
-      : "Cartão não reconhecido";
+    const dispositivo = leitura.Dispositivo
+      ? leitura.Dispositivo.nome
+      : "-";
+
+    const mensagem = leitura.autorizado ? "Acesso permitido" : "Cartão não reconhecido";
 
     tr.innerHTML = `
       <td>${data}</td>
@@ -109,13 +111,14 @@ document.addEventListener("DOMContentLoaded", () => {
       <td>${colaborador}</td>
       <td>${dispositivo}</td>
       <td>${leitura.tag_uid || "-"}</td>
-      <td>${leitura.autorizado ? "✅ Sim" : "❌ Não"}</td>
+      <td>${leitura.autorizado ? "Sim" : "Não"}</td>
       <td>${mensagem}</td>
     `;
 
     tr.classList.add(leitura.autorizado ? "permitido" : "negado");
 
     tbody.prepend(tr);
+
     tr.classList.add("highlight");
     setTimeout(() => tr.classList.remove("highlight"), 2000);
   }

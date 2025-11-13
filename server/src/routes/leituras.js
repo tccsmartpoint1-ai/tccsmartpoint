@@ -51,22 +51,14 @@ module.exports = (io) => {
       }
 
       // === Gera Data/Hora ===
-      let dataFormatada, horaFormatada;
-
-      if (timestamp) {
-        const d = new Date(timestamp);
-        if (isNaN(d.getTime())) {
-          return res.status(400).json({ error: 'timestamp inválido' });
-        }
-        dataFormatada = d.toISOString().split('T')[0];
-        horaFormatada = d.toTimeString().split(' ')[0];
-      } else {
-        // Usa horário local de São Paulo
-        const now = new Date();
-        const local = new Date(now.toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }));
-        dataFormatada = local.toISOString().split('T')[0];
-        horaFormatada = local.toTimeString().split(' ')[0];
+      const now = timestamp ? new Date(timestamp) : new Date();
+      if (isNaN(now.getTime())) {
+        return res.status(400).json({ error: 'timestamp inválido' });
       }
+
+      const local = new Date(now.toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }));
+      const dataFormatada = local.toISOString().split('T')[0];
+      const horaFormatada = local.toTimeString().split(' ')[0];
 
       // === Define se é autorizado e mensagem ===
       const autorizado = !!colaborador;
@@ -94,25 +86,22 @@ module.exports = (io) => {
         include: [{ model: Colaborador }, { model: Dispositivo }]
       });
 
+      // Envia em tempo real ao front
       io.emit('novaLeitura', leituraCompleta);
 
-      res.status(201).json({
-       ok: true,
-       id: leitura.id,
-       autorizado,
-       mensagem,
-       colaborador: colaborador ? colaborador.nome : null,
-       tag: rfid
+      // === RESPOSTA PRO ARDUINO (CORRIGIDA) ===
+      return res.status(200).json({
+        status: autorizado ? "ok" : "negado",
+        mensagem,
+        leitura: leituraCompleta
       });
-
 
     } catch (err) {
       console.error('=== ERRO AO SALVAR LEITURA DO ARDUINO ===');
-      console.error('Mensagem:', err.message);
-      console.error('Stack:', err.stack);
+      console.error(err);
       res.status(500).json({
-        error: 'Erro ao salvar leitura do Arduino',
-        details: err.message
+        status: "erro",
+        mensagem: "Erro ao salvar leitura do Arduino"
       });
     }
   });
