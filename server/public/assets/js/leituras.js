@@ -31,15 +31,20 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 document.addEventListener("DOMContentLoaded", () => {
-  const API_URL = "https://tccsmartpoint1-production.up.railway.app/api";
+
+  // ===== CORREÇÃO AQUI =====
+  const API_URL = "https://tccsmartpoint.onrender.com/api";
+
   const token = localStorage.getItem("token");
   if (!token) return window.location.replace("index.html");
 
   const statusEl = document.getElementById("status");
   const tbody = document.getElementById("leiturasBody");
 
-  // ===== CONEXÃO SOCKET.IO =====
-  const socket = io(API_URL.replace("/api", ""), { transports: ["websocket"] });
+  // ===== CONEXÃO SOCKET.IO (CORRIGIDO) =====
+  const socket = io("https://tccsmartpoint.onrender.com", {
+    transports: ["websocket"],
+  });
 
   socket.on("connect", () => {
     statusEl.textContent = "Conectado";
@@ -54,9 +59,9 @@ document.addEventListener("DOMContentLoaded", () => {
   // ===== NOVAS LEITURAS EM TEMPO REAL =====
   socket.on("novaLeitura", (payload) => {
     const leitura =
-      payload && payload.leitura // retorno da rota Arduino
+      payload && payload.leitura
         ? payload.leitura
-        : payload; // retorno direto do socket do backend
+        : payload;
 
     adicionarLeitura(leitura);
   });
@@ -92,7 +97,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const tr = document.createElement("tr");
 
     const data = leitura.data || "-";
-
     const hora = leitura.hora || "--:--:--";
 
     const colaborador = leitura.Colaborador
