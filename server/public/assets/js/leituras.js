@@ -99,11 +99,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const data = leitura.data || "-";
     const hora = leitura.hora || "--:--:--";
 
-    const colaborador = leitura.Colaborador
+    const colaborador = leitura.colaborador
       ? leitura.Colaborador.nome
       : "-";
 
-    const dispositivo = leitura.Dispositivo
+    const dispositivo = leitura.dispositivo
       ? leitura.Dispositivo.nome
       : "-";
 
