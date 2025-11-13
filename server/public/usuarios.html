@@ -1,4 +1,3 @@
-<!-- public/usuarios.html -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -11,55 +10,27 @@
 </head>
 <body>
 
-  <!-- TOPO -->
   <header class="topbar">
-    <button id="toggleSidebar" aria-label="Alternar menu lateral">☰</button>
+    <button id="toggleSidebar">☰</button>
     <h1>Smart Point</h1>
     <div class="user-area">
-      <img src="../assets/img/icons/usuario.png" alt="Perfil" class="profile-icon">
+      <img src="../assets/img/icons/usuario.png" class="profile-icon">
       <button id="logoutBtn">Sair</button>
     </div>
   </header>
 
-  <!-- MENU LATERAL -->
   <aside class="sidebar expanded">
     <nav>
       <ul>
-        <li>
-          <a href="dashboard.html">
-            <img src="../assets/img/icons/home.png" alt="Dashboard" />
-            <span>Dashboard</span>
-          </a>
-        </li>
-        <li>
-          <a href="leituras.html">
-            <img src="../assets/img/icons/leitura.png" alt="Leituras" />
-            <span>Leituras</span>
-          </a>
-        </li>
-        <li>
-          <a href="usuarios.html" class="active">
-            <img src="../assets/img/icons/usuario.png" alt="Usuários" />
-            <span>Colaboradores</span>
-          </a>
-        </li>
-        <li>
-          <a href="relatorios.html">
-            <img src="../assets/img/icons/relatorio.png" alt="Relatórios" />
-            <span>Relatórios</span>
-          </a>
-        </li>
-        <li>
-          <a href="configuracoes.html">
-            <img src="../assets/img/icons/cnfg.png" alt="Configurações" />
-            <span>Configurações</span>
-          </a>
-        </li>
+        <li><a href="dashboard.html"><img src="../assets/img/icons/home.png"><span>Dashboard</span></a></li>
+        <li><a href="leituras.html"><img src="../assets/img/icons/leitura.png"><span>Leituras</span></a></li>
+        <li><a href="usuarios.html" class="active"><img src="../assets/img/icons/usuario.png"><span>Colaboradores</span></a></li>
+        <li><a href="relatorios.html"><img src="../assets/img/icons/relatorio.png"><span>Relatórios</span></a></li>
+        <li><a href="configuracoes.html"><img src="../assets/img/icons/cnfg.png"><span>Configurações</span></a></li>
       </ul>
     </nav>
   </aside>
 
-  <!-- CONTEÚDO -->
   <main class="content content-usuarios">
 
     <section class="header-row">
@@ -72,12 +43,11 @@
       </div>
     </section>
 
-    <!-- LISTA -->
     <section class="card">
       <div class="lista-header">
         <h3>Colaboradores cadastrados</h3>
         <div class="lista-actions">
-          <input type="text" id="buscar" placeholder="Pesquisar por nome ou CPF..." />
+          <input type="text" id="buscar" placeholder="Pesquisar por nome ou CPF...">
         </div>
       </div>
 
@@ -102,7 +72,7 @@
 
   </main>
 
-  <!-- MODAL DE CADASTRO -->
+  <!-- MODAL -->
   <div class="modal-overlay" id="modalOverlay">
     <div class="modal" id="modalColaborador">
 
@@ -113,51 +83,48 @@
 
       <div class="modal-body">
 
-        <form id="formUsuariosModal" autocomplete="off">
+        <form id="formModal" autocomplete="off">
           <div class="form-grid">
 
-            <!-- Dados pessoais -->
             <div class="group-title">Dados pessoais</div>
 
             <div class="form-field">
-              <label for="m_nome">Nome completo</label>
-              <input type="text" id="m_nome" required />
+              <label for="f_nome">Nome completo</label>
+              <input type="text" id="f_nome">
             </div>
 
             <div class="form-field">
-              <label for="m_cpf">CPF</label>
-              <input type="text" id="m_cpf" required />
+              <label for="f_cpf">CPF</label>
+              <input type="text" id="f_cpf">
             </div>
 
             <div class="form-field">
-              <label for="m_email">E-mail</label>
-              <input type="email" id="m_email" />
+              <label for="f_email">E-mail</label>
+              <input type="email" id="f_email">
             </div>
 
             <div class="form-field">
-              <label for="m_admissao">Data de admissão</label>
-              <input type="date" id="m_admissao" />
+              <label for="f_admissao">Data de admissão</label>
+              <input type="date" id="f_admissao">
             </div>
 
-            <!-- Hierarquia -->
             <div class="group-title">Hierarquia</div>
 
             <div class="form-field">
-              <label for="m_funcao">Função / Cargo</label>
-              <input type="text" id="m_funcao" />
+              <label for="f_funcao">Função / Cargo</label>
+              <input type="text" id="f_funcao">
             </div>
 
             <div class="form-field">
-              <label for="m_departamento">Departamento</label>
-              <input type="text" id="m_departamento" />
+              <label for="f_departamento">Departamento</label>
+              <input type="text" id="f_departamento">
             </div>
 
-            <!-- Jornada -->
             <div class="group-title">Jornada de trabalho</div>
 
             <div class="form-field">
-              <label for="m_jornada">Jornada</label>
-              <select id="m_jornada">
+              <label for="f_jornada">Jornada</label>
+              <select id="f_jornada">
                 <option value="">Selecione</option>
                 <option value="5x2">5x2</option>
                 <option value="6x1">6x1</option>
@@ -166,33 +133,32 @@
             </div>
 
             <div class="form-field">
-              <label for="m_escala">Escala</label>
-              <select id="m_escala">
+              <label for="f_escala">Escala</label>
+              <select id="f_escala">
                 <option value="">Selecione</option>
                 <option value="normal">Normal</option>
                 <option value="turnos">Turnos</option>
               </select>
             </div>
 
-            <!-- Config ponto -->
             <div class="group-title">Configurações de ponto</div>
 
             <div class="form-field">
-              <label for="m_tag">Tag RFID (UID)</label>
-              <input type="text" id="m_tag" required />
+              <label for="f_tag">Tag RFID (UID)</label>
+              <input type="text" id="f_tag">
             </div>
 
             <div class="form-field">
-              <label>Status</label>
-              <select id="m_status">
+              <label for="f_status">Status</label>
+              <select id="f_status">
                 <option value="true">Ativo</option>
                 <option value="false">Inativo</option>
               </select>
             </div>
 
             <div class="form-field">
-              <label>Banco de horas</label>
-              <select id="m_bancoHoras">
+              <label for="f_bancoHoras">Banco de horas</label>
+              <select id="f_bancoHoras">
                 <option value="false">Desativado</option>
                 <option value="true">Ativado</option>
               </select>
@@ -202,9 +168,7 @@
 
           <div class="modal-actions">
             <button type="submit" class="btn btn-primary">Salvar</button>
-            <button type="button" class="btn btn-secondary" id="modalCancel">
-              Cancelar
-            </button>
+            <button type="button" class="btn btn-secondary" id="modalCancel">Cancelar</button>
           </div>
 
         </form>
