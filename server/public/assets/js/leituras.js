@@ -100,11 +100,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const hora = leitura.hora || "--:--:--";
 
     const colaborador = leitura.colaborador
-      ? leitura.Colaborador.nome
+      ? leitura.colaborador.nome
       : "-";
 
     const dispositivo = leitura.dispositivo
-      ? leitura.Dispositivo.nome
+      ? leitura.dispositivo.nome
       : "-";
 
     const mensagem = leitura.autorizado ? "Acesso permitido" : "Cartão não reconhecido";
