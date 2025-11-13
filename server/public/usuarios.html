@@ -1,15 +1,16 @@
+<!-- public/usuarios.html -->
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Usuários & Tags</title>
-  <link rel="stylesheet" href="../assets/css/usuarios.css">
-</head>
+  <title>Smart Point — Colaboradores</title>
 
+  <link rel="stylesheet" href="../assets/css/baseuser.css" />
+  <link rel="stylesheet" href="../assets/css/usuarios.css" />
+</head>
 <body>
-  <!-- ===== TOPO ===== -->
+  <!-- TOPO -->
   <header class="topbar">
     <button id="toggleSidebar" aria-label="Alternar menu lateral">☰</button>
     <h1>Smart Point</h1>
@@ -19,8 +20,7 @@
     </div>
   </header>
 
-
-  <!-- ===== MENU LATERAL ===== -->
+  <!-- MENU LATERAL -->
   <aside class="sidebar expanded">
     <nav>
       <ul>
@@ -36,10 +36,10 @@
             <span>Leituras</span>
           </a>
         </li>
-        <li class="active">
-          <a href="usuarios.html">
+        <li>
+          <a href="usuarios.html" class="active">
             <img src="../assets/img/icons/usuario.png" alt="Usuários" />
-            <span>Usuários</span>
+            <span>Colaboradores</span>
           </a>
         </li>
         <li>
@@ -58,95 +58,149 @@
     </nav>
   </aside>
 
-  <!-- ===== CONTEÚDO PRINCIPAL ===== -->
-  <main class="content">
-    <section class="cadastro">
-      <h2>Cadastro de Usuários</h2>
-      <form id="formCadastro">
-        <div class="grid-3">
-          <div class="form-grupo">
+  <!-- CONTEÚDO -->
+  <main class="content content-usuarios">
+
+    <section class="header-row">
+      <div>
+        <h2>Colaboradores</h2>
+        <p>Cadastro de colaboradores e vínculo com tag RFID.</p>
+      </div>
+      <div class="header-actions">
+        <button id="btnNovo" class="btn btn-primary">+ Novo colaborador</button>
+      </div>
+    </section>
+
+    <!-- FORMULÁRIO -->
+    <section class="card" id="cardForm">
+      <h3>Novo colaborador</h3>
+
+      <form id="formUsuarios" autocomplete="off">
+        <div class="form-grid">
+
+          <!-- Dados pessoais -->
+          <div class="group-title">Dados pessoais</div>
+
+          <div class="form-field">
+            <label for="nome">Nome completo</label>
+            <input type="text" id="nome" placeholder="Ex: João da Silva" required />
+          </div>
+
+          <div class="form-field">
             <label for="cpf">CPF</label>
-            <input id="cpf" type="text" placeholder="000.000.000-00" required />
+            <input type="text" id="cpf" placeholder="000.000.000-00" required />
           </div>
-          <div class="form-grupo">
-            <label for="nome">Nome Completo</label>
-            <input id="nome" type="text" placeholder="Ex: Maria Silva" required />
+
+          <div class="form-field">
+            <label for="email">E-mail</label>
+            <input type="email" id="email" placeholder="exemplo@empresa.com" />
           </div>
-          <div class="form-grupo">
-            <label for="tag">Tag RFID</label>
-            <input id="tag" type="text" placeholder="Ex: TAG-01A2" required />
+
+          <div class="form-field">
+            <label for="admissao">Data de admissão</label>
+            <input type="date" id="admissao" />
           </div>
+
+          <!-- Hierarquia -->
+          <div class="group-title">Hierarquia</div>
+
+          <div class="form-field">
+            <label for="funcao">Função / Cargo</label>
+            <input type="text" id="funcao" placeholder="Ex: Auxiliar administrativo" />
+          </div>
+
+          <div class="form-field">
+            <label for="departamento">Departamento</label>
+            <input type="text" id="departamento" placeholder="Ex: Administrativo" />
+          </div>
+
+          <!-- Jornada -->
+          <div class="group-title">Jornada de trabalho</div>
+
+          <div class="form-field">
+            <label for="jornada">Jornada</label>
+            <select id="jornada">
+              <option value="">Selecione</option>
+              <option value="5x2">5x2 (segunda a sexta)</option>
+              <option value="6x1">6x1</option>
+              <option value="12x36">12x36</option>
+              <option value="personalizada">Personalizada</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label for="escala">Escala</label>
+            <select id="escala">
+              <option value="">Selecione</option>
+              <option value="normal">Normal (dias fixos)</option>
+              <option value="turnos">Turnos</option>
+            </select>
+          </div>
+
+          <!-- Config. ponto -->
+          <div class="group-title">Configurações de ponto</div>
+
+          <div class="form-field">
+            <label for="tag">Tag RFID (UID)</label>
+            <input type="text" id="tag" placeholder="Ex: 83A4B14" required />
+          </div>
+
+          <div class="form-field">
+            <label>Status</label>
+            <select id="status">
+              <option value="true">Ativo</option>
+              <option value="false">Inativo</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label>Banco de horas</label>
+            <select id="bancoHoras">
+              <option value="false">Desativado</option>
+              <option value="true">Ativado</option>
+            </select>
+          </div>
+
         </div>
 
-        <div class="botoes">
-          <button type="submit" id="btnCadastrar" class="btn-primary">Cadastrar</button>
-          <button type="reset" class="btn-secondary">Limpar</button>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Salvar</button>
+          <button type="button" id="btnLimpar" class="btn btn-secondary">Limpar</button>
         </div>
       </form>
     </section>
 
-    <section class="tabela">
-      <h2>Usuários Cadastrados</h2>
+    <!-- LISTA -->
+    <section class="card">
+      <div class="lista-header">
+        <h3>Colaboradores cadastrados</h3>
+        <div class="lista-actions">
+          <input type="text" id="buscar" placeholder="Pesquisar por nome ou CPF..." />
+        </div>
+      </div>
+
       <div class="tabela-wrapper">
-        <table id="tabelaUsuarios">
+        <table id="tblUsuarios">
           <thead>
             <tr>
-              <th>CPF</th>
+              <th>Ações</th>
               <th>Nome</th>
-              <th>Tag</th>
+              <th>CPF</th>
+              <th>Departamento</th>
+              <th>Função</th>
+              <th>Tag RFID</th>
+              <th>Status</th>
+              <th>Admissão</th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>111.111.111-11</td>
-              <td>Maria Silva</td>
-              <td>TAG-01A2</td>
-            </tr>
-            <tr>
-              <td>222.222.222-22</td>
-              <td>João Souza</td>
-              <td>TAG-09F8</td>
-            </tr>
           </tbody>
         </table>
       </div>
     </section>
+
   </main>
 
-  <!-- ===== SEGURANÇA E CONTROLE ===== -->
-  <script>
-    // Proteção de acesso
-    const token = localStorage.getItem("token");
-    if (!token) window.location.replace("index.html");
-
-    // Bloqueio de histórico após logout
-    window.history.pushState(null, null, window.location.href);
-    window.onpopstate = () => window.history.pushState(null, null, window.location.href);
-
-    // Logout seguro
-    document.getElementById("logoutBtn").addEventListener("click", () => {
-      localStorage.removeItem("token");
-      window.location.replace("index.html");
-    });
-
-    // Controle da sidebar
-    const sidebar = document.querySelector(".sidebar");
-    const toggleBtn = document.getElementById("toggleSidebar");
-
-    toggleBtn.addEventListener("click", () => {
-      sidebar.classList.toggle("collapsed");
-      localStorage.setItem(
-        "sidebarState",
-        sidebar.classList.contains("collapsed") ? "collapsed" : "expanded"
-      );
-    });
-
-    // Mantém o estado da sidebar
-    document.addEventListener("DOMContentLoaded", () => {
-      const savedState = localStorage.getItem("sidebarState");
-      if (savedState === "collapsed") sidebar.classList.add("collapsed");
-    });
-  </script>
+  <script src="../assets/js/usuarios.js"></script>
 </body>
-
 </html>
