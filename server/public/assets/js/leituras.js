@@ -32,7 +32,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 document.addEventListener("DOMContentLoaded", () => {
 
-  // ===== CORREÇÃO AQUI =====
   const API_URL = "https://tccsmartpoint.onrender.com/api";
 
   const token = localStorage.getItem("token");
@@ -41,7 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const statusEl = document.getElementById("status");
   const tbody = document.getElementById("leiturasBody");
 
-  // ===== CONEXÃO SOCKET.IO (CORRIGIDO) =====
+  // ===== SOCKET CORRETO =====
   const socket = io("https://tccsmartpoint.onrender.com", {
     transports: ["websocket"],
   });
@@ -99,6 +98,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const data = leitura.data || "-";
     const hora = leitura.hora || "--:--:--";
 
+    // ===== CORREÇÃO AQUI =====
     const colaborador = leitura.colaborador
       ? leitura.colaborador.nome
       : "-";
