@@ -67,7 +67,7 @@ const Dispositivo = sequelize.define('dispositivos', {
 });
 
 // =====================
-// Leituras Reais (nova tabela principal)
+// Leituras Reais
 // =====================
 const LeiturasReais = sequelize.define('leituras_reais', {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
@@ -89,19 +89,31 @@ const LeiturasReais = sequelize.define('leituras_reais', {
 });
 
 // =====================
-// Associações
+// Associações CORRIGIDAS
 // =====================
+
+// TAG ↔ COLABORADOR
 Colaborador.hasMany(Tag, { foreignKey: 'colaborador_id' });
 Tag.belongsTo(Colaborador, { foreignKey: 'colaborador_id', onDelete: 'SET NULL' });
 
+// COLABORADOR ↔ LEITURAS
 Colaborador.hasMany(LeiturasReais, { foreignKey: 'colaborador_id' });
-LeiturasReais.belongsTo(Colaborador, { foreignKey: 'colaborador_id', onDelete: 'SET NULL' });
+LeiturasReais.belongsTo(Colaborador, { 
+  foreignKey: 'colaborador_id',
+  as: 'colaborador',
+  onDelete: 'SET NULL'
+});
 
+// DISPOSITIVO ↔ LEITURAS
 Dispositivo.hasMany(LeiturasReais, { foreignKey: 'dispositivo_id' });
-LeiturasReais.belongsTo(Dispositivo, { foreignKey: 'dispositivo_id', onDelete: 'CASCADE' });
+LeiturasReais.belongsTo(Dispositivo, { 
+  foreignKey: 'dispositivo_id',
+  as: 'dispositivo',
+  onDelete: 'CASCADE'
+});
 
 // =====================
-// Exportação unificada
+// Exportação
 // =====================
 module.exports = {
   sequelize,

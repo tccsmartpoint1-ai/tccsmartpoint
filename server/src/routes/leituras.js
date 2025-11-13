@@ -24,10 +24,9 @@ function buildWhere(query) {
   return where;
 }
 
-// ==== EXPORTAÇÃO DO MÓDULO COM SOCKET ====
 module.exports = (io) => {
 
-  // === ROTA PÚBLICA PARA O ARDUINO (sem token) ===
+  // === ROTA PÚBLICA PARA O ARDUINO ===
   router.post('/arduino', async (req, res) => {
     try {
       const { rfid, nome, dispositivo, timestamp } = req.body;
@@ -36,11 +35,9 @@ module.exports = (io) => {
         return res.status(400).json({ error: 'Campo rfid é obrigatório' });
       }
 
-      // === Busca TAG e Colaborador associado ===
       const tag = await Tag.findOne({ where: { uid: rfid } });
       const colaborador = tag ? await Colaborador.findByPk(tag.colaborador_id) : null;
 
-      // === Busca (ou cria) o Dispositivo ===
       let disp = await Dispositivo.findOne({ where: { nome: dispositivo } });
       if (!disp) {
         disp = await Dispositivo.create({
@@ -50,7 +47,6 @@ module.exports = (io) => {
         });
       }
 
-      // === Gera Data/Hora ===
       const now = timestamp ? new Date(timestamp) : new Date();
       if (isNaN(now.getTime())) {
         return res.status(400).json({ error: 'timestamp inválido' });
@@ -60,13 +56,11 @@ module.exports = (io) => {
       const dataFormatada = local.toISOString().split('T')[0];
       const horaFormatada = local.toTimeString().split(' ')[0];
 
-      // === Define se é autorizado e mensagem ===
       const autorizado = !!colaborador;
       const mensagem = autorizado
         ? `Acesso permitido: ${colaborador.nome}`
         : 'Cartão não reconhecido';
 
-      // === Cria o registro da leitura ===
       const leitura = await LeiturasReais.create({
         tag_uid: rfid,
         colaborador_id: colaborador ? colaborador.id : null,
@@ -81,15 +75,15 @@ module.exports = (io) => {
         ip: req.ip
       });
 
-      // === Busca leitura completa com associações ===
       const leituraCompleta = await LeiturasReais.findByPk(leitura.id, {
-        include: [{ model: Colaborador }, { model: Dispositivo }]
+        include: [
+          { model: Colaborador, as: 'colaborador' },
+          { model: Dispositivo, as: 'dispositivo' }
+        ]
       });
 
-      // Envia em tempo real ao front
       io.emit('novaLeitura', leituraCompleta);
 
-      // === RESPOSTA PRO ARDUINO (CORRIGIDA) ===
       return res.status(200).json({
         status: autorizado ? "ok" : "negado",
         mensagem,
@@ -115,7 +109,10 @@ module.exports = (io) => {
 
       const { count, rows } = await LeiturasReais.findAndCountAll({
         where,
-        include: [{ model: Colaborador }, { model: Dispositivo }],
+        include: [
+          { model: Colaborador, as: 'colaborador' },
+          { model: Dispositivo, as: 'dispositivo' }
+        ],
         order: [['id', 'DESC']],
         offset: parseInt(offset),
         limit: parseInt(limit)
@@ -140,7 +137,10 @@ module.exports = (io) => {
       const where = buildWhere(req.query);
       const rows = await LeiturasReais.findAll({
         where,
-        include: [{ model: Colaborador }, { model: Dispositivo }],
+        include: [
+          { model: Colaborador, as: 'colaborador' },
+          { model: Dispositivo, as: 'dispositivo' }
+        ],
         order: [['id', 'DESC']]
       });
 
@@ -151,8 +151,8 @@ module.exports = (io) => {
         tag_uid: r.tag_uid,
         tipo_batida: r.tipo_batida,
         autorizado: r.autorizado,
-        colaborador: r.Colaborador?.nome || '',
-        dispositivo: r.Dispositivo?.nome || '',
+        colaborador: r.colaborador?.nome || '',
+        dispositivo: r.dispositivo?.nome || '',
         mensagem: r.mensagem || ''
       }));
 
