@@ -30,60 +30,72 @@ document.addEventListener("DOMContentLoaded", () => {
   if (savedState === "collapsed") sidebar.classList.add("collapsed");
 });
 
+// =========================================
+//          CONFIGURAÇÃO MODAL
+// =========================================
+const modalOverlay = document.getElementById("modalOverlay");
+const modal = document.getElementById("modalColaborador");
+const btnNovo = document.getElementById("btnNovo");
+const btnFechar = document.getElementById("modalClose");
+
+// abrir
+btnNovo.addEventListener("click", () => {
+  modalOverlay.style.display = "flex";
+});
+
+// fechar
+btnFechar.addEventListener("click", () => {
+  modalOverlay.style.display = "none";
+});
+
+// fechar clicando no fundo
+modalOverlay.addEventListener("click", (e) => {
+  if (e.target === modalOverlay) modalOverlay.style.display = "none";
+});
+
+// =========================================
+//              API + FORMULÁRIO
+// =========================================
+
 document.addEventListener("DOMContentLoaded", () => {
   const API = "https://tccsmartpoint.onrender.com/api";
 
-  const form = document.getElementById("formUsuarios");
-  const btnLimpar = document.getElementById("btnLimpar");
-  const btnNovo = document.getElementById("btnNovo");
-  const cardForm = document.getElementById("cardForm");
-
-  const inputNome = document.getElementById("nome");
-  const inputCPF = document.getElementById("cpf");
-  const inputEmail = document.getElementById("email");
-  const inputAdmissao = document.getElementById("admissao");
-  const inputFuncao = document.getElementById("funcao");
-  const inputDepartamento = document.getElementById("departamento");
-  const inputJornada = document.getElementById("jornada");
-  const inputEscala = document.getElementById("escala");
-  const inputTag = document.getElementById("tag");
-  const inputStatus = document.getElementById("status");
-  const inputBancoHoras = document.getElementById("bancoHoras");
+  const form = document.getElementById("formModal");
   const inputBuscar = document.getElementById("buscar");
-
   const tbody = document.querySelector("#tblUsuarios tbody");
+
+  // Campos do modal
+  const fNome = document.getElementById("f_nome");
+  const fCPF = document.getElementById("f_cpf");
+  const fEmail = document.getElementById("f_email");
+  const fAdmissao = document.getElementById("f_admissao");
+  const fFuncao = document.getElementById("f_funcao");
+  const fDepartamento = document.getElementById("f_departamento");
+  const fJornada = document.getElementById("f_jornada");
+  const fEscala = document.getElementById("f_escala");
+  const fTag = document.getElementById("f_tag");
+  const fStatus = document.getElementById("f_status");
+  const fBancoHoras = document.getElementById("f_bancoHoras");
 
   let listaColaboradores = [];
   let mapaTags = {};
 
-  btnNovo.addEventListener("click", () => {
-    cardForm.scrollIntoView({ behavior: "smooth", block: "start" });
-    inputNome.focus();
-  });
-
-  btnLimpar.addEventListener("click", () => {
-    form.reset();
-    inputStatus.value = "true";
-    inputBancoHoras.value = "false";
-  });
-
-  function aplicarMascaraCPF(valor) {
-    const v = valor.replace(/\D/g, "").slice(0, 11);
-    const p1 = v.slice(0, 3);
-    const p2 = v.slice(3, 6);
-    const p3 = v.slice(6, 9);
-    const p4 = v.slice(9, 11);
-    let out = p1;
-    if (p2) out += "." + p2;
-    if (p3) out += "." + p3;
-    if (p4) out += "-" + p4;
+  // Máscara CPF
+  function mascaraCPF(v) {
+    v = v.replace(/\D/g, "").slice(0, 11);
+    let out = "";
+    if (v.length > 0) out = v.slice(0, 3);
+    if (v.length > 3) out += "." + v.slice(3, 6);
+    if (v.length > 6) out += "." + v.slice(6, 9);
+    if (v.length > 9) out += "-" + v.slice(9, 11);
     return out;
   }
 
-  inputCPF.addEventListener("input", (e) => {
-    e.target.value = aplicarMascaraCPF(e.target.value);
+  fCPF.addEventListener("input", (e) => {
+    e.target.value = mascaraCPF(e.target.value);
   });
 
+  // Carregar colaboradores + Tags
   async function carregarColaboradoresETags() {
     try {
       const [resColab, resTags] = await Promise.all([
@@ -95,8 +107,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const tags = await resTags.json();
 
       listaColaboradores = Array.isArray(colabs) ? colabs : [];
-      mapaTags = {};
 
+      mapaTags = {};
       if (Array.isArray(tags)) {
         tags.forEach(t => {
           if (t.colaborador_id && !mapaTags[t.colaborador_id]) {
@@ -111,16 +123,15 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // Render tabela
   function renderTabela(filtro = "") {
     tbody.innerHTML = "";
-
     const termo = filtro.trim().toLowerCase();
 
     const dados = listaColaboradores.filter(c => {
       if (!termo) return true;
-      const nome = (c.nome || "").toLowerCase();
-      const cpf = (c.cpf || "").toLowerCase();
-      return nome.includes(termo) || cpf.includes(termo);
+      return (c.nome || "").toLowerCase().includes(termo) ||
+             (c.cpf || "").toLowerCase().includes(termo);
     });
 
     if (dados.length === 0) {
@@ -130,17 +141,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     dados.forEach(c => {
       const tr = document.createElement("tr");
-
-      const statusAtivo = c.ativo !== false;
-
       const tag = mapaTags[c.id] || "-";
 
       tr.innerHTML = `
         <td>
           <div class="action-buttons">
-            <button class="action-edit" data-id="${c.id}" title="Editar">✎</button>
-            <button class="action-lock" data-id="${c.id}" title="Ativar/Inativar">🔒</button>
-            <button class="action-delete" data-id="${c.id}" title="Excluir">✖</button>
+            <button class="action-edit" data-id="${c.id}">✎</button>
+            <button class="action-lock" data-id="${c.id}">🔒</button>
+            <button class="action-delete" data-id="${c.id}">✖</button>
           </div>
         </td>
         <td>${c.nome || "-"}</td>
@@ -149,8 +157,8 @@ document.addEventListener("DOMContentLoaded", () => {
         <td>${c.funcao || "-"}</td>
         <td>${tag}</td>
         <td>
-          <span class="badge ${statusAtivo ? "badge-success" : "badge-muted"}">
-            ${statusAtivo ? "Ativo" : "Inativo"}
+          <span class="badge ${c.ativo ? "badge-success" : "badge-muted"}">
+            ${c.ativo ? "Ativo" : "Inativo"}
           </span>
         </td>
         <td>${c.data_admissao || "-"}</td>
@@ -164,27 +172,29 @@ document.addEventListener("DOMContentLoaded", () => {
     renderTabela(e.target.value);
   });
 
+  // Envio do formulário (modal)
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const nome = inputNome.value.trim();
-    const cpf = inputCPF.value.replace(/\D/g, "");
-    const email = inputEmail.value.trim() || null;
-    const admissao = inputAdmissao.value || null;
-    const funcao = inputFuncao.value.trim() || null;
-    const departamento = inputDepartamento.value.trim() || null;
-    const jornada = inputJornada.value || null;
-    const escala = inputEscala.value || null;
-    const tagUid = inputTag.value.trim().toUpperCase();
-    const ativo = inputStatus.value === "true";
-    const bancoHorasAtivo = inputBancoHoras.value === "true";
+    const nome = fNome.value.trim();
+    const cpf = fCPF.value.replace(/\D/g, "");
+    const email = fEmail.value.trim();
+    const admissao = fAdmissao.value;
+    const funcao = fFuncao.value;
+    const departamento = fDepartamento.value;
+    const jornada = fJornada.value;
+    const escala = fEscala.value;
+    const tagUid = fTag.value.trim().toUpperCase();
+    const ativo = fStatus.value === "true";
+    const bancoHoras = fBancoHoras.value === "true";
 
     if (!nome || !cpf || !tagUid) {
-      alert("Preencha pelo menos Nome, CPF e Tag RFID.");
+      alert("Preencha Nome, CPF e Tag RFID.");
       return;
     }
 
     try {
+      // Criar colaborador
       const colabRes = await fetch(`${API}/colaboradores`, {
         method: "POST",
         headers: {
@@ -201,17 +211,18 @@ document.addEventListener("DOMContentLoaded", () => {
           departamento,
           jornada,
           escala,
-          banco_horas_ativo: bancoHorasAtivo
+          banco_horas_ativo: bancoHoras
         })
       });
 
       const colab = await colabRes.json();
 
-      if (!colab || !colab.id) {
+      if (!colab.id) {
         alert("Erro ao cadastrar colaborador.");
         return;
       }
 
+      // Criar TAG
       await fetch(`${API}/tags`, {
         method: "POST",
         headers: {
@@ -227,10 +238,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
       alert("Colaborador cadastrado com sucesso.");
       form.reset();
-      inputStatus.value = "true";
-      inputBancoHoras.value = "false";
 
-      await carregarColaboradoresETags();
+      modalOverlay.style.display = "none";
+
+      carregarColaboradoresETags();
 
     } catch (err) {
       alert("Erro ao cadastrar colaborador.");

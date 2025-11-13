@@ -1,5 +1,6 @@
 /* assets/css/usuarios.css */
 
+/* Conteúdo principal */
 .content-usuarios {
   padding: 20px;
   gap: 16px;
@@ -28,6 +29,7 @@
   padding: 8px 16px;
 }
 
+/* Card padrão */
 .card {
   background: #fff;
   border-radius: 12px;
@@ -40,92 +42,7 @@
   margin-bottom: 12px;
 }
 
-/* Formulário */
-
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px 20px;
-  margin-top: 8px;
-}
-
-.form-field {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.form-field label {
-  font-size: 0.9rem;
-  font-weight: 500;
-}
-
-.form-field input,
-.form-field select {
-  padding: 8px 10px;
-  border-radius: 6px;
-  border: 1px solid #d0d7e2;
-  font-size: 0.9rem;
-}
-
-.form-field input:focus,
-.form-field select:focus {
-  outline: none;
-  border-color: #1e73d8;
-  box-shadow: 0 0 0 2px rgba(30,115,216,0.15);
-}
-
-.group-title {
-  grid-column: 1 / -1;
-  margin-top: 4px;
-  margin-bottom: 4px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  color: #1e73d8;
-  border-bottom: 1px solid #e3e9f2;
-  padding-bottom: 3px;
-}
-
-.form-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 14px;
-}
-
-/* Botões genéricos (reutilizam base.css se existir) */
-
-.btn {
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.9rem;
-}
-
-.btn-primary {
-  background: #1e73d8;
-  color: #fff;
-  padding: 8px 16px;
-}
-
-.btn-primary:hover {
-  background: #185cae;
-}
-
-.btn-secondary {
-  background: #e0e4ec;
-  color: #333;
-  padding: 8px 16px;
-}
-
-.btn-small {
-  padding: 4px 8px;
-  font-size: 0.8rem;
-}
-
 /* Lista */
-
 .lista-header {
   display: flex;
   align-items: center;
@@ -145,7 +62,6 @@
 }
 
 /* Tabela */
-
 .tabela-wrapper {
   overflow-x: auto;
 }
@@ -172,6 +88,7 @@
   background: #f8fafc;
 }
 
+/* Badges */
 .badge {
   display: inline-block;
   padding: 2px 8px;
@@ -190,6 +107,7 @@
   color: #555;
 }
 
+/* Botões de ação da tabela */
 .action-buttons {
   display: flex;
   gap: 4px;
@@ -211,8 +129,134 @@
 .action-lock   { background: #f6c453; color: #fff; }
 .action-delete { background: #e14c4c; color: #fff; }
 
-@media (max-width: 900px) {
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
+/* ============================
+   MODAL NOVO COLABORADOR
+=============================== */
+
+/* Fundo escuro */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(2px);
+  z-index: 2000;
+}
+
+/* Caixa central */
+.modal {
+  width: 900px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: #fff;
+  border-radius: 12px;
+  padding: 25px;
+  animation: fadeIn 0.2s ease;
+}
+
+/* Header do modal */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h3 {
+  margin: 0;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 28px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+/* Corpo */
+.modal-body {
+  margin-top: 10px;
+}
+
+/* Grid do formulário */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px 20px;
+  margin-top: 15px;
+}
+
+/* Campos */
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.form-field label {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.form-field input,
+.form-field select {
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #d0d7e2;
+  font-size: 0.9rem;
+}
+
+.form-field input:focus,
+.form-field select:focus {
+  outline: none;
+  border-color: #1e73d8;
+  box-shadow: 0 0 0 2px rgba(30,115,216,0.15);
+}
+
+/* Títulos das seções */
+.group-title {
+  grid-column: 1 / -1;
+  margin-top: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #1e73d8;
+  border-bottom: 1px solid #e3e9f2;
+  padding-bottom: 5px;
+}
+
+/* Rodapé do modal */
+.modal-actions {
+  margin-top: 25px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+/* Botões */
+.btn {
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.btn-primary {
+  background: #1e73d8;
+  color: #fff;
+  padding: 8px 16px;
+}
+
+.btn-secondary {
+  background: #e0e4ec;
+  color: #333;
+  padding: 8px 16px;
+}
+
+/* Animação */
+@keyframes fadeIn {
+  from { transform: scale(0.95); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
 }

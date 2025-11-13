@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="../assets/css/usuarios.css" />
 </head>
 <body>
+
   <!-- TOPO -->
   <header class="topbar">
     <button id="toggleSidebar" aria-label="Alternar menu lateral">☰</button>
@@ -64,110 +65,11 @@
     <section class="header-row">
       <div>
         <h2>Colaboradores</h2>
-        <p>Cadastro de colaboradores e vínculo com tag RFID.</p>
+        <p>Gerenciamento de colaboradores e vínculo com RFID.</p>
       </div>
       <div class="header-actions">
         <button id="btnNovo" class="btn btn-primary">+ Novo colaborador</button>
       </div>
-    </section>
-
-    <!-- FORMULÁRIO -->
-    <section class="card" id="cardForm">
-      <h3>Novo colaborador</h3>
-
-      <form id="formUsuarios" autocomplete="off">
-        <div class="form-grid">
-
-          <!-- Dados pessoais -->
-          <div class="group-title">Dados pessoais</div>
-
-          <div class="form-field">
-            <label for="nome">Nome completo</label>
-            <input type="text" id="nome" placeholder="Ex: João da Silva" required />
-          </div>
-
-          <div class="form-field">
-            <label for="cpf">CPF</label>
-            <input type="text" id="cpf" placeholder="000.000.000-00" required />
-          </div>
-
-          <div class="form-field">
-            <label for="email">E-mail</label>
-            <input type="email" id="email" placeholder="exemplo@empresa.com" />
-          </div>
-
-          <div class="form-field">
-            <label for="admissao">Data de admissão</label>
-            <input type="date" id="admissao" />
-          </div>
-
-          <!-- Hierarquia -->
-          <div class="group-title">Hierarquia</div>
-
-          <div class="form-field">
-            <label for="funcao">Função / Cargo</label>
-            <input type="text" id="funcao" placeholder="Ex: Auxiliar administrativo" />
-          </div>
-
-          <div class="form-field">
-            <label for="departamento">Departamento</label>
-            <input type="text" id="departamento" placeholder="Ex: Administrativo" />
-          </div>
-
-          <!-- Jornada -->
-          <div class="group-title">Jornada de trabalho</div>
-
-          <div class="form-field">
-            <label for="jornada">Jornada</label>
-            <select id="jornada">
-              <option value="">Selecione</option>
-              <option value="5x2">5x2 (segunda a sexta)</option>
-              <option value="6x1">6x1</option>
-              <option value="12x36">12x36</option>
-              <option value="personalizada">Personalizada</option>
-            </select>
-          </div>
-
-          <div class="form-field">
-            <label for="escala">Escala</label>
-            <select id="escala">
-              <option value="">Selecione</option>
-              <option value="normal">Normal (dias fixos)</option>
-              <option value="turnos">Turnos</option>
-            </select>
-          </div>
-
-          <!-- Config. ponto -->
-          <div class="group-title">Configurações de ponto</div>
-
-          <div class="form-field">
-            <label for="tag">Tag RFID (UID)</label>
-            <input type="text" id="tag" placeholder="Ex: 83A4B14" required />
-          </div>
-
-          <div class="form-field">
-            <label>Status</label>
-            <select id="status">
-              <option value="true">Ativo</option>
-              <option value="false">Inativo</option>
-            </select>
-          </div>
-
-          <div class="form-field">
-            <label>Banco de horas</label>
-            <select id="bancoHoras">
-              <option value="false">Desativado</option>
-              <option value="true">Ativado</option>
-            </select>
-          </div>
-
-        </div>
-
-        <div class="form-actions">
-          <button type="submit" class="btn btn-primary">Salvar</button>
-          <button type="button" id="btnLimpar" class="btn btn-secondary">Limpar</button>
-        </div>
-      </form>
     </section>
 
     <!-- LISTA -->
@@ -193,13 +95,124 @@
               <th>Admissão</th>
             </tr>
           </thead>
-          <tbody>
-          </tbody>
+          <tbody></tbody>
         </table>
       </div>
     </section>
 
   </main>
+
+  <!-- MODAL DE CADASTRO -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal" id="modalColaborador">
+
+      <div class="modal-header">
+        <h3>Novo colaborador</h3>
+        <button class="modal-close" id="modalClose">×</button>
+      </div>
+
+      <div class="modal-body">
+
+        <form id="formUsuariosModal" autocomplete="off">
+          <div class="form-grid">
+
+            <!-- Dados pessoais -->
+            <div class="group-title">Dados pessoais</div>
+
+            <div class="form-field">
+              <label for="m_nome">Nome completo</label>
+              <input type="text" id="m_nome" required />
+            </div>
+
+            <div class="form-field">
+              <label for="m_cpf">CPF</label>
+              <input type="text" id="m_cpf" required />
+            </div>
+
+            <div class="form-field">
+              <label for="m_email">E-mail</label>
+              <input type="email" id="m_email" />
+            </div>
+
+            <div class="form-field">
+              <label for="m_admissao">Data de admissão</label>
+              <input type="date" id="m_admissao" />
+            </div>
+
+            <!-- Hierarquia -->
+            <div class="group-title">Hierarquia</div>
+
+            <div class="form-field">
+              <label for="m_funcao">Função / Cargo</label>
+              <input type="text" id="m_funcao" />
+            </div>
+
+            <div class="form-field">
+              <label for="m_departamento">Departamento</label>
+              <input type="text" id="m_departamento" />
+            </div>
+
+            <!-- Jornada -->
+            <div class="group-title">Jornada de trabalho</div>
+
+            <div class="form-field">
+              <label for="m_jornada">Jornada</label>
+              <select id="m_jornada">
+                <option value="">Selecione</option>
+                <option value="5x2">5x2</option>
+                <option value="6x1">6x1</option>
+                <option value="12x36">12x36</option>
+              </select>
+            </div>
+
+            <div class="form-field">
+              <label for="m_escala">Escala</label>
+              <select id="m_escala">
+                <option value="">Selecione</option>
+                <option value="normal">Normal</option>
+                <option value="turnos">Turnos</option>
+              </select>
+            </div>
+
+            <!-- Config ponto -->
+            <div class="group-title">Configurações de ponto</div>
+
+            <div class="form-field">
+              <label for="m_tag">Tag RFID (UID)</label>
+              <input type="text" id="m_tag" required />
+            </div>
+
+            <div class="form-field">
+              <label>Status</label>
+              <select id="m_status">
+                <option value="true">Ativo</option>
+                <option value="false">Inativo</option>
+              </select>
+            </div>
+
+            <div class="form-field">
+              <label>Banco de horas</label>
+              <select id="m_bancoHoras">
+                <option value="false">Desativado</option>
+                <option value="true">Ativado</option>
+              </select>
+            </div>
+
+          </div>
+
+          <div class="modal-actions">
+            <button type="submit" class="btn btn-primary">Salvar</button>
+            <button type="button" class="btn btn-secondary" id="modalCancel">
+              Cancelar
+            </button>
+          </div>
+
+        </form>
+
+      </div>
+
+    </div>
+  </div>
 
   <script src="../assets/js/usuarios.js"></script>
 </body>
