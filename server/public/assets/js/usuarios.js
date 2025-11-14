@@ -28,6 +28,11 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // ===============================
+//   FORM PRECISA SER GLOBAL
+// ===============================
+const form = document.getElementById("formModal");
+
+// ===============================
 //        MODAL
 // ===============================
 const modalOverlay = document.getElementById("modalOverlay");
@@ -61,8 +66,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const tabelaBody = document.querySelector("#tblUsuarios tbody");
   const inputBuscar = document.getElementById("buscar");
-
-  const form = document.getElementById("formModal");
 
   const fNome = document.getElementById("f_nome");
   const fCPF = document.getElementById("f_cpf");
@@ -109,7 +112,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       renderTabela();
-    } catch (err) {
+    } catch {
       tabelaBody.innerHTML = "<tr><td colspan='8'>Erro ao carregar colaboradores.</td></tr>";
     }
   }
@@ -147,9 +150,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <td>${c.funcao || "-"}</td>
         <td>${tag}</td>
         <td>
-          <span class="badge ${c.ativo ? "badge-success" : "badge-muted"}">
-            ${c.ativo ? "Ativo" : "Inativo"}
-          </span>
+          <span class="badge ${c.ativo ? "badge-success" : "badge-muted"}">${c.ativo ? "Ativo" : "Inativo"}</span>
         </td>
         <td>${c.data_admissao || "-"}</td>
       `;
@@ -169,12 +170,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (btn.classList.contains("action-delete")) {
       if (!confirm("Deseja excluir este colaborador?")) return;
-
       await fetch(`${API}/colaboradores/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` }
       });
-
       carregarDados();
       return;
     }
@@ -184,7 +183,6 @@ document.addEventListener("DOMContentLoaded", () => {
         method: "PUT",
         headers: { Authorization: `Bearer ${token}` }
       });
-
       carregarDados();
       return;
     }
@@ -240,10 +238,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (editId) {
       const res = await fetch(`${API}/colaboradores/${editId}`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
-        },
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify(payload)
       });
 
@@ -251,19 +246,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
       await fetch(`${API}/colaboradores/${editId}/tag`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
-        },
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({ uid: tagUid })
       });
     } else {
       const res = await fetch(`${API}/colaboradores`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
-        },
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify(payload)
       });
 
@@ -271,10 +260,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       await fetch(`${API}/tags`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
-        },
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({
           uid: tagUid,
           colaborador_id: colab.id,
