@@ -27,6 +27,15 @@ const Colaborador = sequelize.define('colaboradores', {
   cpf: { type: DataTypes.STRING(11), unique: true },
   email: { type: DataTypes.STRING(255) },
   ativo: { type: DataTypes.BOOLEAN, defaultValue: true },
+
+  // NOVOS CAMPOS
+  data_admissao: { type: DataTypes.DATEONLY, allowNull: true },
+  funcao: { type: DataTypes.STRING(150), allowNull: true },
+  departamento: { type: DataTypes.STRING(150), allowNull: true },
+  jornada: { type: DataTypes.STRING(50), allowNull: true },
+  escala: { type: DataTypes.STRING(50), allowNull: true },
+  banco_horas_ativo: { type: DataTypes.BOOLEAN, defaultValue: false },
+
   criado_em: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
   atualizado_em: { type: DataTypes.DATE, defaultValue: DataTypes.NOW }
 }, { 
@@ -36,6 +45,7 @@ const Colaborador = sequelize.define('colaboradores', {
     beforeUpdate: (colab) => { colab.atualizado_em = new Date(); }
   }
 });
+
 
 // =====================
 // Tag
