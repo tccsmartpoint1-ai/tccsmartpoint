@@ -7,7 +7,6 @@ if (!token) window.location.replace("index.html");
 window.history.pushState(null, null, window.location.href);
 window.onpopstate = () => window.history.pushState(null, null, window.location.href);
 
-// Logout
 document.getElementById("logoutBtn").addEventListener("click", () => {
   localStorage.removeItem("token");
   window.location.replace("index.html");
@@ -32,18 +31,17 @@ document.addEventListener("DOMContentLoaded", () => {
 //        MODAL
 // ===============================
 const modalOverlay = document.getElementById("modalOverlay");
-const modal = document.getElementById("modalColaborador");
 const btnNovo = document.getElementById("btnNovo");
 const btnClose = document.getElementById("modalClose");
 const btnCancel = document.getElementById("modalCancel");
-const form = document.getElementById("formUsuariosModal");
 
 function abrirModal() {
   modalOverlay.style.display = "flex";
 }
+
 function fecharModal() {
   modalOverlay.style.display = "none";
-  delete form.dataset.editId;
+  form.dataset.editId = "";
   form.reset();
 }
 
@@ -56,7 +54,7 @@ modalOverlay.addEventListener("click", (e) => {
 });
 
 // ===============================
-//         API + FORMULÁRIO
+//    API + FORMULÁRIO
 // ===============================
 document.addEventListener("DOMContentLoaded", () => {
   const API = "https://tccsmartpoint.onrender.com/api";
@@ -64,19 +62,23 @@ document.addEventListener("DOMContentLoaded", () => {
   const tabelaBody = document.querySelector("#tblUsuarios tbody");
   const inputBuscar = document.getElementById("buscar");
 
-  // Campos do modal
-  const fNome = document.getElementById("m_nome");
-  const fCPF = document.getElementById("m_cpf");
-  const fEmail = document.getElementById("m_email");
-  const fTag = document.getElementById("m_tag");
-  const fStatus = document.getElementById("m_status");
+  const form = document.getElementById("formModal");
+
+  const fNome = document.getElementById("f_nome");
+  const fCPF = document.getElementById("f_cpf");
+  const fEmail = document.getElementById("f_email");
+  const fAdmissao = document.getElementById("f_admissao");
+  const fFuncao = document.getElementById("f_funcao");
+  const fDepartamento = document.getElementById("f_departamento");
+  const fJornada = document.getElementById("f_jornada");
+  const fEscala = document.getElementById("f_escala");
+  const fTag = document.getElementById("f_tag");
+  const fStatus = document.getElementById("f_status");
+  const fBancoHoras = document.getElementById("f_bancoHoras");
 
   let listaColaboradores = [];
   let mapaTags = {};
 
-  // ===============================
-  //     MÁSCARA CPF
-  // ===============================
   function mascaraCPF(v) {
     v = v.replace(/\D/g, "").slice(0, 11);
     let out = "";
@@ -91,9 +93,6 @@ document.addEventListener("DOMContentLoaded", () => {
     e.target.value = mascaraCPF(e.target.value);
   });
 
-  // ===============================
-  // CARREGAR COLABORADORES + TAGS
-  // ===============================
   async function carregarDados() {
     try {
       const [resColab, resTags] = await Promise.all([
@@ -115,9 +114,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // ===============================
-  //     RENDER TABELA
-  // ===============================
   function renderTabela(filtro = "") {
     tabelaBody.innerHTML = "";
     const termo = filtro.trim().toLowerCase();
@@ -145,17 +141,17 @@ document.addEventListener("DOMContentLoaded", () => {
             <button class="action-delete" data-id="${c.id}">✖</button>
           </div>
         </td>
-        <td>${c.nome}</td>
-        <td>${c.cpf}</td>
-        <td>-</td>
-        <td>-</td>
+        <td>${c.nome || "-"}</td>
+        <td>${c.cpf || "-"}</td>
+        <td>${c.departamento || "-"}</td>
+        <td>${c.funcao || "-"}</td>
         <td>${tag}</td>
         <td>
           <span class="badge ${c.ativo ? "badge-success" : "badge-muted"}">
             ${c.ativo ? "Ativo" : "Inativo"}
           </span>
         </td>
-        <td>${c.criado_em ? c.criado_em.split("T")[0] : "-"}</td>
+        <td>${c.data_admissao || "-"}</td>
       `;
 
       tabelaBody.appendChild(tr);
@@ -166,15 +162,11 @@ document.addEventListener("DOMContentLoaded", () => {
     renderTabela(e.target.value);
   });
 
-  // ===============================
-  //      AÇÕES DA TABELA
-  // ===============================
   tabelaBody.addEventListener("click", async (e) => {
     const btn = e.target;
     const id = btn.dataset.id;
     if (!id) return;
 
-    // EXCLUIR
     if (btn.classList.contains("action-delete")) {
       if (!confirm("Deseja excluir este colaborador?")) return;
 
@@ -187,7 +179,6 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // ATIVAR / INATIVAR
     if (btn.classList.contains("action-lock")) {
       await fetch(`${API}/colaboradores/${id}/toggle`, {
         method: "PUT",
@@ -198,15 +189,20 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // EDITAR
     if (btn.classList.contains("action-edit")) {
       const colab = listaColaboradores.find(c => c.id == id);
       if (!colab) return;
 
-      fNome.value = colab.nome;
-      fCPF.value = mascaraCPF(colab.cpf);
+      fNome.value = colab.nome || "";
+      fCPF.value = mascaraCPF(colab.cpf || "");
       fEmail.value = colab.email || "";
+      fAdmissao.value = colab.data_admissao || "";
+      fFuncao.value = colab.funcao || "";
+      fDepartamento.value = colab.departamento || "";
+      fJornada.value = colab.jornada || "";
+      fEscala.value = colab.escala || "";
       fStatus.value = colab.ativo ? "true" : "false";
+      fBancoHoras.value = colab.banco_horas_ativo ? "true" : "false";
       fTag.value = mapaTags[colab.id] || "";
 
       form.dataset.editId = id;
@@ -215,9 +211,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // ===============================
-  //    SALVAR (NOVO + EDITAR)
-  // ===============================
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -225,7 +218,13 @@ document.addEventListener("DOMContentLoaded", () => {
       nome: fNome.value.trim(),
       cpf: fCPF.value.replace(/\D/g, ""),
       email: fEmail.value.trim(),
-      ativo: fStatus.value === "true"
+      data_admissao: fAdmissao.value,
+      funcao: fFuncao.value,
+      departamento: fDepartamento.value,
+      jornada: fJornada.value,
+      escala: fEscala.value,
+      ativo: fStatus.value === "true",
+      banco_horas_ativo: fBancoHoras.value === "true"
     };
 
     const tagUid = fTag.value.trim().toUpperCase();
@@ -238,7 +237,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let colab;
 
-    // EDITAR
     if (editId) {
       const res = await fetch(`${API}/colaboradores/${editId}`, {
         method: "PUT",
@@ -248,10 +246,10 @@ document.addEventListener("DOMContentLoaded", () => {
         },
         body: JSON.stringify(payload)
       });
+
       colab = await res.json();
 
-      // atualizar TAG existente
-      await fetch(`${API}/tags/updateByColab/${editId}`, {
+      await fetch(`${API}/colaboradores/${editId}/tag`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -259,10 +257,7 @@ document.addEventListener("DOMContentLoaded", () => {
         },
         body: JSON.stringify({ uid: tagUid })
       });
-    }
-
-    // CADASTRAR NOVO
-    else {
+    } else {
       const res = await fetch(`${API}/colaboradores`, {
         method: "POST",
         headers: {
@@ -271,6 +266,7 @@ document.addEventListener("DOMContentLoaded", () => {
         },
         body: JSON.stringify(payload)
       });
+
       colab = await res.json();
 
       await fetch(`${API}/tags`, {
