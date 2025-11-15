@@ -3,7 +3,8 @@ const router = express.Router();
 const { Colaborador, Tag } = require('../models/index');
 const { Op } = require('sequelize');
 const auth = require('../middleware/auth');
-const uploadFoto = require('../middleware/uploadFoto'); // <-- ADICIONADO
+const uploadFoto = require('../middleware/uploadFoto');
+
 
 // ===========================
 // LISTAR
@@ -12,6 +13,7 @@ router.get('/', auth, async (req, res) => {
   try {
     const { page = 1, limit = 20, q } = req.query;
     const offset = (page - 1) * limit;
+
     const where = q ? { nome: { [Op.like]: `%${q}%` } } : {};
 
     const rows = await Colaborador.findAll({
@@ -26,6 +28,7 @@ router.get('/', auth, async (req, res) => {
     res.status(500).json({ error: 'Erro ao listar colaboradores' });
   }
 });
+
 
 // ===========================
 // CRIAR
@@ -63,50 +66,52 @@ router.post('/', auth, async (req, res) => {
       jornada,
       escala,
       banco_horas_ativo,
-      foto: null // <-- garante que existe o campo
+      foto_url: null       // <- CAMPO CORRETO
     });
 
     res.status(201).json(created);
+
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
 });
+
 
 // ===========================
 // EDITAR
 // ===========================
 router.put('/:id', auth, async (req, res) => {
   try {
-    const id = req.params.id;
-
-    const reg = await Colaborador.findByPk(id);
+    const reg = await Colaborador.findByPk(req.params.id);
     if (!reg) return res.status(404).json({ error: 'Colaborador não encontrado' });
 
     await reg.update(req.body);
     res.json(reg);
+
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
 });
+
 
 // ===========================
 // REMOVER
 // ===========================
 router.delete('/:id', auth, async (req, res) => {
   try {
-    const id = req.params.id;
-
-    const reg = await Colaborador.findByPk(id);
+    const reg = await Colaborador.findByPk(req.params.id);
     if (!reg) return res.status(404).json({ error: 'Colaborador não encontrado' });
 
     await reg.destroy();
-    await Tag.update({ colaborador_id: null }, { where: { colaborador_id: id } });
+    await Tag.update({ colaborador_id: null }, { where: { colaborador_id: req.params.id } });
 
     res.json({ success: true });
+
   } catch (err) {
     res.status(500).json({ error: 'Erro ao remover colaborador' });
   }
 });
+
 
 // ===========================
 // ATIVAR / INATIVAR
@@ -120,20 +125,22 @@ router.put('/:id/toggle', auth, async (req, res) => {
     await reg.save();
 
     res.json({ success: true, ativo: reg.ativo });
+
   } catch (err) {
     res.status(500).json({ error: 'Erro ao alterar status' });
   }
 });
 
+
 // ===========================
-// ATUALIZAR TAG AO EDITAR
+// ATUALIZAR TAG
 // ===========================
 router.put('/:id/tag', auth, async (req, res) => {
   try {
     const { uid } = req.body;
-    const colaborador_id = req.params.id;
-
     if (!uid) return res.status(400).json({ error: 'UID da tag é obrigatório' });
+
+    const colaborador_id = req.params.id;
 
     await Tag.update({ colaborador_id: null }, { where: { uid } });
 
@@ -150,37 +157,38 @@ router.put('/:id/tag', auth, async (req, res) => {
     }
 
     res.json({ success: true, tag });
+
   } catch (err) {
     res.status(500).json({ error: 'Erro ao atualizar TAG' });
   }
 });
 
+
 // ======================================================
-// NOVA ROTA — UPLOAD DE FOTO
+// UPLOAD DE FOTO
 // ======================================================
 router.post('/:id/foto', auth, uploadFoto.single('foto'), async (req, res) => {
   try {
-    const id = req.params.id;
-    const reg = await Colaborador.findByPk(id);
-
+    const reg = await Colaborador.findByPk(req.params.id);
     if (!reg) return res.status(404).json({ error: 'Colaborador não encontrado' });
 
     if (!req.file) {
       return res.status(400).json({ error: 'Nenhuma foto enviada' });
     }
 
-    await reg.update({ foto: req.file.filename });
+    await reg.update({ foto_url: req.file.filename });
 
     res.json({
-     success: true,
-     message: "Foto enviada com sucesso",
-     file: req.file.filename,
-     url: `${req.protocol}://${req.get("host")}/uploads/fotos/${req.file.filename}`
-});
+      success: true,
+      message: "Foto enviada com sucesso",
+      file: req.file.filename,
+      url: `${req.protocol}://${req.get("host")}/uploads/fotos/${req.file.filename}`
+    });
 
   } catch (err) {
     res.status(500).json({ error: 'Erro ao enviar foto' });
   }
 });
+
 
 module.exports = router;

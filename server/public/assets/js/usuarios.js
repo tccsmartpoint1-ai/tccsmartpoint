@@ -168,7 +168,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ---------------------------------
-  // RENDER TABELA (COM FOTO)
+  // RENDER TABELA
   // ---------------------------------
   function renderTabela(filtro = "") {
     tabelaBody.innerHTML = "";
@@ -187,8 +187,8 @@ document.addEventListener("DOMContentLoaded", () => {
     dadosFiltrados.forEach((c) => {
       const tr = document.createElement("tr");
 
-      const fotoUrl = c.foto
-        ? `https://tccsmartpoint.onrender.com/uploads/fotos/${c.foto}`
+      const fotoUrl = c.foto_url
+        ? `https://tccsmartpoint.onrender.com/uploads/fotos/${c.foto_url}`
         : "../assets/img/fotos/default.png";
 
       tr.innerHTML = `
@@ -257,10 +257,13 @@ document.addEventListener("DOMContentLoaded", () => {
       fNome.value = c.nome;
       fCPF.value = c.cpf;
       fEmail.value = c.email;
-      fAdmissao.value = c.data_admissao;
+
+      fAdmissao.value = c.data_admissao ? c.data_admissao.slice(0, 10) : "";
+
       fFuncao.value = c.funcao;
       fDepartamento.value = c.departamento;
 
+      // Jornada
       if (["5x2","6x1","12x36","24x72","turno fixo","revezamento","plantão"].includes(c.jornada)) {
         fJornada.value = c.jornada;
         boxJornadaCustom.classList.add("hidden");
@@ -270,6 +273,7 @@ document.addEventListener("DOMContentLoaded", () => {
         fJornadaCustom.value = c.jornada;
       }
 
+      // Escala
       if (["normal","manhã","tarde","noturno","turnos alternados","plantão"].includes(c.escala)) {
         fEscala.value = c.escala;
         boxEscalaCustom.classList.add("hidden");
@@ -283,8 +287,8 @@ document.addEventListener("DOMContentLoaded", () => {
       fBancoHoras.value = c.banco_horas_ativo ? "true" : "false";
       fTag.value = mapaTags[c.id] || "";
 
-      previewFoto.src = c.foto
-        ? `https://tccsmartpoint.onrender.com/uploads/fotos/${c.foto}`
+      previewFoto.src = c.foto_url
+        ? `https://tccsmartpoint.onrender.com/uploads/fotos/${c.foto_url}`
         : "../assets/img/fotos/default.png";
 
       form.dataset.editId = id;
@@ -293,7 +297,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // ---------------------------------
-  // SUBMIT (CRIAR / EDITAR) — JSON + FOTO SEPARADA
+  // SUBMIT (CRIAR / EDITAR)
   // ---------------------------------
   form.onsubmit = async (e) => {
     e.preventDefault();
@@ -322,25 +326,25 @@ document.addEventListener("DOMContentLoaded", () => {
     // EDITAR
     // ========================
     if (editId) {
-      const fd = new FormData();
-      fd.append("nome", fNome.value);
-      fd.append("cpf", fCPF.value.replace(/\D/g, ""));
-      fd.append("email", fEmail.value);
-      fd.append("data_admissao", fAdmissao.value);
-      fd.append("funcao", fFuncao.value);
-      fd.append("departamento", fDepartamento.value);
-      fd.append("jornada", jornadaFinal);
-      fd.append("escala", escalaFinal);
-      fd.append("ativo", fStatus.value);
-      fd.append("banco_horas_ativo", fBancoHoras.value);
-
-      const res = await fetch(`${API}/colaboradores/${editId}`, {
+      await fetch(`${API}/colaboradores/${editId}`, {
         method: "PUT",
-        headers: { Authorization: `Bearer ${token}` },
-        body: fd,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          nome: fNome.value,
+          cpf: fCPF.value.replace(/\D/g, ""),
+          email: fEmail.value,
+          data_admissao: fAdmissao.value,
+          funcao: fFuncao.value,
+          departamento: fDepartamento.value,
+          jornada: jornadaFinal,
+          escala: escalaFinal,
+          ativo: fStatus.value,
+          banco_horas_ativo: fBancoHoras.value
+        })
       });
-
-      colab = await res.json();
 
       if (fFoto.files.length > 0) {
         const fdFoto = new FormData();
@@ -349,7 +353,7 @@ document.addEventListener("DOMContentLoaded", () => {
         await fetch(`${API}/colaboradores/${editId}/foto`, {
           method: "POST",
           headers: { Authorization: `Bearer ${token}` },
-          body: fdFoto,
+          body: fdFoto
         });
       }
 
@@ -357,14 +361,14 @@ document.addEventListener("DOMContentLoaded", () => {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`
         },
-        body: JSON.stringify({ uid: tagUid }),
+        body: JSON.stringify({ uid: tagUid })
       });
 
     } else {
       // ========================
-      // CRIAR — JSON COMO ANTES
+      // CRIAR
       // ========================
       const res = await fetch(`${API}/colaboradores`, {
         method: "POST",
@@ -395,7 +399,7 @@ document.addEventListener("DOMContentLoaded", () => {
         await fetch(`${API}/colaboradores/${colab.id}/foto`, {
           method: "POST",
           headers: { Authorization: `Bearer ${token}` },
-          body: fdFoto,
+          body: fdFoto
         });
       }
 
@@ -403,13 +407,13 @@ document.addEventListener("DOMContentLoaded", () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`
         },
         body: JSON.stringify({
           uid: tagUid,
           colaborador_id: colab.id,
-          ativo: true,
-        }),
+          ativo: true
+        })
       });
     }
 

@@ -1,6 +1,7 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/db');
 
+
 // =====================
 // Admin
 // =====================
@@ -13,10 +14,11 @@ const Admin = sequelize.define('admins', {
   ativo: { type: DataTypes.BOOLEAN, defaultValue: true },
   criado_em: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
   atualizado_em: { type: DataTypes.DATE, defaultValue: DataTypes.NOW }
-}, { 
+}, {
   tableName: 'admins',
   timestamps: false
 });
+
 
 // =====================
 // Colaborador
@@ -28,7 +30,10 @@ const Colaborador = sequelize.define('colaboradores', {
   email: { type: DataTypes.STRING(255) },
   ativo: { type: DataTypes.BOOLEAN, defaultValue: true },
 
-  // NOVOS CAMPOS
+  // FOTO DO COLABORADOR — CAMPO CORRETO
+  foto_url: { type: DataTypes.STRING(255), allowNull: true },
+
+  // CAMPOS ADICIONAIS
   data_admissao: { type: DataTypes.DATEONLY, allowNull: true },
   funcao: { type: DataTypes.STRING(150), allowNull: true },
   departamento: { type: DataTypes.STRING(150), allowNull: true },
@@ -38,7 +43,7 @@ const Colaborador = sequelize.define('colaboradores', {
 
   criado_em: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
   atualizado_em: { type: DataTypes.DATE, defaultValue: DataTypes.NOW }
-}, { 
+}, {
   tableName: 'colaboradores',
   timestamps: false,
   hooks: {
@@ -57,10 +62,11 @@ const Tag = sequelize.define('tags', {
   colaborador_id: { type: DataTypes.INTEGER, allowNull: true },
   ativo: { type: DataTypes.BOOLEAN, defaultValue: true },
   criado_em: { type: DataTypes.DATE, defaultValue: DataTypes.NOW }
-}, { 
+}, {
   tableName: 'tags',
   timestamps: false
 });
+
 
 // =====================
 // Dispositivo
@@ -71,10 +77,11 @@ const Dispositivo = sequelize.define('dispositivos', {
   identificador: { type: DataTypes.STRING(100), unique: true },
   descricao: { type: DataTypes.TEXT },
   criado_em: { type: DataTypes.DATE, defaultValue: DataTypes.NOW }
-}, { 
+}, {
   tableName: 'dispositivos',
   timestamps: false
 });
+
 
 // =====================
 // Leituras Reais
@@ -93,13 +100,14 @@ const LeiturasReais = sequelize.define('leituras_reais', {
   raw_payload: { type: DataTypes.JSONB },
   ip: { type: DataTypes.STRING(45) },
   criado_em: { type: DataTypes.DATE, defaultValue: DataTypes.NOW }
-}, { 
+}, {
   tableName: 'leituras_reais',
   timestamps: false
 });
 
+
 // =====================
-// Associações CORRIGIDAS
+// Associações
 // =====================
 
 // TAG ↔ COLABORADOR
@@ -108,7 +116,7 @@ Tag.belongsTo(Colaborador, { foreignKey: 'colaborador_id', onDelete: 'SET NULL' 
 
 // COLABORADOR ↔ LEITURAS
 Colaborador.hasMany(LeiturasReais, { foreignKey: 'colaborador_id' });
-LeiturasReais.belongsTo(Colaborador, { 
+LeiturasReais.belongsTo(Colaborador, {
   foreignKey: 'colaborador_id',
   as: 'colaborador',
   onDelete: 'SET NULL'
@@ -116,11 +124,12 @@ LeiturasReais.belongsTo(Colaborador, {
 
 // DISPOSITIVO ↔ LEITURAS
 Dispositivo.hasMany(LeiturasReais, { foreignKey: 'dispositivo_id' });
-LeiturasReais.belongsTo(Dispositivo, { 
+LeiturasReais.belongsTo(Dispositivo, {
   foreignKey: 'dispositivo_id',
   as: 'dispositivo',
   onDelete: 'CASCADE'
 });
+
 
 // =====================
 // Exportação
