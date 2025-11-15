@@ -46,7 +46,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnNovo = document.getElementById("btnNovo");
   const btnClose = document.getElementById("modalClose");
   const btnCancel = document.getElementById("modalCancel");
-  const form = document.getElementById("formModal");
+  const form =
+    document.getElementById("formUsuariosModal") ||
+    document.getElementById("formModal");
 
   function abrirModal() {
     if (modalOverlay) modalOverlay.style.display = "flex";
@@ -55,7 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function fecharModal() {
     if (modalOverlay) modalOverlay.style.display = "none";
     if (form) {
-      form.dataset.editId = "";
+      delete form.dataset.editId;
       form.reset();
     }
   }
@@ -119,8 +121,10 @@ document.addEventListener("DOMContentLoaded", () => {
         fetch(`${API}/tags`,          { headers: { Authorization: `Bearer ${token}` } })
       ]);
 
-      listaColaboradores = await resColab.json();
-      const tags = await resTags.json();
+      const colabs = await resColab.json();
+      const tags   = await resTags.json();
+
+      listaColaboradores = Array.isArray(colabs) ? colabs : [];
 
       mapaTags = {};
       if (Array.isArray(tags)) {
@@ -130,7 +134,8 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       renderTabela();
-    } catch {
+    } catch (err) {
+      console.error("Erro ao carregar dados:", err);
       tabelaBody.innerHTML = "<tr><td colspan='8'>Erro ao carregar colaboradores.</td></tr>";
     }
   }
@@ -203,23 +208,43 @@ document.addEventListener("DOMContentLoaded", () => {
       if (btn.classList.contains("action-delete")) {
         if (!confirm("Deseja excluir este colaborador?")) return;
 
-        await fetch(`${API}/colaboradores/${id}`, {
-          method: "DELETE",
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        try {
+          const resp = await fetch(`${API}/colaboradores/${id}`, {
+            method: "DELETE",
+            headers: { Authorization: `Bearer ${token}` }
+          });
 
-        carregarDados();
+          if (!resp.ok) {
+            const erro = await resp.json().catch(() => ({}));
+            alert(erro.error || "Erro ao excluir colaborador.");
+          } else {
+            carregarDados();
+          }
+        } catch (err) {
+          alert("Erro de comunicação ao excluir.");
+        }
+
         return;
       }
 
       // ativar / inativar
       if (btn.classList.contains("action-lock")) {
-        await fetch(`${API}/colaboradores/${id}/toggle`, {
-          method: "PUT",
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        try {
+          const resp = await fetch(`${API}/colaboradores/${id}/toggle`, {
+            method: "PUT",
+            headers: { Authorization: `Bearer ${token}` }
+          });
 
-        carregarDados();
+          if (!resp.ok) {
+            const erro = await resp.json().catch(() => ({}));
+            alert(erro.error || "Erro ao alterar status.");
+          } else {
+            carregarDados();
+          }
+        } catch (err) {
+          alert("Erro de comunicação ao alterar status.");
+        }
+
         return;
       }
 
@@ -267,7 +292,7 @@ document.addEventListener("DOMContentLoaded", () => {
         banco_horas_ativo: fBancoHoras ? fBancoHoras.value === "true" : false
       };
 
-      const tagUid = fTag ? fTag.value.trim().toUpperCase() : "";
+      const tagUid = fTag && fTag.value ? fTag.value.trim().toUpperCase() : "";
       const editId = form.dataset.editId;
 
       if (!payload.nome || !payload.cpf || !tagUid) {
@@ -275,64 +300,90 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      let colab;
+      try {
+        let colab;
 
-      // editar
-      if (editId) {
-        const res = await fetch(`${API}/colaboradores/${editId}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`
-          },
-          body: JSON.stringify(payload)
-        });
+        // editar
+        if (editId) {
+          const res = await fetch(`${API}/colaboradores/${editId}`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify(payload)
+          });
 
-        colab = await res.json();
+          const data = await res.json();
+          if (!res.ok) {
+            alert(data.error || "Erro ao editar colaborador.");
+            return;
+          }
+          colab = data;
 
-        await fetch(`${API}/colaboradores/${editId}/tag`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`
-          },
-          body: JSON.stringify({ uid: tagUid })
-        });
+          const resTag = await fetch(`${API}/colaboradores/${editId}/tag`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify({ uid: tagUid })
+          });
+
+          const dataTag = await resTag.json();
+          if (!resTag.ok) {
+            alert(dataTag.error || "Erro ao atualizar TAG.");
+            return;
+          }
+        }
+        // novo
+        else {
+          const res = await fetch(`${API}/colaboradores`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify(payload)
+          });
+
+          const data = await res.json();
+          if (!res.ok) {
+            alert(data.error || "Erro ao cadastrar colaborador.");
+            return;
+          }
+          colab = data;
+
+          const resTag = await fetch(`${API}/tags`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify({
+              uid: tagUid,
+              colaborador_id: colab.id,
+              ativo: true
+            })
+          });
+
+          const dataTag = await resTag.json();
+          if (!resTag.ok) {
+            alert(dataTag.error || "Erro ao cadastrar TAG.");
+            return;
+          }
+        }
+
+        form.reset();
+        delete form.dataset.editId;
+        fecharModal();
+        carregarDados();
+      } catch (err) {
+        console.error("Erro no submit:", err);
+        alert("Erro de comunicação ao salvar colaborador.");
       }
-      // novo
-      else {
-        const res = await fetch(`${API}/colaboradores`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`
-          },
-          body: JSON.stringify(payload)
-        });
-
-        colab = await res.json();
-
-        await fetch(`${API}/tags`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`
-          },
-          body: JSON.stringify({
-            uid: tagUid,
-            colaborador_id: colab.id,
-            ativo: true
-          })
-        });
-      }
-
-      form.reset();
-      delete form.dataset.editId;
-      fecharModal();
-      carregarDados();
     });
   }
 
-  // carrega dados ao abrir página
   carregarDados();
 });

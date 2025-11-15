@@ -18,7 +18,7 @@ router.get('/', auth, async (req, res) => {
       limit: parseInt(limit),
       offset,
       order: [['nome', 'ASC']]
-    });f
+    });
 
     res.json(rows);
   } catch (err) {
@@ -80,7 +80,7 @@ router.put('/:id', auth, async (req, res) => {
     const reg = await Colaborador.findByPk(id);
     if (!reg) return res.status(404).json({ error: 'Colaborador não encontrado' });
 
-    await reg.update(req.body); // atualiza tudo que vier do front
+    await reg.update(req.body); 
     res.json(reg);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -133,10 +133,8 @@ router.put('/:id/tag', auth, async (req, res) => {
 
     if (!uid) return res.status(400).json({ error: 'UID da tag é obrigatório' });
 
-    // Desvincula essa TAG de outro colaborador, se existir
     await Tag.update({ colaborador_id: null }, { where: { uid } });
 
-    // Vincula ao colaborador atual
     let tag = await Tag.findOne({ where: { uid } });
 
     if (!tag) {
