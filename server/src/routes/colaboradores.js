@@ -18,7 +18,7 @@ router.get('/', auth, async (req, res) => {
       limit: parseInt(limit),
       offset,
       order: [['nome', 'ASC']]
-    });
+    });f
 
     res.json(rows);
   } catch (err) {
