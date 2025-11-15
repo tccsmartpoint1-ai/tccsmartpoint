@@ -172,10 +172,12 @@ router.post('/:id/foto', auth, uploadFoto.single('foto'), async (req, res) => {
     await reg.update({ foto: req.file.filename });
 
     res.json({
-      success: true,
-      message: "Foto enviada com sucesso",
-      file: req.file.filename
-    });
+     success: true,
+     message: "Foto enviada com sucesso",
+     file: req.file.filename,
+     url: `${req.protocol}://${req.get("host")}/uploads/fotos/${req.file.filename}`
+});
+
   } catch (err) {
     res.status(500).json({ error: 'Erro ao enviar foto' });
   }

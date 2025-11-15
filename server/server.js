@@ -24,7 +24,12 @@ app.use(cors({
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
 app.use(express.json());
+
+// SERVE ARQUIVOS DO FRONT
 app.use(express.static(path.join(__dirname, 'public')));
+
+// SERVE ARQUIVOS DE UPLOAD DAS FOTOS (NECESSÁRIO)
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // ===== Rotas =====
 const leiturasRoutes = require('./src/routes/leituras')(io); 

@@ -64,7 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function abrirModal() {
     modalOverlay.style.display = "flex";
-    previewFoto.src = "../assets/img/fotos/default.png";  // reset imagem
+    previewFoto.src = "../assets/img/fotos/default.png";
     if (fFoto) fFoto.value = "";
   }
 
@@ -168,7 +168,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ---------------------------------
-  // RENDER TABELA
+  // RENDER TABELA (COM FOTO)
   // ---------------------------------
   function renderTabela(filtro = "") {
     tabelaBody.innerHTML = "";
@@ -180,14 +180,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (dadosFiltrados.length === 0) {
       tabelaBody.innerHTML =
-        "<tr><td colspan='8'>Nenhum colaborador encontrado.</td></tr>";
+        "<tr><td colspan='9'>Nenhum colaborador encontrado.</td></tr>";
       return;
     }
 
     dadosFiltrados.forEach((c) => {
       const tr = document.createElement("tr");
 
+      const fotoUrl = c.foto
+        ? `https://tccsmartpoint.onrender.com/uploads/fotos/${c.foto}`
+        : "../assets/img/fotos/default.png";
+
       tr.innerHTML = `
+        <td><img src="${fotoUrl}" style="width:50px; height:50px; border-radius:6px; object-fit:cover;"></td>
+
         <td>
           <div class="action-buttons">
             <button class="action-edit" data-id="${c.id}">✎</button>
@@ -195,16 +201,19 @@ document.addEventListener("DOMContentLoaded", () => {
             <button class="action-delete" data-id="${c.id}">✖</button>
           </div>
         </td>
+
         <td>${c.nome}</td>
         <td>${c.cpf}</td>
         <td>${c.departamento || "-"}</td>
         <td>${c.funcao || "-"}</td>
         <td>${mapaTags[c.id] || "-"}</td>
+
         <td>
           <span class="badge ${c.ativo ? "badge-success" : "badge-muted"}">
             ${c.ativo ? "Ativo" : "Inativo"}
           </span>
         </td>
+
         <td>${c.data_admissao || "-"}</td>
       `;
 
@@ -276,10 +285,11 @@ document.addEventListener("DOMContentLoaded", () => {
       fBancoHoras.value = c.banco_horas_ativo ? "true" : "false";
       fTag.value = mapaTags[c.id] || "";
 
-      previewFoto.src =
-        c.foto_url
-          ? `${API.replace("/api", "")}/uploads/colaboradores/${c.foto_url}`
-          : "../assets/img/fotos/default.png";
+      if (c.foto) {
+        previewFoto.src = `https://tccsmartpoint.onrender.com/uploads/fotos/${c.foto}`;
+      } else {
+        previewFoto.src = "../assets/img/fotos/default.png";
+      }
 
       form.dataset.editId = id;
       abrirModal();
@@ -287,7 +297,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // ---------------------------------
-  // SUBMIT (CRIAR / EDITAR) ⬇️ COM FOTO
+  // SUBMIT (CRIAR / EDITAR) COM FOTO
   // ---------------------------------
   form.onsubmit = async (e) => {
     e.preventDefault();
@@ -310,7 +320,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // FORM DATA PARA ENVIAR FOTO
+    // FORM DATA para dados comuns
     const fd = new FormData();
     fd.append("nome", fNome.value);
     fd.append("cpf", fCPF.value.replace(/\D/g, ""));
@@ -323,12 +333,11 @@ document.addEventListener("DOMContentLoaded", () => {
     fd.append("ativo", fStatus.value);
     fd.append("banco_horas_ativo", fBancoHoras.value);
 
-    if (fFoto.files.length > 0) {
-      fd.append("foto", fFoto.files[0]);
-    }
-
     let colab;
 
+    // ========================
+    // EDITAR
+    // ========================
     if (editId) {
       const res = await fetch(`${API}/colaboradores/${editId}`, {
         method: "PUT",
@@ -338,6 +347,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
       colab = await res.json();
 
+      // Envia foto se houve nova seleção
+      if (fFoto.files.length > 0) {
+        const fdFoto = new FormData();
+        fdFoto.append("foto", fFoto.files[0]);
+
+        await fetch(`${API}/colaboradores/${editId}/foto`, {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+          body: fdFoto,
+        });
+      }
+
+      // Atualiza TAG
       await fetch(`${API}/colaboradores/${editId}/tag`, {
         method: "PUT",
         headers: {
@@ -346,7 +368,11 @@ document.addEventListener("DOMContentLoaded", () => {
         },
         body: JSON.stringify({ uid: tagUid }),
       });
+
     } else {
+      // ========================
+      // CRIAR
+      // ========================
       const res = await fetch(`${API}/colaboradores`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
@@ -355,6 +381,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
       colab = await res.json();
 
+      // Enviar foto (se houver)
+      if (fFoto.files.length > 0) {
+        const fdFoto = new FormData();
+        fdFoto.append("foto", fFoto.files[0]);
+
+        await fetch(`${API}/colaboradores/${colab.id}/foto`, {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+          body: fdFoto,
+        });
+      }
+
+      // Criar TAG
       await fetch(`${API}/tags`, {
         method: "POST",
         headers: {
