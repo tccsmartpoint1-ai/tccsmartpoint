@@ -86,6 +86,27 @@
         <form id="formModal" autocomplete="off">
           <div class="form-grid">
 
+            <!-- ===========================
+                 FOTO DO COLABORADOR
+            ============================ -->
+            <div class="group-title">Foto do colaborador</div>
+
+            <div class="form-field" style="grid-column: 1 / -1; display:flex; align-items:center; gap:20px;">
+              <img id="previewFoto" 
+                  src="../assets/img/fotos/default.png" 
+                  alt="Foto" 
+                  style="width:110px; height:110px; border-radius:10px; object-fit:cover; border:1px solid #ccc;">
+              
+              <div>
+                <label for="f_foto">Selecionar foto</label>
+                <input type="file" id="f_foto" accept="image/*">
+                <p style="font-size:0.75rem; color:#777;">Formatos permitidos: JPG, PNG | Máx: 2MB</p>
+              </div>
+            </div>
+
+            <!-- ===========================
+                 DADOS PESSOAIS
+            ============================ -->
             <div class="group-title">Dados pessoais</div>
 
             <div class="form-field">
@@ -108,6 +129,9 @@
               <input type="date" id="f_admissao">
             </div>
 
+            <!-- ===========================
+                 HIERARQUIA
+            ============================ -->
             <div class="group-title">Hierarquia</div>
 
             <div class="form-field">
@@ -120,6 +144,9 @@
               <input type="text" id="f_departamento">
             </div>
 
+            <!-- ===========================
+                 JORNADA
+            ============================ -->
             <div class="group-title">Jornada de trabalho</div>
 
             <div class="form-field">
@@ -161,6 +188,9 @@
               <input type="text" id="f_escala_custom" placeholder="Ex: 2x2, 1x3, escala livre...">
             </div>
 
+            <!-- ===========================
+                 CONFIGURAÇÕES DE PONTO
+            ============================ -->
             <div class="group-title">Configurações de ponto</div>
 
             <div class="form-field">

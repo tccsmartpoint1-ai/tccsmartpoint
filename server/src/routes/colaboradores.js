@@ -3,6 +3,7 @@ const router = express.Router();
 const { Colaborador, Tag } = require('../models/index');
 const { Op } = require('sequelize');
 const auth = require('../middleware/auth');
+const uploadFoto = require('../middleware/uploadFoto'); // <-- ADICIONADO
 
 // ===========================
 // LISTAR
@@ -61,7 +62,8 @@ router.post('/', auth, async (req, res) => {
       departamento,
       jornada,
       escala,
-      banco_horas_ativo
+      banco_horas_ativo,
+      foto: null // <-- garante que existe o campo
     });
 
     res.status(201).json(created);
@@ -80,7 +82,7 @@ router.put('/:id', auth, async (req, res) => {
     const reg = await Colaborador.findByPk(id);
     if (!reg) return res.status(404).json({ error: 'Colaborador não encontrado' });
 
-    await reg.update(req.body); 
+    await reg.update(req.body);
     res.json(reg);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -150,6 +152,32 @@ router.put('/:id/tag', auth, async (req, res) => {
     res.json({ success: true, tag });
   } catch (err) {
     res.status(500).json({ error: 'Erro ao atualizar TAG' });
+  }
+});
+
+// ======================================================
+// NOVA ROTA — UPLOAD DE FOTO
+// ======================================================
+router.post('/:id/foto', auth, uploadFoto.single('foto'), async (req, res) => {
+  try {
+    const id = req.params.id;
+    const reg = await Colaborador.findByPk(id);
+
+    if (!reg) return res.status(404).json({ error: 'Colaborador não encontrado' });
+
+    if (!req.file) {
+      return res.status(400).json({ error: 'Nenhuma foto enviada' });
+    }
+
+    await reg.update({ foto: req.file.filename });
+
+    res.json({
+      success: true,
+      message: "Foto enviada com sucesso",
+      file: req.file.filename
+    });
+  } catch (err) {
+    res.status(500).json({ error: 'Erro ao enviar foto' });
   }
 });
 

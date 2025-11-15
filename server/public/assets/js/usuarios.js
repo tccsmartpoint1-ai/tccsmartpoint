@@ -47,14 +47,34 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnCancel = document.getElementById("modalCancel");
   const form = document.getElementById("formModal");
 
+  // FOTO — CAMPOS
+  const fFoto = document.getElementById("f_foto");
+  const previewFoto = document.getElementById("previewFoto");
+
+  // Preview imediata
+  if (fFoto) {
+    fFoto.onchange = () => {
+      const file = fFoto.files[0];
+      if (!file) return;
+
+      const url = URL.createObjectURL(file);
+      previewFoto.src = url;
+    };
+  }
+
   function abrirModal() {
     modalOverlay.style.display = "flex";
+    previewFoto.src = "../assets/img/fotos/default.png";  // reset imagem
+    if (fFoto) fFoto.value = "";
   }
 
   function fecharModal() {
     modalOverlay.style.display = "none";
     form.reset();
     delete form.dataset.editId;
+
+    previewFoto.src = "../assets/img/fotos/default.png";
+    if (fFoto) fFoto.value = "";
 
     boxJornadaCustom.classList.add("hidden");
     fJornadaCustom.value = "";
@@ -133,7 +153,7 @@ document.addEventListener("DOMContentLoaded", () => {
   async function carregarDados() {
     const [resColab, resTags] = await Promise.all([
       fetch(`${API}/colaboradores`, { headers: { Authorization: `Bearer ${token}` } }),
-      fetch(`${API}/tags`, { headers: { Authorization: `Bearer ${token}` } })
+      fetch(`${API}/tags`, { headers: { Authorization: `Bearer ${token}` } }),
     ]);
 
     listaColaboradores = await resColab.json();
@@ -180,9 +200,11 @@ document.addEventListener("DOMContentLoaded", () => {
         <td>${c.departamento || "-"}</td>
         <td>${c.funcao || "-"}</td>
         <td>${mapaTags[c.id] || "-"}</td>
-        <td><span class="badge ${c.ativo ? "badge-success" : "badge-muted"}">
+        <td>
+          <span class="badge ${c.ativo ? "badge-success" : "badge-muted"}">
             ${c.ativo ? "Ativo" : "Inativo"}
-        </span></td>
+          </span>
+        </td>
         <td>${c.data_admissao || "-"}</td>
       `;
 
@@ -205,7 +227,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!confirm("Excluir colaborador?")) return;
       await fetch(`${API}/colaboradores/${id}`, {
         method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
       return carregarDados();
     }
@@ -214,7 +236,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (btn.classList.contains("action-lock")) {
       await fetch(`${API}/colaboradores/${id}/toggle`, {
         method: "PUT",
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
       return carregarDados();
     }
@@ -254,13 +276,18 @@ document.addEventListener("DOMContentLoaded", () => {
       fBancoHoras.value = c.banco_horas_ativo ? "true" : "false";
       fTag.value = mapaTags[c.id] || "";
 
+      previewFoto.src =
+        c.foto_url
+          ? `${API.replace("/api", "")}/uploads/colaboradores/${c.foto_url}`
+          : "../assets/img/fotos/default.png";
+
       form.dataset.editId = id;
       abrirModal();
     }
   };
 
   // ---------------------------------
-  // SUBMIT (CRIAR / EDITAR)
+  // SUBMIT (CRIAR / EDITAR) ⬇️ COM FOTO
   // ---------------------------------
   form.onsubmit = async (e) => {
     e.preventDefault();
@@ -275,25 +302,29 @@ document.addEventListener("DOMContentLoaded", () => {
         ? fEscalaCustom.value.trim()
         : fEscala.value;
 
-    const payload = {
-      nome: fNome.value,
-      cpf: fCPF.value.replace(/\D/g, ""),
-      email: fEmail.value,
-      data_admissao: fAdmissao.value,
-      funcao: fFuncao.value,
-      departamento: fDepartamento.value,
-      jornada: jornadaFinal,
-      escala: escalaFinal,
-      ativo: fStatus.value === "true",
-      banco_horas_ativo: fBancoHoras.value === "true",
-    };
-
     const tagUid = fTag.value.trim().toUpperCase();
     const editId = form.dataset.editId;
 
-    if (!payload.nome || !payload.cpf || !tagUid) {
+    if (!fNome.value || !fCPF.value.replace(/\D/g, "") || !tagUid) {
       alert("Preencha Nome, CPF e Tag RFID.");
       return;
+    }
+
+    // FORM DATA PARA ENVIAR FOTO
+    const fd = new FormData();
+    fd.append("nome", fNome.value);
+    fd.append("cpf", fCPF.value.replace(/\D/g, ""));
+    fd.append("email", fEmail.value);
+    fd.append("data_admissao", fAdmissao.value);
+    fd.append("funcao", fFuncao.value);
+    fd.append("departamento", fDepartamento.value);
+    fd.append("jornada", jornadaFinal);
+    fd.append("escala", escalaFinal);
+    fd.append("ativo", fStatus.value);
+    fd.append("banco_horas_ativo", fBancoHoras.value);
+
+    if (fFoto.files.length > 0) {
+      fd.append("foto", fFoto.files[0]);
     }
 
     let colab;
@@ -301,31 +332,25 @@ document.addEventListener("DOMContentLoaded", () => {
     if (editId) {
       const res = await fetch(`${API}/colaboradores/${editId}`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify(payload)
+        headers: { Authorization: `Bearer ${token}` },
+        body: fd,
       });
 
       colab = await res.json();
+
       await fetch(`${API}/colaboradores/${editId}/tag`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ uid: tagUid })
+        body: JSON.stringify({ uid: tagUid }),
       });
-
     } else {
       const res = await fetch(`${API}/colaboradores`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify(payload)
+        headers: { Authorization: `Bearer ${token}` },
+        body: fd,
       });
 
       colab = await res.json();
@@ -334,13 +359,13 @@ document.addEventListener("DOMContentLoaded", () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           uid: tagUid,
           colaborador_id: colab.id,
-          ativo: true
-        })
+          ativo: true,
+        }),
       });
     }
 
