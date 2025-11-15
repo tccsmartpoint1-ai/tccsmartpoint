@@ -5,7 +5,6 @@ const { Op } = require('sequelize');
 const auth = require('../middleware/auth');
 const uploadFoto = require('../middleware/uploadFoto');
 
-
 // ===========================
 // LISTAR
 // ===========================
@@ -24,11 +23,10 @@ router.get('/', auth, async (req, res) => {
     });
 
     res.json(rows);
-  } catch (err) {
+  } catch {
     res.status(500).json({ error: 'Erro ao listar colaboradores' });
   }
 });
-
 
 // ===========================
 // CRIAR
@@ -66,7 +64,7 @@ router.post('/', auth, async (req, res) => {
       jornada,
       escala,
       banco_horas_ativo,
-      foto_url: null       // <- CAMPO CORRETO
+      foto_url: null
     });
 
     res.status(201).json(created);
@@ -75,7 +73,6 @@ router.post('/', auth, async (req, res) => {
     res.status(400).json({ error: err.message });
   }
 });
-
 
 // ===========================
 // EDITAR
@@ -93,7 +90,6 @@ router.put('/:id', auth, async (req, res) => {
   }
 });
 
-
 // ===========================
 // REMOVER
 // ===========================
@@ -107,11 +103,10 @@ router.delete('/:id', auth, async (req, res) => {
 
     res.json({ success: true });
 
-  } catch (err) {
+  } catch {
     res.status(500).json({ error: 'Erro ao remover colaborador' });
   }
 });
-
 
 // ===========================
 // ATIVAR / INATIVAR
@@ -126,11 +121,10 @@ router.put('/:id/toggle', auth, async (req, res) => {
 
     res.json({ success: true, ativo: reg.ativo });
 
-  } catch (err) {
+  } catch {
     res.status(500).json({ error: 'Erro ao alterar status' });
   }
 });
-
 
 // ===========================
 // ATUALIZAR TAG
@@ -147,22 +141,17 @@ router.put('/:id/tag', auth, async (req, res) => {
     let tag = await Tag.findOne({ where: { uid } });
 
     if (!tag) {
-      tag = await Tag.create({
-        uid,
-        colaborador_id,
-        ativo: true
-      });
+      tag = await Tag.create({ uid, colaborador_id, ativo: true });
     } else {
       await tag.update({ colaborador_id });
     }
 
     res.json({ success: true, tag });
 
-  } catch (err) {
+  } catch {
     res.status(500).json({ error: 'Erro ao atualizar TAG' });
   }
 });
-
 
 // =============================================
 // UPLOAD DE FOTO (Cloudinary)
@@ -171,21 +160,16 @@ router.post("/:id/foto", auth, uploadFoto.single("foto"), async (req, res) => {
   try {
     const reg = await Colaborador.findByPk(req.params.id);
     if (!reg) return res.status(404).json({ error: "Colaborador não encontrado" });
-
-    if (!req.file) {
-      return res.status(400).json({ error: "Nenhuma foto enviada" });
-    }
+    if (!req.file) return res.status(400).json({ error: "Nenhuma foto enviada" });
 
     await reg.update({ foto_url: req.file.path });
 
     res.json({
       success: true,
-      message: "Foto enviada com sucesso",
-      file: req.file.path,
       url: req.file.path
     });
 
-  } catch (err) {
+  } catch {
     res.status(500).json({ error: "Erro ao enviar foto" });
   }
 });

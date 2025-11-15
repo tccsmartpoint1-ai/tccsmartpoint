@@ -6,11 +6,11 @@ const storage = new CloudinaryStorage({
   cloudinary,
   params: {
     folder: "smartpoint/colaboradores",
-    allowed_formats: ["jpg", "png", "jpeg"],
-    transformation: [{ width: 400, height: 400, crop: "fill" }]
+    allowed_formats: ["jpg", "jpeg", "png", "webp"],
+    transformation: [
+      { width: 400, height: 400, crop: "fill", gravity: "auto" }
+    ]
   }
 });
 
-const upload = multer({ storage });
-
-module.exports = upload;
+module.exports = multer({ storage });

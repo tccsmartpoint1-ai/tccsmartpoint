@@ -150,25 +150,24 @@ document.addEventListener("DOMContentLoaded", () => {
   let listaColaboradores = [];
   let mapaTags = {};
 
- async function carregarDados() {
-  const [resColab, resTags] = await Promise.all([
-    fetch(`${API}/colaboradores`, { headers: { Authorization: `Bearer ${token}` } }),
-    fetch(`${API}/tags`, { headers: { Authorization: `Bearer ${token}` } }),
-  ]);
+  async function carregarDados() {
+    const [resColab, resTags] = await Promise.all([
+      fetch(`${API}/colaboradores`, { headers: { Authorization: `Bearer ${token}` } }),
+      fetch(`${API}/tags`, { headers: { Authorization: `Bearer ${token}` } }),
+    ]);
 
-  listaColaboradores = await resColab.json();
-  const tags = await resTags.json();
+    listaColaboradores = await resColab.json();
+    const tags = await resTags.json();
 
-  mapaTags = {};
-  tags.forEach((t) => {
-    if (t.colaborador_id) mapaTags[t.colaborador_id] = t.uid;
-  });
+    mapaTags = {};
+    tags.forEach((t) => {
+      if (t.colaborador_id) mapaTags[t.colaborador_id] = t.uid;
+    });
 
-  // ➜ ATUALIZA O CONTADOR
-  document.getElementById("countColab").textContent = listaColaboradores.length;
+    document.getElementById("countColab").textContent = listaColaboradores.length;
 
-  renderTabela();
-}
+    renderTabela();
+  }
 
   // ---------------------------------
   // RENDER TABELA
@@ -177,26 +176,25 @@ document.addEventListener("DOMContentLoaded", () => {
     tabelaBody.innerHTML = "";
 
     const termo = filtro.toLowerCase();
-   const dadosFiltrados = listaColaboradores.filter((c) => {
-  const nome = c.nome.toLowerCase();
-  const cpf = (c.cpf || "").toString();
 
-  const cpfSemMascara = cpf.replace(/\D/g, "");
-  const termoSemMascara = termo.replace(/\D/g, "");
+    const dadosFiltrados = listaColaboradores.filter((c) => {
+      const nome = c.nome.toLowerCase();
+      const cpf = (c.cpf || "").toString();
 
-  const cpfFormatado =
-    cpf.length === 11
-      ? cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4")
-      : cpf;
+      const cpfSemMascara = cpf.replace(/\D/g, "");
+      const termoSemMascara = termo.replace(/\D/g, "");
 
-  return (
-    nome.includes(termo) ||
-    cpfSemMascara.includes(termoSemMascara) ||
-    cpfFormatado.includes(termo)
-  );
-});
+      const cpfFormatado =
+        cpf.length === 11
+          ? cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4")
+          : cpf;
 
-
+      return (
+        nome.includes(termo) ||
+        cpfSemMascara.includes(termoSemMascara) ||
+        cpfFormatado.includes(termo)
+      );
+    });
 
     if (dadosFiltrados.length === 0) {
       tabelaBody.innerHTML =
@@ -249,7 +247,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const id = btn.dataset.id;
     if (!id) return;
 
-    // DELETE
     if (btn.classList.contains("action-delete")) {
       if (!confirm("Excluir colaborador?")) return;
       await fetch(`${API}/colaboradores/${id}`, {
@@ -259,7 +256,6 @@ document.addEventListener("DOMContentLoaded", () => {
       return carregarDados();
     }
 
-    // TOGGLE
     if (btn.classList.contains("action-lock")) {
       await fetch(`${API}/colaboradores/${id}/toggle`, {
         method: "PUT",
@@ -268,7 +264,6 @@ document.addEventListener("DOMContentLoaded", () => {
       return carregarDados();
     }
 
-    // EDIT
     if (btn.classList.contains("action-edit")) {
       const c = listaColaboradores.find((x) => x.id == id);
 
@@ -281,7 +276,6 @@ document.addEventListener("DOMContentLoaded", () => {
       fFuncao.value = c.funcao;
       fDepartamento.value = c.departamento;
 
-      // Jornada
       if (["5x2","6x1","12x36","24x72","turno fixo","revezamento","plantão"].includes(c.jornada)) {
         fJornada.value = c.jornada;
         boxJornadaCustom.classList.add("hidden");
@@ -291,7 +285,6 @@ document.addEventListener("DOMContentLoaded", () => {
         fJornadaCustom.value = c.jornada;
       }
 
-      // Escala
       if (["normal","manhã","tarde","noturno","turnos alternados","plantão"].includes(c.escala)) {
         fEscala.value = c.escala;
         boxEscalaCustom.classList.add("hidden");
@@ -305,9 +298,8 @@ document.addEventListener("DOMContentLoaded", () => {
       fBancoHoras.value = c.banco_horas_ativo ? "true" : "false";
       fTag.value = mapaTags[c.id] || "";
 
-      previewFoto.src = c.foto_url
-        ? `https://tccsmartpoint.onrender.com/uploads/fotos/${c.foto_url}`
-        : "../assets/img/fotos/default.png";
+      // ✔ CORRIGIDO — usa URL do Cloudinary
+      previewFoto.src = c.foto_url || "../assets/img/fotos/default.png";
 
       form.dataset.editId = id;
       abrirModal();
@@ -340,9 +332,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let colab;
 
-    // ========================
-    // EDITAR
-    // ========================
     if (editId) {
       await fetch(`${API}/colaboradores/${editId}`, {
         method: "PUT",
@@ -385,9 +374,6 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
     } else {
-      // ========================
-      // CRIAR
-      // ========================
       const res = await fetch(`${API}/colaboradores`, {
         method: "POST",
         headers: {
