@@ -1,24 +1,27 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Smart Point — Colaboradores</title>
 
-  <link rel="stylesheet" href="../assets/css/baseuser.css" />
-  <link rel="stylesheet" href="../assets/css/usuarios.css" />
+  <link rel="stylesheet" href="../assets/css/baseuser.css">
+  <link rel="stylesheet" href="../assets/css/usuarios.css">
 </head>
 <body>
 
+  <!-- TOPBAR -->
   <header class="topbar">
     <button id="toggleSidebar">☰</button>
     <h1>Smart Point</h1>
+
     <div class="user-area">
       <img src="../assets/img/icons/usuario.png" class="profile-icon">
       <button id="logoutBtn">Sair</button>
     </div>
   </header>
 
+  <!-- SIDEBAR -->
   <aside class="sidebar expanded">
     <nav>
       <ul>
@@ -31,8 +34,10 @@
     </nav>
   </aside>
 
+  <!-- CONTEÚDO -->
   <main class="content content-usuarios">
 
+    <!-- HEADER DA LISTA -->
     <section class="header-row">
       <div>
         <h2>Colaboradores</h2>
@@ -43,9 +48,11 @@
       </div>
     </section>
 
+    <!-- LISTA -->
     <section class="card">
+
       <div class="lista-header">
-        <h3>Colaboradores cadastrados</h3>
+        <h3>Colaboradores cadastrados (<span id="countColab">0</span>)</h3>
         <div class="lista-actions">
           <input type="text" id="buscar" placeholder="Pesquisar por nome ou CPF...">
         </div>
@@ -69,6 +76,7 @@
           <tbody></tbody>
         </table>
       </div>
+
     </section>
 
   </main>
@@ -83,31 +91,23 @@
       </div>
 
       <div class="modal-body">
-
         <form id="formModal" autocomplete="off">
+
           <div class="form-grid">
 
-            <!-- ===========================
-                 FOTO DO COLABORADOR
-            ============================ -->
+            <!-- FOTO -->
             <div class="group-title">Foto do colaborador</div>
 
-            <div class="form-field" style="grid-column: 1 / -1; display:flex; align-items:center; gap:20px;">
-              <img id="previewFoto" 
-                  src="../assets/img/fotos/default.png" 
-                  alt="Foto" 
-                  style="width:110px; height:110px; border-radius:10px; object-fit:cover; border:1px solid #ccc;">
-              
+            <div class="foto-container">
+              <img id="previewFoto" src="../assets/img/fotos/default.png" alt="Foto">
               <div>
                 <label for="f_foto">Selecionar foto</label>
                 <input type="file" id="f_foto" accept="image/*">
-                <p style="font-size:0.75rem; color:#777;">Formatos permitidos: JPG, PNG | Máx: 2MB</p>
+                <p class="foto-info">Formatos permitidos: JPG, PNG | Máx: 2MB</p>
               </div>
             </div>
 
-            <!-- ===========================
-                 DADOS PESSOAIS
-            ============================ -->
+            <!-- DADOS PESSOAIS -->
             <div class="group-title">Dados pessoais</div>
 
             <div class="form-field">
@@ -130,9 +130,7 @@
               <input type="date" id="f_admissao">
             </div>
 
-            <!-- ===========================
-                 HIERARQUIA
-            ============================ -->
+            <!-- HIERARQUIA -->
             <div class="group-title">Hierarquia</div>
 
             <div class="form-field">
@@ -145,9 +143,7 @@
               <input type="text" id="f_departamento">
             </div>
 
-            <!-- ===========================
-                 JORNADA
-            ============================ -->
+            <!-- JORNADA -->
             <div class="group-title">Jornada de trabalho</div>
 
             <div class="form-field">
@@ -167,9 +163,10 @@
 
             <div class="form-field hidden" id="box_jornada_custom">
               <label for="f_jornada_custom">Jornada personalizada</label>
-              <input type="text" id="f_jornada_custom" placeholder="Ex: 4h por dia, 3x2, etc">
+              <input type="text" id="f_jornada_custom" placeholder="Ex: 4h/dia, 3x2 etc">
             </div>
 
+            <!-- ESCALA -->
             <div class="form-field">
               <label for="f_escala">Escala</label>
               <select id="f_escala">
@@ -186,12 +183,10 @@
 
             <div class="form-field hidden" id="box_escala_custom">
               <label for="f_escala_custom">Escala personalizada</label>
-              <input type="text" id="f_escala_custom" placeholder="Ex: 2x2, 1x3, escala livre...">
+              <input type="text" id="f_escala_custom" placeholder="Ex: 2x2, 1x3 etc">
             </div>
 
-            <!-- ===========================
-                 CONFIGURAÇÕES DE PONTO
-            ============================ -->
+            <!-- CONFIG. PONTO -->
             <div class="group-title">Configurações de ponto</div>
 
             <div class="form-field">
@@ -223,7 +218,6 @@
           </div>
 
         </form>
-
       </div>
 
     </div>

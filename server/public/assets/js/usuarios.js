@@ -150,22 +150,25 @@ document.addEventListener("DOMContentLoaded", () => {
   let listaColaboradores = [];
   let mapaTags = {};
 
-  async function carregarDados() {
-    const [resColab, resTags] = await Promise.all([
-      fetch(`${API}/colaboradores`, { headers: { Authorization: `Bearer ${token}` } }),
-      fetch(`${API}/tags`, { headers: { Authorization: `Bearer ${token}` } }),
-    ]);
+ async function carregarDados() {
+  const [resColab, resTags] = await Promise.all([
+    fetch(`${API}/colaboradores`, { headers: { Authorization: `Bearer ${token}` } }),
+    fetch(`${API}/tags`, { headers: { Authorization: `Bearer ${token}` } }),
+  ]);
 
-    listaColaboradores = await resColab.json();
-    const tags = await resTags.json();
+  listaColaboradores = await resColab.json();
+  const tags = await resTags.json();
 
-    mapaTags = {};
-    tags.forEach((t) => {
-      if (t.colaborador_id) mapaTags[t.colaborador_id] = t.uid;
-    });
+  mapaTags = {};
+  tags.forEach((t) => {
+    if (t.colaborador_id) mapaTags[t.colaborador_id] = t.uid;
+  });
 
-    renderTabela();
-  }
+  // ➜ ATUALIZA O CONTADOR
+  document.getElementById("countColab").textContent = listaColaboradores.length;
+
+  renderTabela();
+}
 
   // ---------------------------------
   // RENDER TABELA
@@ -174,9 +177,25 @@ document.addEventListener("DOMContentLoaded", () => {
     tabelaBody.innerHTML = "";
 
     const termo = filtro.toLowerCase();
-    const dadosFiltrados = listaColaboradores.filter((c) =>
-      c.nome.toLowerCase().includes(termo)
-    );
+    const dadosFiltrados = listaColaboradores.filter((c) => {
+  const nome = c.nome.toLowerCase();
+  const cpf = (c.cpf || "").toString();
+
+  const cpfSemMascara = cpf.replace(/\D/g, "");
+  const termoSemMascara = termo.replace(/\D/g, "");
+
+  const cpfFormatado =
+    cpf.length === 11
+      ? cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4")
+      : cpf;
+
+  return (
+    nome.includes(termo) ||
+    cpfSemMascara.includes(termoSemMascara) ||
+    cpfFormatado.includes(termo)
+  );
+});
+
 
     if (dadosFiltrados.length === 0) {
       tabelaBody.innerHTML =
@@ -192,7 +211,7 @@ document.addEventListener("DOMContentLoaded", () => {
         : "../assets/img/fotos/default.png";
 
       tr.innerHTML = `
-        <td><img src="${fotoUrl}" style="width:50px; height:50px; border-radius:6px; object-fit:cover;"></td>
+        <td><img src="${fotoUrl}" class="tabela-foto"></td>
 
         <td>
           <div class="action-buttons">
