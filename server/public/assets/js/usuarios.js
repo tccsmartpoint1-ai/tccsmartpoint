@@ -261,7 +261,6 @@ document.addEventListener("DOMContentLoaded", () => {
       fFuncao.value = c.funcao;
       fDepartamento.value = c.departamento;
 
-      // Jornada
       if (["5x2","6x1","12x36","24x72","turno fixo","revezamento","plantão"].includes(c.jornada)) {
         fJornada.value = c.jornada;
         boxJornadaCustom.classList.add("hidden");
@@ -271,7 +270,6 @@ document.addEventListener("DOMContentLoaded", () => {
         fJornadaCustom.value = c.jornada;
       }
 
-      // Escala
       if (["normal","manhã","tarde","noturno","turnos alternados","plantão"].includes(c.escala)) {
         fEscala.value = c.escala;
         boxEscalaCustom.classList.add("hidden");
@@ -285,11 +283,9 @@ document.addEventListener("DOMContentLoaded", () => {
       fBancoHoras.value = c.banco_horas_ativo ? "true" : "false";
       fTag.value = mapaTags[c.id] || "";
 
-      if (c.foto) {
-        previewFoto.src = `https://tccsmartpoint.onrender.com/uploads/fotos/${c.foto}`;
-      } else {
-        previewFoto.src = "../assets/img/fotos/default.png";
-      }
+      previewFoto.src = c.foto
+        ? `https://tccsmartpoint.onrender.com/uploads/fotos/${c.foto}`
+        : "../assets/img/fotos/default.png";
 
       form.dataset.editId = id;
       abrirModal();
@@ -297,7 +293,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // ---------------------------------
-  // SUBMIT (CRIAR / EDITAR) COM FOTO
+  // SUBMIT (CRIAR / EDITAR) — JSON + FOTO SEPARADA
   // ---------------------------------
   form.onsubmit = async (e) => {
     e.preventDefault();
@@ -320,25 +316,24 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // FORM DATA para dados comuns
-    const fd = new FormData();
-    fd.append("nome", fNome.value);
-    fd.append("cpf", fCPF.value.replace(/\D/g, ""));
-    fd.append("email", fEmail.value);
-    fd.append("data_admissao", fAdmissao.value);
-    fd.append("funcao", fFuncao.value);
-    fd.append("departamento", fDepartamento.value);
-    fd.append("jornada", jornadaFinal);
-    fd.append("escala", escalaFinal);
-    fd.append("ativo", fStatus.value);
-    fd.append("banco_horas_ativo", fBancoHoras.value);
-
     let colab;
 
     // ========================
     // EDITAR
     // ========================
     if (editId) {
+      const fd = new FormData();
+      fd.append("nome", fNome.value);
+      fd.append("cpf", fCPF.value.replace(/\D/g, ""));
+      fd.append("email", fEmail.value);
+      fd.append("data_admissao", fAdmissao.value);
+      fd.append("funcao", fFuncao.value);
+      fd.append("departamento", fDepartamento.value);
+      fd.append("jornada", jornadaFinal);
+      fd.append("escala", escalaFinal);
+      fd.append("ativo", fStatus.value);
+      fd.append("banco_horas_ativo", fBancoHoras.value);
+
       const res = await fetch(`${API}/colaboradores/${editId}`, {
         method: "PUT",
         headers: { Authorization: `Bearer ${token}` },
@@ -347,7 +342,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
       colab = await res.json();
 
-      // Envia foto se houve nova seleção
       if (fFoto.files.length > 0) {
         const fdFoto = new FormData();
         fdFoto.append("foto", fFoto.files[0]);
@@ -359,7 +353,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
 
-      // Atualiza TAG
       await fetch(`${API}/colaboradores/${editId}/tag`, {
         method: "PUT",
         headers: {
@@ -371,17 +364,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
     } else {
       // ========================
-      // CRIAR
+      // CRIAR — JSON COMO ANTES
       // ========================
       const res = await fetch(`${API}/colaboradores`, {
         method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
-        body: fd,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          nome: fNome.value,
+          cpf: fCPF.value.replace(/\D/g, ""),
+          email: fEmail.value,
+          data_admissao: fAdmissao.value,
+          funcao: fFuncao.value,
+          departamento: fDepartamento.value,
+          jornada: jornadaFinal,
+          escala: escalaFinal,
+          ativo: fStatus.value,
+          banco_horas_ativo: fBancoHoras.value
+        })
       });
 
       colab = await res.json();
 
-      // Enviar foto (se houver)
       if (fFoto.files.length > 0) {
         const fdFoto = new FormData();
         fdFoto.append("foto", fFoto.files[0]);
@@ -393,7 +399,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
 
-      // Criar TAG
       await fetch(`${API}/tags`, {
         method: "POST",
         headers: {
