@@ -177,7 +177,7 @@ document.addEventListener("DOMContentLoaded", () => {
     tabelaBody.innerHTML = "";
 
     const termo = filtro.toLowerCase();
-    const dadosFiltrados = listaColaboradores.filter((c) => {
+   const dadosFiltrados = listaColaboradores.filter((c) => {
   const nome = c.nome.toLowerCase();
   const cpf = (c.cpf || "").toString();
 
@@ -195,6 +195,7 @@ document.addEventListener("DOMContentLoaded", () => {
     cpfFormatado.includes(termo)
   );
 });
+
 
 
     if (dadosFiltrados.length === 0) {
