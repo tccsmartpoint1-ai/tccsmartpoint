@@ -164,31 +164,30 @@ router.put('/:id/tag', auth, async (req, res) => {
 });
 
 
-// ======================================================
-// UPLOAD DE FOTO
-// ======================================================
-router.post('/:id/foto', auth, uploadFoto.single('foto'), async (req, res) => {
+// =============================================
+// UPLOAD DE FOTO (Cloudinary)
+// =============================================
+router.post("/:id/foto", auth, uploadFoto.single("foto"), async (req, res) => {
   try {
     const reg = await Colaborador.findByPk(req.params.id);
-    if (!reg) return res.status(404).json({ error: 'Colaborador não encontrado' });
+    if (!reg) return res.status(404).json({ error: "Colaborador não encontrado" });
 
     if (!req.file) {
-      return res.status(400).json({ error: 'Nenhuma foto enviada' });
+      return res.status(400).json({ error: "Nenhuma foto enviada" });
     }
 
-    await reg.update({ foto_url: req.file.filename });
+    await reg.update({ foto_url: req.file.path });
 
     res.json({
       success: true,
       message: "Foto enviada com sucesso",
-      file: req.file.filename,
-      url: `${req.protocol}://${req.get("host")}/uploads/fotos/${req.file.filename}`
+      file: req.file.path,
+      url: req.file.path
     });
 
   } catch (err) {
-    res.status(500).json({ error: 'Erro ao enviar foto' });
+    res.status(500).json({ error: "Erro ao enviar foto" });
   }
 });
-
 
 module.exports = router;

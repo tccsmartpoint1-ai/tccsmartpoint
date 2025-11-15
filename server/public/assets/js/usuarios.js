@@ -207,9 +207,7 @@ document.addEventListener("DOMContentLoaded", () => {
     dadosFiltrados.forEach((c) => {
       const tr = document.createElement("tr");
 
-      const fotoUrl = c.foto_url
-        ? `https://tccsmartpoint.onrender.com/uploads/fotos/${c.foto_url}`
-        : "../assets/img/fotos/default.png";
+      const fotoUrl = c.foto_url || "../assets/img/fotos/default.png";
 
       tr.innerHTML = `
         <td><img src="${fotoUrl}" class="tabela-foto"></td>

@@ -1,27 +1,16 @@
 const multer = require("multer");
-const path = require("path");
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
+const cloudinary = require("../config/cloudinary");
 
-// Local onde as fotos serão salvas
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, path.resolve("uploads", "fotos"));
-  },
-  filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname);
-    const name = `colab_${Date.now()}${ext}`;
-    cb(null, name);
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: "smartpoint/colaboradores",
+    allowed_formats: ["jpg", "png", "jpeg"],
+    transformation: [{ width: 400, height: 400, crop: "fill" }]
   }
 });
 
-// Filtrar formatos permitidos
-const fileFilter = (req, file, cb) => {
-  const permitidos = ["image/jpeg", "image/png", "image/webp"];
-  if (permitidos.includes(file.mimetype)) {
-    cb(null, true);
-  } else {
-    cb(new Error("Formato não permitido. Use JPG, PNG ou WEBP."));
-  }
-};
+const upload = multer({ storage });
 
-// Exporta o middleware já configurado
-module.exports = multer({ storage, fileFilter });
+module.exports = upload;
