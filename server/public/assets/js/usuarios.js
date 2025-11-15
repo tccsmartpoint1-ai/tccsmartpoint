@@ -1,5 +1,5 @@
 // ===============================
-//      PROTEÇÃO DE ACESSO
+// PROTEÇÃO DE ACESSO
 // ===============================
 const token = localStorage.getItem("token");
 if (!token) window.location.replace("index.html");
@@ -17,26 +17,25 @@ document.addEventListener("DOMContentLoaded", () => {
   // TOPO / SIDEBAR / LOGOUT
   // ---------------------------------
   const logoutBtn = document.getElementById("logoutBtn");
-  if (logoutBtn) {
-    logoutBtn.addEventListener("click", () => {
-      localStorage.removeItem("token");
-      window.location.replace("index.html");
-    });
-  }
+  if (logoutBtn) logoutBtn.onclick = () => {
+    localStorage.removeItem("token");
+    window.location.replace("index.html");
+  };
 
   const sidebar = document.querySelector(".sidebar");
   const toggleBtn = document.getElementById("toggleSidebar");
-  if (toggleBtn && sidebar) {
-    toggleBtn.addEventListener("click", () => {
+
+  if (toggleBtn) {
+    toggleBtn.onclick = () => {
       sidebar.classList.toggle("collapsed");
       localStorage.setItem(
         "sidebarState",
         sidebar.classList.contains("collapsed") ? "collapsed" : "expanded"
       );
-    });
-
-    const savedState = localStorage.getItem("sidebarState");
-    if (savedState === "collapsed") sidebar.classList.add("collapsed");
+    };
+  }
+  if (localStorage.getItem("sidebarState") === "collapsed") {
+    sidebar.classList.add("collapsed");
   }
 
   // ---------------------------------
@@ -46,123 +45,127 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnNovo = document.getElementById("btnNovo");
   const btnClose = document.getElementById("modalClose");
   const btnCancel = document.getElementById("modalCancel");
-  const form =
-    document.getElementById("formUsuariosModal") ||
-    document.getElementById("formModal");
+  const form = document.getElementById("formModal");
 
   function abrirModal() {
-    if (modalOverlay) modalOverlay.style.display = "flex";
+    modalOverlay.style.display = "flex";
   }
 
   function fecharModal() {
-    if (modalOverlay) modalOverlay.style.display = "none";
-    if (form) {
-      delete form.dataset.editId;
-      form.reset();
-    }
+    modalOverlay.style.display = "none";
+    form.reset();
+    delete form.dataset.editId;
+
+    boxJornadaCustom.classList.add("hidden");
+    fJornadaCustom.value = "";
+
+    boxEscalaCustom.classList.add("hidden");
+    fEscalaCustom.value = "";
   }
 
-  if (btnNovo) btnNovo.addEventListener("click", abrirModal);
-  if (btnClose) btnClose.addEventListener("click", fecharModal);
-  if (btnCancel) btnCancel.addEventListener("click", fecharModal);
+  if (btnNovo) btnNovo.onclick = abrirModal;
+  if (btnClose) btnClose.onclick = fecharModal;
+  if (btnCancel) btnCancel.onclick = fecharModal;
 
-  if (modalOverlay) {
-    modalOverlay.addEventListener("click", (e) => {
-      if (e.target === modalOverlay) fecharModal();
-    });
-  }
+  modalOverlay.onclick = (e) => {
+    if (e.target === modalOverlay) fecharModal();
+  };
 
   // ---------------------------------
-  // CAMPOS DO FORM / TABELA
+  // CAMPOS
   // ---------------------------------
   const tabelaBody = document.querySelector("#tblUsuarios tbody");
   const inputBuscar = document.getElementById("buscar");
 
-  const fNome          = document.getElementById("f_nome");
-  const fCPF           = document.getElementById("f_cpf");
-  const fEmail         = document.getElementById("f_email");
-  const fAdmissao      = document.getElementById("f_admissao");
-  const fFuncao        = document.getElementById("f_funcao");
-  const fDepartamento  = document.getElementById("f_departamento");
-  const fJornada       = document.getElementById("f_jornada");
-  const fEscala        = document.getElementById("f_escala");
-  const fTag           = document.getElementById("f_tag");
-  const fStatus        = document.getElementById("f_status");
-  const fBancoHoras    = document.getElementById("f_bancoHoras");
+  const fNome = document.getElementById("f_nome");
+  const fCPF = document.getElementById("f_cpf");
+  const fEmail = document.getElementById("f_email");
+  const fAdmissao = document.getElementById("f_admissao");
+  const fFuncao = document.getElementById("f_funcao");
+  const fDepartamento = document.getElementById("f_departamento");
 
+  const fJornada = document.getElementById("f_jornada");
+  const fJornadaCustom = document.getElementById("f_jornada_custom");
+  const boxJornadaCustom = document.getElementById("box_jornada_custom");
+
+  const fEscala = document.getElementById("f_escala");
+  const fEscalaCustom = document.getElementById("f_escala_custom");
+  const boxEscalaCustom = document.getElementById("box_escala_custom");
+
+  const fTag = document.getElementById("f_tag");
+  const fStatus = document.getElementById("f_status");
+  const fBancoHoras = document.getElementById("f_bancoHoras");
+
+  // CPF MASK
+  fCPF.oninput = (e) => {
+    const v = e.target.value.replace(/\D/g, "").slice(0, 11);
+    e.target.value = v
+      .replace(/(\d{3})(\d)/, "$1.$2")
+      .replace(/(\d{3})(\d)/, "$1.$2")
+      .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+  };
+
+  // CAMPOS PERSONALIZADOS
+  fJornada.onchange = () => {
+    if (fJornada.value === "personalizada") {
+      boxJornadaCustom.classList.remove("hidden");
+    } else {
+      boxJornadaCustom.classList.add("hidden");
+      fJornadaCustom.value = "";
+    }
+  };
+
+  fEscala.onchange = () => {
+    if (fEscala.value === "personalizada") {
+      boxEscalaCustom.classList.remove("hidden");
+    } else {
+      boxEscalaCustom.classList.add("hidden");
+      fEscalaCustom.value = "";
+    }
+  };
+
+  // ---------------------------------
+  // CARREGAR
+  // ---------------------------------
   let listaColaboradores = [];
   let mapaTags = {};
 
-  function mascaraCPF(v) {
-    v = v.replace(/\D/g, "").slice(0, 11);
-    let out = "";
-    if (v.length > 0) out = v.slice(0, 3);
-    if (v.length > 3) out += "." + v.slice(3, 6);
-    if (v.length > 6) out += "." + v.slice(6, 9);
-    if (v.length > 9) out += "-" + v.slice(9, 11);
-    return out;
-  }
-
-  if (fCPF) {
-    fCPF.addEventListener("input", (e) => {
-      e.target.value = mascaraCPF(e.target.value);
-    });
-  }
-
-  // ---------------------------------
-  // CARREGAR COLABORADORES + TAGS
-  // ---------------------------------
   async function carregarDados() {
-    if (!tabelaBody) return;
+    const [resColab, resTags] = await Promise.all([
+      fetch(`${API}/colaboradores`, { headers: { Authorization: `Bearer ${token}` } }),
+      fetch(`${API}/tags`, { headers: { Authorization: `Bearer ${token}` } })
+    ]);
 
-    try {
-      const [resColab, resTags] = await Promise.all([
-        fetch(`${API}/colaboradores`, { headers: { Authorization: `Bearer ${token}` } }),
-        fetch(`${API}/tags`,          { headers: { Authorization: `Bearer ${token}` } })
-      ]);
+    listaColaboradores = await resColab.json();
+    const tags = await resTags.json();
 
-      const colabs = await resColab.json();
-      const tags   = await resTags.json();
+    mapaTags = {};
+    tags.forEach((t) => {
+      if (t.colaborador_id) mapaTags[t.colaborador_id] = t.uid;
+    });
 
-      listaColaboradores = Array.isArray(colabs) ? colabs : [];
-
-      mapaTags = {};
-      if (Array.isArray(tags)) {
-        tags.forEach(t => {
-          if (t.colaborador_id) mapaTags[t.colaborador_id] = t.uid;
-        });
-      }
-
-      renderTabela();
-    } catch (err) {
-      console.error("Erro ao carregar dados:", err);
-      tabelaBody.innerHTML = "<tr><td colspan='8'>Erro ao carregar colaboradores.</td></tr>";
-    }
+    renderTabela();
   }
 
   // ---------------------------------
   // RENDER TABELA
   // ---------------------------------
   function renderTabela(filtro = "") {
-    if (!tabelaBody) return;
-
     tabelaBody.innerHTML = "";
-    const termo = filtro.trim().toLowerCase();
 
-    const dados = listaColaboradores.filter(c => {
-      if (!termo) return true;
-      return (c.nome || "").toLowerCase().includes(termo) ||
-             (c.cpf || "").toLowerCase().includes(termo);
-    });
+    const termo = filtro.toLowerCase();
+    const dadosFiltrados = listaColaboradores.filter((c) =>
+      c.nome.toLowerCase().includes(termo)
+    );
 
-    if (dados.length === 0) {
-      tabelaBody.innerHTML = "<tr><td colspan='8'>Nenhum colaborador encontrado.</td></tr>";
+    if (dadosFiltrados.length === 0) {
+      tabelaBody.innerHTML =
+        "<tr><td colspan='8'>Nenhum colaborador encontrado.</td></tr>";
       return;
     }
 
-    dados.forEach(c => {
+    dadosFiltrados.forEach((c) => {
       const tr = document.createElement("tr");
-      const tag = mapaTags[c.id] || "-";
 
       tr.innerHTML = `
         <td>
@@ -172,16 +175,14 @@ document.addEventListener("DOMContentLoaded", () => {
             <button class="action-delete" data-id="${c.id}">✖</button>
           </div>
         </td>
-        <td>${c.nome || "-"}</td>
-        <td>${c.cpf || "-"}</td>
+        <td>${c.nome}</td>
+        <td>${c.cpf}</td>
         <td>${c.departamento || "-"}</td>
         <td>${c.funcao || "-"}</td>
-        <td>${tag}</td>
-        <td>
-          <span class="badge ${c.ativo ? "badge-success" : "badge-muted"}">
+        <td>${mapaTags[c.id] || "-"}</td>
+        <td><span class="badge ${c.ativo ? "badge-success" : "badge-muted"}">
             ${c.ativo ? "Ativo" : "Inativo"}
-          </span>
-        </td>
+        </span></td>
         <td>${c.data_admissao || "-"}</td>
       `;
 
@@ -189,201 +190,163 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  if (inputBuscar) {
-    inputBuscar.addEventListener("input", (e) => {
-      renderTabela(e.target.value);
-    });
-  }
+  inputBuscar.oninput = (e) => renderTabela(e.target.value);
 
   // ---------------------------------
-  // AÇÕES DA TABELA
+  // AÇÕES (EDIT / DELETE / TOGGLE)
   // ---------------------------------
-  if (tabelaBody) {
-    tabelaBody.addEventListener("click", async (e) => {
-      const btn = e.target;
-      const id = btn.dataset.id;
-      if (!id) return;
+  tabelaBody.onclick = async (e) => {
+    const btn = e.target;
+    const id = btn.dataset.id;
+    if (!id) return;
 
-      // excluir
-      if (btn.classList.contains("action-delete")) {
-        if (!confirm("Deseja excluir este colaborador?")) return;
+    // DELETE
+    if (btn.classList.contains("action-delete")) {
+      if (!confirm("Excluir colaborador?")) return;
+      await fetch(`${API}/colaboradores/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      return carregarDados();
+    }
 
-        try {
-          const resp = await fetch(`${API}/colaboradores/${id}`, {
-            method: "DELETE",
-            headers: { Authorization: `Bearer ${token}` }
-          });
+    // TOGGLE
+    if (btn.classList.contains("action-lock")) {
+      await fetch(`${API}/colaboradores/${id}/toggle`, {
+        method: "PUT",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      return carregarDados();
+    }
 
-          if (!resp.ok) {
-            const erro = await resp.json().catch(() => ({}));
-            alert(erro.error || "Erro ao excluir colaborador.");
-          } else {
-            carregarDados();
-          }
-        } catch (err) {
-          alert("Erro de comunicação ao excluir.");
-        }
+    // EDIT
+    if (btn.classList.contains("action-edit")) {
+      const c = listaColaboradores.find((x) => x.id == id);
 
-        return;
+      fNome.value = c.nome;
+      fCPF.value = c.cpf;
+      fEmail.value = c.email;
+      fAdmissao.value = c.data_admissao;
+      fFuncao.value = c.funcao;
+      fDepartamento.value = c.departamento;
+
+      // Jornada
+      if (["5x2","6x1","12x36","24x72","turno fixo","revezamento","plantão"].includes(c.jornada)) {
+        fJornada.value = c.jornada;
+        boxJornadaCustom.classList.add("hidden");
+      } else {
+        fJornada.value = "personalizada";
+        boxJornadaCustom.classList.remove("hidden");
+        fJornadaCustom.value = c.jornada;
       }
 
-      // ativar / inativar
-      if (btn.classList.contains("action-lock")) {
-        try {
-          const resp = await fetch(`${API}/colaboradores/${id}/toggle`, {
-            method: "PUT",
-            headers: { Authorization: `Bearer ${token}` }
-          });
-
-          if (!resp.ok) {
-            const erro = await resp.json().catch(() => ({}));
-            alert(erro.error || "Erro ao alterar status.");
-          } else {
-            carregarDados();
-          }
-        } catch (err) {
-          alert("Erro de comunicação ao alterar status.");
-        }
-
-        return;
+      // Escala
+      if (["normal","manhã","tarde","noturno","turnos alternados","plantão"].includes(c.escala)) {
+        fEscala.value = c.escala;
+        boxEscalaCustom.classList.add("hidden");
+      } else {
+        fEscala.value = "personalizada";
+        boxEscalaCustom.classList.remove("hidden");
+        fEscalaCustom.value = c.escala;
       }
 
-      // editar
-      if (btn.classList.contains("action-edit")) {
-        const colab = listaColaboradores.find(c => c.id == id);
-        if (!colab) return;
+      fStatus.value = c.ativo ? "true" : "false";
+      fBancoHoras.value = c.banco_horas_ativo ? "true" : "false";
+      fTag.value = mapaTags[c.id] || "";
 
-        if (fNome)         fNome.value         = colab.nome || "";
-        if (fCPF)          fCPF.value          = mascaraCPF(colab.cpf || "");
-        if (fEmail)        fEmail.value        = colab.email || "";
-        if (fAdmissao)     fAdmissao.value     = colab.data_admissao || "";
-        if (fFuncao)       fFuncao.value       = colab.funcao || "";
-        if (fDepartamento) fDepartamento.value = colab.departamento || "";
-        if (fJornada)      fJornada.value      = colab.jornada || "";
-        if (fEscala)       fEscala.value       = colab.escala || "";
-        if (fStatus)       fStatus.value       = colab.ativo ? "true" : "false";
-        if (fBancoHoras)   fBancoHoras.value   = colab.banco_horas_ativo ? "true" : "false";
-        if (fTag)          fTag.value          = mapaTags[colab.id] || "";
-
-        if (form) form.dataset.editId = id;
-
-        abrirModal();
-      }
-    });
-  }
+      form.dataset.editId = id;
+      abrirModal();
+    }
+  };
 
   // ---------------------------------
-  // SUBMIT DO FORM (CRIAR / EDITAR)
+  // SUBMIT (CRIAR / EDITAR)
   // ---------------------------------
-  if (form) {
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
+  form.onsubmit = async (e) => {
+    e.preventDefault();
 
-      const payload = {
-        nome:          fNome ? fNome.value.trim() : "",
-        cpf:           fCPF  ? fCPF.value.replace(/\D/g, "") : "",
-        email:         fEmail ? fEmail.value.trim() : "",
-        data_admissao: fAdmissao ? fAdmissao.value : null,
-        funcao:        fFuncao ? fFuncao.value : "",
-        departamento:  fDepartamento ? fDepartamento.value : "",
-        jornada:       fJornada ? fJornada.value : "",
-        escala:        fEscala ? fEscala.value : "",
-        ativo:         fStatus ? fStatus.value === "true" : true,
-        banco_horas_ativo: fBancoHoras ? fBancoHoras.value === "true" : false
-      };
+    const jornadaFinal =
+      fJornada.value === "personalizada"
+        ? fJornadaCustom.value.trim()
+        : fJornada.value;
 
-      const tagUid = fTag && fTag.value ? fTag.value.trim().toUpperCase() : "";
-      const editId = form.dataset.editId;
+    const escalaFinal =
+      fEscala.value === "personalizada"
+        ? fEscalaCustom.value.trim()
+        : fEscala.value;
 
-      if (!payload.nome || !payload.cpf || !tagUid) {
-        alert("Preencha Nome, CPF e Tag RFID.");
-        return;
-      }
+    const payload = {
+      nome: fNome.value,
+      cpf: fCPF.value.replace(/\D/g, ""),
+      email: fEmail.value,
+      data_admissao: fAdmissao.value,
+      funcao: fFuncao.value,
+      departamento: fDepartamento.value,
+      jornada: jornadaFinal,
+      escala: escalaFinal,
+      ativo: fStatus.value === "true",
+      banco_horas_ativo: fBancoHoras.value === "true",
+    };
 
-      try {
-        let colab;
+    const tagUid = fTag.value.trim().toUpperCase();
+    const editId = form.dataset.editId;
 
-        // editar
-        if (editId) {
-          const res = await fetch(`${API}/colaboradores/${editId}`, {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`
-            },
-            body: JSON.stringify(payload)
-          });
+    if (!payload.nome || !payload.cpf || !tagUid) {
+      alert("Preencha Nome, CPF e Tag RFID.");
+      return;
+    }
 
-          const data = await res.json();
-          if (!res.ok) {
-            alert(data.error || "Erro ao editar colaborador.");
-            return;
-          }
-          colab = data;
+    let colab;
 
-          const resTag = await fetch(`${API}/colaboradores/${editId}/tag`, {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`
-            },
-            body: JSON.stringify({ uid: tagUid })
-          });
+    if (editId) {
+      const res = await fetch(`${API}/colaboradores/${editId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+      });
 
-          const dataTag = await resTag.json();
-          if (!resTag.ok) {
-            alert(dataTag.error || "Erro ao atualizar TAG.");
-            return;
-          }
-        }
-        // novo
-        else {
-          const res = await fetch(`${API}/colaboradores`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`
-            },
-            body: JSON.stringify(payload)
-          });
+      colab = await res.json();
+      await fetch(`${API}/colaboradores/${editId}/tag`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ uid: tagUid })
+      });
 
-          const data = await res.json();
-          if (!res.ok) {
-            alert(data.error || "Erro ao cadastrar colaborador.");
-            return;
-          }
-          colab = data;
+    } else {
+      const res = await fetch(`${API}/colaboradores`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+      });
 
-          const resTag = await fetch(`${API}/tags`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`
-            },
-            body: JSON.stringify({
-              uid: tagUid,
-              colaborador_id: colab.id,
-              ativo: true
-            })
-          });
+      colab = await res.json();
 
-          const dataTag = await resTag.json();
-          if (!resTag.ok) {
-            alert(dataTag.error || "Erro ao cadastrar TAG.");
-            return;
-          }
-        }
+      await fetch(`${API}/tags`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          uid: tagUid,
+          colaborador_id: colab.id,
+          ativo: true
+        })
+      });
+    }
 
-        form.reset();
-        delete form.dataset.editId;
-        fecharModal();
-        carregarDados();
-      } catch (err) {
-        console.error("Erro no submit:", err);
-        alert("Erro de comunicação ao salvar colaborador.");
-      }
-    });
-  }
+    fecharModal();
+    carregarDados();
+  };
 
   carregarDados();
 });
