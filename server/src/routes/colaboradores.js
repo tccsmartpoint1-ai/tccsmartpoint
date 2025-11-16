@@ -158,6 +158,10 @@ router.put('/:id/tag', auth, async (req, res) => {
 // =============================================
 router.post("/:id/foto", auth, uploadFoto.single("foto"), async (req, res) => {
   try {
+    console.log("REQ.FILE:", req.file);
+    console.log("REQ.BODY:", req.body);
+    console.log("REQ.PARAMS:", req.params);
+
     const reg = await Colaborador.findByPk(req.params.id);
     if (!reg) return res.status(404).json({ error: "Colaborador não encontrado" });
     if (!req.file) return res.status(400).json({ error: "Nenhuma foto enviada" });
@@ -169,9 +173,11 @@ router.post("/:id/foto", auth, uploadFoto.single("foto"), async (req, res) => {
       url: req.file.path
     });
 
-  } catch {
+  } catch (err) {
+    console.error("ERRO UPLOAD FOTO:", err);
     res.status(500).json({ error: "Erro ao enviar foto" });
   }
 });
+
 
 module.exports = router;
