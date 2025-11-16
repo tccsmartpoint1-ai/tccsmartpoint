@@ -8,6 +8,54 @@ window.history.pushState(null, null, window.location.href);
 window.onpopstate = () => window.history.pushState(null, null, window.location.href);
 
 // ===============================
+// FUNÇÃO PARA COMPRIMIR IMAGEM
+// ===============================
+async function comprimirImagem(file, maxWidth = 800, maxHeight = 800, quality = 0.8) {
+  return new Promise((resolve) => {
+    const img = document.createElement("img");
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
+      img.src = e.target.result;
+    };
+
+    img.onload = () => {
+      let { width, height } = img;
+
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+
+      if (width > height) {
+        if (width > maxWidth) {
+          height = (height * maxWidth) / width;
+          width = maxWidth;
+        }
+      } else {
+        if (height > maxHeight) {
+          width = (width * maxHeight) / height;
+          height = maxHeight;
+        }
+      }
+
+      canvas.width = width;
+      canvas.height = height;
+
+      ctx.drawImage(img, 0, 0, width, height);
+
+      canvas.toBlob(
+        (blob) => {
+          resolve(new File([blob], file.name, { type: "image/jpeg" }));
+        },
+        "image/jpeg",
+        quality
+      );
+    };
+
+    reader.readAsDataURL(file);
+  });
+}
+
+// ===============================
 //  TUDO APÓS O DOM CARREGAR
 // ===============================
 document.addEventListener("DOMContentLoaded", () => {
@@ -47,16 +95,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnCancel = document.getElementById("modalCancel");
   const form = document.getElementById("formModal");
 
-  // FOTO — CAMPOS
   const fFoto = document.getElementById("f_foto");
   const previewFoto = document.getElementById("previewFoto");
 
-  // Preview imediata
   if (fFoto) {
     fFoto.onchange = () => {
       const file = fFoto.files[0];
       if (!file) return;
-
       const url = URL.createObjectURL(file);
       previewFoto.src = url;
     };
@@ -72,13 +117,10 @@ document.addEventListener("DOMContentLoaded", () => {
     modalOverlay.style.display = "none";
     form.reset();
     delete form.dataset.editId;
-
     previewFoto.src = "../assets/img/fotos/default.png";
     if (fFoto) fFoto.value = "";
-
     boxJornadaCustom.classList.add("hidden");
     fJornadaCustom.value = "";
-
     boxEscalaCustom.classList.add("hidden");
     fEscalaCustom.value = "";
   }
@@ -116,7 +158,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const fStatus = document.getElementById("f_status");
   const fBancoHoras = document.getElementById("f_bancoHoras");
 
-  // CPF MASK
   fCPF.oninput = (e) => {
     const v = e.target.value.replace(/\D/g, "").slice(0, 11);
     e.target.value = v
@@ -125,7 +166,6 @@ document.addEventListener("DOMContentLoaded", () => {
       .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
   };
 
-  // CAMPOS PERSONALIZADOS
   fJornada.onchange = () => {
     if (fJornada.value === "personalizada") {
       boxJornadaCustom.classList.remove("hidden");
@@ -145,7 +185,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // ---------------------------------
-  // CARREGAR
+  // CARREGAR DADOS
   // ---------------------------------
   let listaColaboradores = [];
   let mapaTags = {};
@@ -206,10 +246,9 @@ document.addEventListener("DOMContentLoaded", () => {
       const tr = document.createElement("tr");
 
       const fotoUrl =
-  c.foto_url && c.foto_url.startsWith("http")
-    ? c.foto_url
-    : "../assets/img/fotos/default.png";
-
+        c.foto_url && c.foto_url.startsWith("http")
+          ? c.foto_url
+          : "../assets/img/fotos/default.png";
 
       tr.innerHTML = `
         <td><img src="${fotoUrl}" class="tabela-foto"></td>
@@ -244,7 +283,7 @@ document.addEventListener("DOMContentLoaded", () => {
   inputBuscar.oninput = (e) => renderTabela(e.target.value);
 
   // ---------------------------------
-  // AÇÕES (EDIT / DELETE / TOGGLE)
+  // AÇÕES
   // ---------------------------------
   tabelaBody.onclick = async (e) => {
     const btn = e.target;
@@ -274,9 +313,7 @@ document.addEventListener("DOMContentLoaded", () => {
       fNome.value = c.nome;
       fCPF.value = c.cpf;
       fEmail.value = c.email;
-
       fAdmissao.value = c.data_admissao ? c.data_admissao.slice(0, 10) : "";
-
       fFuncao.value = c.funcao;
       fDepartamento.value = c.departamento;
 
@@ -302,7 +339,6 @@ document.addEventListener("DOMContentLoaded", () => {
       fBancoHoras.value = c.banco_horas_ativo ? "true" : "false";
       fTag.value = mapaTags[c.id] || "";
 
-      // ✔ CORRIGIDO — usa URL do Cloudinary
       previewFoto.src = c.foto_url || "../assets/img/fotos/default.png";
 
       form.dataset.editId = id;
@@ -336,6 +372,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let colab;
 
+    // EDITAR
     if (editId) {
       await fetch(`${API}/colaboradores/${editId}`, {
         method: "PUT",
@@ -358,8 +395,11 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       if (fFoto.files.length > 0) {
+        const fotoOriginal = fFoto.files[0];
+        const fotoComprimida = await comprimirImagem(fotoOriginal);
+
         const fdFoto = new FormData();
-        fdFoto.append("foto", fFoto.files[0]);
+        fdFoto.append("foto", fotoComprimida);
 
         await fetch(`${API}/colaboradores/${editId}/foto`, {
           method: "POST",
@@ -378,6 +418,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
     } else {
+      // CRIAR
       const res = await fetch(`${API}/colaboradores`, {
         method: "POST",
         headers: {
@@ -401,8 +442,11 @@ document.addEventListener("DOMContentLoaded", () => {
       colab = await res.json();
 
       if (fFoto.files.length > 0) {
+        const fotoOriginal = fFoto.files[0];
+        const fotoComprimida = await comprimirImagem(fotoOriginal);
+
         const fdFoto = new FormData();
-        fdFoto.append("foto", fFoto.files[0]);
+        fdFoto.append("foto", fotoComprimida);
 
         await fetch(`${API}/colaboradores/${colab.id}/foto`, {
           method: "POST",
