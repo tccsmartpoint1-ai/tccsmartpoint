@@ -6,6 +6,10 @@ if (!process.env.JWT_SECRET) {
 }
 
 module.exports = function (req, res, next) {
+
+  // ✔ LOG CORRETO
+  console.log(">>> AUTH EXECUTADO:", req.headers.authorization);
+
   const header = req.headers['authorization'];
   if (!header) return res.status(401).json({ error: 'Token não fornecido' });
 
