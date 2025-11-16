@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+console.log(">>> CARREGOU COLABORADORES.JS");
 const { Colaborador, Tag } = require('../models/index');
 const { Op } = require('sequelize');
 const auth = require('../middleware/auth');
