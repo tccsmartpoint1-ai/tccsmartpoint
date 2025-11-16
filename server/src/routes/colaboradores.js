@@ -157,7 +157,7 @@ router.put('/:id/tag', auth, async (req, res) => {
 // =============================================
 // UPLOAD DE FOTO (Cloudinary)
 // =============================================
-router.post("/:id/foto", auth, uploadFoto.single("foto"), async (req, res) => {
+router.post("/:id/foto", auth, uploadFoto, async (req, res) => {
   try {
     console.log("REQ.FILE:", req.file);
     console.log("REQ.BODY:", req.body);
