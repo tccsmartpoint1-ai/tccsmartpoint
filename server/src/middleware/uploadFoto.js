@@ -20,11 +20,17 @@ const storage = new CloudinaryStorage({
   }
 });
 
+// ENVOLVE O MULTER PRA CAPTURAR ERRO
 const upload = multer({ storage });
 
-// log quando o single("foto") for chamado
-const middleware = upload.single("foto");
 module.exports = (req, res, next) => {
   console.log(">>> uploadFoto.single chamado");
-  middleware(req, res, next);
+
+  upload.single("foto")(req, res, function (err) {
+    if (err) {
+      console.error(">>> ERRO NO MULTER/CLOUDINARY:", err);
+      return res.status(500).json({ error: "Falha no upload", detalhes: err.message });
+    }
+    next();
+  });
 };
