@@ -51,15 +51,16 @@ app.get('/ping', (_req, res) => {
   res.json({ status: 'API rodando' });
 });
 
-// ===== Rota de status do banco =====
-app.get('/status', async (_req, res) => {
+// ===== Rota de status da API (usada na tela Configurações) =====
+app.get('/api/status', async (_req, res) => {
   try {
     await sequelize.authenticate();
-    res.json({ status: 'Banco conectado com sucesso!' });
+    res.json({ status: 'ok', db: true });
   } catch (error) {
-    res.status(500).json({ status: 'Erro ao conectar ao banco', erro: error.message });
+    res.status(500).json({ status: 'erro', db: false, msg: error.message });
   }
 });
+
 
 // ===== Banco e inicialização =====
 const PORT = process.env.PORT || 3000;

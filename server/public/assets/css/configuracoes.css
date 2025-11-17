@@ -246,20 +246,20 @@ select:focus {
 
 /* ===== PILLS ===== */
 .pill {
-  display: inline-block;
-  padding: 6px 12px;
+  padding: 5px 12px;
   border-radius: 20px;
+  color: #fff;
   font-size: 13px;
-  font-weight: 600;
-  text-align: center;
-  color: white;
-  background: #1976d2;
+  display: inline-block;
+}
+
+.pill-on {
+  background: #28a745;
 }
 
 .pill-off {
-  background: #e53935;
+  background: #dc3545;
 }
-
 /* ===== BOTÕES ===== */
 button {
   cursor: pointer;
