@@ -28,15 +28,14 @@ body {
   overflow-x: hidden;
 }
 
-/* ===== TOPO (PADRÃO GLOBAL) ===== */
+/* ===== TOPO ===== */
 .topbar {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   height: 60px;
-  background: linear-gradient(90deg, #1976d2, #2196f3);
-  color: #fff;
+  background: linear-gradient(90deg, #f5f7f8, #fafbfc);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -54,14 +53,9 @@ body {
 #toggleSidebar {
   background: none;
   border: none;
-  color: white;
+  color: var(--ink-900);
   font-size: 22px;
   cursor: pointer;
-  transition: transform 0.2s ease;
-}
-
-#toggleSidebar:hover {
-  transform: scale(1.1);
 }
 
 .user-area {
@@ -74,24 +68,17 @@ body {
   width: 35px;
   height: 35px;
   border-radius: 50%;
-  background: white;
   object-fit: cover;
-  border: 2px solid #90caf9;
+  border: 2px solid var(--blue-300);
 }
 
 #logoutBtn {
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(0, 0, 0, 0.05);
+  border: 1px solid #ccc;
   border-radius: 8px;
   padding: 6px 12px;
-  color: #fff;
-  font-size: 14px;
+  color: var(--ink-900);
   cursor: pointer;
-  transition: background 0.2s ease;
-}
-
-#logoutBtn:hover {
-  background: rgba(255, 255, 255, 0.25);
 }
 
 /* ===== SIDEBAR ===== */
@@ -104,7 +91,7 @@ body {
   background: var(--blue-700);
   color: #fff;
   padding-top: 20px;
-  transition: all 0.3s ease;
+  transition: width 0.3s;
   overflow: hidden;
   z-index: 900;
 }
@@ -124,20 +111,18 @@ body {
   padding: 12px 20px;
   color: white;
   text-decoration: none;
-  transition: background 0.2s, transform 0.2s;
   border-left: 4px solid transparent;
+  transition: background 0.2s;
 }
 
 .sidebar nav ul li a:hover,
 .sidebar nav ul li a.active {
   background: var(--blue-600);
-  transform: translateX(2px);
   border-left: 4px solid var(--blue-300);
 }
 
 .sidebar nav ul li a img {
   width: 22px;
-  height: 22px;
   filter: brightness(0) invert(1);
 }
 
@@ -160,10 +145,10 @@ body {
   margin-top: 60px;
   margin-left: 220px;
   padding: 30px;
-  transition: margin-left 0.3s ease;
+  transition: margin-left 0.3s;
 }
 
-.sidebar.collapsed~.content {
+.sidebar.collapsed ~ .content {
   margin-left: 80px;
 }
 
@@ -210,12 +195,11 @@ body {
   border: 1px solid var(--blue-300);
   border-radius: 8px;
   outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .filtro-grupo input:focus {
   border-color: var(--ring);
-  box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring) 25%, transparent);
+  box-shadow: 0 0 0 3px rgba(30, 136, 229, 0.25);
 }
 
 /* ===== BOTÕES ===== */
@@ -234,57 +218,10 @@ body {
   border-radius: 10px;
   cursor: pointer;
   font-weight: 600;
-  transition: opacity 0.2s, transform 0.1s;
 }
 
 .botoes button:hover {
   opacity: 0.9;
-}
-
-.botoes button:active {
-  transform: translateY(1px);
-}
-
-/* ===== STATUS E LOADER ===== */
-.status-msg {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 14px;
-  color: var(--blue-600);
-  margin-bottom: 10px;
-}
-
-.status-msg.error {
-  color: var(--red-600);
-}
-
-.status-msg.success {
-  color: #2e7d32;
-}
-
-.status-area,
-.status-msg {
-  display: none !important;
-}
-
-.loader {
-  border: 3px solid #f3f3f3;
-  border-top: 3px solid var(--blue-600);
-  border-radius: 50%;
-  width: 18px;
-  height: 18px;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-
-  100% {
-    transform: rotate(360deg);
-  }
 }
 
 /* ===== FOLHA DE PONTO ===== */
@@ -300,9 +237,28 @@ body {
   font-size: 16px;
 }
 
+.resumo-colaborador {
+  padding: 12px 16px;
+  background: #ffffff;
+  border: 1px solid #e3e3e3;
+  border-top: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  font-size: 14px;
+}
+
+.tabela-wrapper {
+  border-radius: 0 0 10px 10px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  background: #fff;
+}
+
 #tblFolha {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
   font-size: 13.5px;
 }
 
@@ -313,53 +269,123 @@ body {
 
 #tblFolha th,
 #tblFolha td {
-  padding: 10px 8px;
+  padding: 10px 6px;
   text-align: center;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid #d9d9d9;
 }
 
 #tblFolha tbody tr:hover {
   background: #f4faff;
 }
 
-/* ===== CORES ===== */
+/* ===== TIPOS DE DIA ===== */
 #tblFolha tr.falta {
-  background-color: #ffebee !important;
+  background: #ffebee !important;
   color: #b71c1c !important;
-  font-weight: 600;
 }
 
 #tblFolha tr.feriado {
-  background-color: #e3f2fd !important;
+  background: #e3f2fd !important;
   color: #0d47a1 !important;
-  font-weight: 600;
 }
 
 #tblFolha tr.ferias {
-  background-color: #e8f5e9 !important;
+  background: #e8f5e9 !important;
   color: #1b5e20 !important;
-  font-weight: 600;
 }
 
+/* ===== CÉLULAS COLORIDAS ===== */
 #tblFolha td.extra {
-  background-color: #fff3e0 !important;
-  color: #ef6c00 !important;
+  background-color: #fff3e0;
+  color: #ef6c00;
   font-weight: 600;
 }
 
 #tblFolha td.atraso {
-  background-color: #fff8e1 !important;
-  color: #f57f17 !important;
+  background-color: #fff8e1;
+  color: #f57f17;
   font-weight: 600;
 }
 
-.tabela-wrapper {
-  border-radius: 0 0 10px 10px;
-  box-shadow: var(--shadow);
-  overflow: hidden;
+/* ===== CAMPOS EDITÁVEIS ===== */
+#tblFolha td[contenteditable="true"] {
+  background-color: #fafafa;
+  cursor: text;
 }
 
-/* ===== ROLAGEM ===== */
+#tblFolha td[contenteditable="true"]:focus {
+  outline: 2px solid var(--blue-300);
+  background-color: #ffffff;
+}
+
+.btn-edit,
+.btn-save {
+  border: none;
+  background: var(--blue-600);
+  color: white;
+  padding: 5px 7px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.btn-edit:hover,
+.btn-save:hover {
+  background: var(--blue-700);
+}
+
+.no-print {
+  display: table-cell;
+}
+
+/* ===== IMPRESSÃO ===== */
+@media print {
+
+  body {
+    background: #ffffff !important;
+  }
+
+  .topbar,
+  .sidebar,
+  .filtros,
+  .botoes,
+  #toggleSidebar,
+  #logoutBtn,
+  .btn-edit,
+  .btn-save,
+  .no-print {
+    display: none !important;
+  }
+
+  .content {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  #blocoFolhaPonto {
+    margin: 0;
+    padding: 0;
+    box-shadow: none !important;
+  }
+
+  .tabela-wrapper {
+    box-shadow: none !important;
+  }
+
+  table {
+    page-break-inside: auto !important;
+  }
+
+  thead {
+    display: table-header-group !important;
+  }
+
+  tr {
+    page-break-inside: avoid !important;
+  }
+}
+
+/* ===== SCROLL ===== */
 body::-webkit-scrollbar {
   width: 8px;
 }
@@ -383,37 +409,8 @@ body::-webkit-scrollbar-thumb {
   .sidebar.active {
     transform: translateX(0);
   }
-}
 
-/* ===== CAMPOS EDITÁVEIS ===== */
-#tblFolha td[contenteditable="true"] {
-  background-color: #fafafa;
-  cursor: text;
-}
-
-#tblFolha td[contenteditable="true"]:focus {
-  outline: 2px solid var(--blue-300);
-  background-color: #ffffff;
-}
-
-.btn-edit,
-.btn-save {
-  border: none;
-  background: var(--blue-600);
-  color: white;
-  padding: 5px 7px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: background 0.2s;
-}
-
-.btn-edit:hover,
-.btn-save:hover {
-  background: var(--blue-700);
-}
-
-tr.editavel td {
-  background: #fff8e1 !important;
-  border: 1px solid #ffeb3b;
+  .resumo-colaborador {
+    flex-direction: column;
+  }
 }

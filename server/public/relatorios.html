@@ -4,9 +4,51 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Smart Point </title>
+  <title>Smart Point</title>
 
   <link rel="stylesheet" href="assets/css/relatorios.css" />
+
+  <!-- ESTILO EXCLUSIVO PARA IMPRESSÃO -->
+  <style>
+    @media print {
+      body {
+        background: #fff !important;
+      }
+
+      .topbar,
+      .sidebar,
+      .filtros,
+      .botoes,
+      #toggleSidebar,
+      #logoutBtn,
+      .btn-edit,
+      .btn-save {
+        display: none !important;
+      }
+
+      main.content {
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+
+      #blocoFolhaPonto {
+        box-shadow: none !important;
+        padding: 0 !important;
+      }
+
+      table {
+        page-break-inside: auto !important;
+      }
+
+      tr {
+        page-break-inside: avoid !important;
+      }
+
+      thead {
+        display: table-header-group !important;
+      }
+    }
+  </style>
 </head>
 
 <body>
@@ -59,8 +101,10 @@
     </nav>
   </aside>
 
+
   <!-- ===== CONTEÚDO ===== -->
   <main class="content">
+
     <!-- FILTROS -->
     <section class="filtros">
       <h2>Relatórios Consolidados</h2>
@@ -70,12 +114,12 @@
         <div class="grid-4">
           <div class="filtro-grupo">
             <label for="relColaborador">Colaborador</label>
-            <input id="relColaborador" type="text" placeholder="Nome ou CPF" />
+            <input id="relColaborador" type="text" placeholder="Nome ou CPF" autocomplete="off" />
           </div>
 
           <div class="filtro-grupo">
             <label for="relDispositivo">Dispositivo</label>
-            <input id="relDispositivo" type="text" placeholder="Ex: ESP32-01" />
+            <input id="relDispositivo" type="text" placeholder="Ex: ESP32-01" autocomplete="off" />
           </div>
 
           <div class="filtro-grupo">
@@ -99,72 +143,40 @@
     </section>
 
 
-    <!-- NOVO BLOCO: FOLHA DE PONTO -->
+
+    <!-- ===== FOLHA DE PONTO ===== -->
     <section class="bloco" id="blocoFolhaPonto">
       <h3>Registro de Ponto Diário</h3>
+
+      <!-- RESUMO DO COLABORADOR (VISUAL + PDF) -->
+      <div id="resumoColaborador" class="resumo-colaborador">
+        <p><strong>Nome:</strong> <span id="resNome"></span></p>
+        <p><strong>CPF:</strong> <span id="resCpf"></span></p>
+        <p><strong>Cargo:</strong> <span id="resCargo"></span></p>
+        <p><strong>Setor:</strong> <span id="resSetor"></span></p>
+        <p><strong>Período:</strong> <span id="resPeriodo"></span></p>
+      </div>
+
       <div class="tabela-wrapper">
         <table id="tblFolha">
           <thead>
             <tr>
-              <th>Nome</th>
-              <th>CPF</th>
-              <th>Cargo</th>
-              <th>Setor</th>
               <th>Data</th>
               <th>Entrada</th>
               <th>Saída Almoço</th>
               <th>Retorno</th>
               <th>Saída Final</th>
-              <th>Total Horas</th>
+              <th>Total</th>
               <th>Extras</th>
               <th>Faltas</th>
               <th>Atrasos</th>
               <th>Banco de Horas</th>
-              <th>Observações</th>
+              <th>Obs</th>
+              <th class="no-print">Editar</th>
             </tr>
           </thead>
-          <tbody>
-            <tr>
-              <td>João Silva</td>
-              <td>111.111.111-11</td>
-              <td>Operador</td>
-              <td>Produção</td>
-              <td>01/10/2025</td>
-              <td>08:00</td>
-              <td>12:00</td>
-              <td>13:00</td>
-              <td>17:00</td>
-              <td>8h</td>
-              <td class="extra">1h</td>
-              <td>-</td>
-              <td>-</td>
-              <td>+1h</td>
-              <td>
-                <button class="btn-edit" title="Editar">&#9998;</button>
-                <button class="btn-save" title="Salvar" style="display:none;">💾</button>
-              </td>
-            </tr>
-
-            <tr>
-              <td>Maria Oliveira</td>
-              <td>222.222.222-22</td>
-              <td>RH</td>
-              <td>Administrativo</td>
-              <td>04/10/2025</td>
-              <td>08:10</td>
-              <td>12:00</td>
-              <td>13:00</td>
-              <td>17:00</td>
-              <td>7h50</td>
-              <td>-</td>
-              <td>-</td>
-              <td class="atraso">10min</td>
-              <td>-0.10h</td>
-              <td>
-                <button class="btn-edit" title="Editar">&#9998;</button>
-                <button class="btn-save" title="Salvar" style="display:none;">💾</button>
-              </td>
-            </tr>
+          <tbody id="tblBody">
+            <!-- preenchido via JS -->
           </tbody>
         </table>
       </div>
