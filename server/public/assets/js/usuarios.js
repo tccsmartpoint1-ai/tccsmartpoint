@@ -187,32 +187,27 @@ document.addEventListener("DOMContentLoaded", () => {
   // ---------------------------------
   // CARREGAR DADOS
   // ---------------------------------
-let listaColaboradores = [];  
-let mapaTags = {};
+  let listaColaboradores = [];
+  let mapaTags = {};
 
-async function carregarDados() {
-  console.log("Carregando dados...");
+  async function carregarDados() {
+    const [resColab, resTags] = await Promise.all([
+      fetch(`${API}/colaboradores`, { headers: { Authorization: `Bearer ${token}` } }),
+      fetch(`${API}/tags`, { headers: { Authorization: `Bearer ${token}` } }),
+    ]);
 
-  const [resColab, resTags] = await Promise.all([
-    fetch(`${API}/colaboradores`, { headers: { Authorization: `Bearer ${token}` } }),
-    fetch(`${API}/tags`, { headers: { Authorization: `Bearer ${token}` } }),
-  ]);
+    listaColaboradores = await resColab.json();
+    const tags = await resTags.json();
 
-  listaColaboradores = await resColab.json();
-  const tags = await resTags.json();
+    mapaTags = {};
+    tags.forEach((t) => {
+      if (t.colaborador_id) mapaTags[t.colaborador_id] = t.uid;
+    });
 
-  console.log("Colaboradores recebidos:", listaColaboradores);
+    document.getElementById("countColab").textContent = listaColaboradores.length;
 
-  mapaTags = {};
-  tags.forEach((t) => {
-    if (t.colaborador_id) mapaTags[t.colaborador_id] = t.uid;
-  });
-
-  document.getElementById("countColab").textContent = listaColaboradores.length;
-
-  tabelaBody.innerHTML = ""; // TABELA INICIAL VAZIA
-}
-
+    renderTabela();
+  }
 
 function removerAcentos(txt) {
   return txt.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
@@ -298,7 +293,7 @@ if (inputBuscar) {
     if (termos.length >= 1) {
       renderTabela(termos);
     } else {
-      tabelaBody.innerHTML = ""; // vazio quando o usuário apaga a busca
+      tabelaBody.innerHTML = ""; // tabela vazia ao entrar na página
     }
   });
 }
