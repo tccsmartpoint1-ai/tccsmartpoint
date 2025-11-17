@@ -498,5 +498,5 @@ if (btnMostrarTodos) {
 
     await carregarDados();
   };
-
+   carregarDados();
 });
