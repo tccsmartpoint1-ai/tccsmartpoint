@@ -281,7 +281,13 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  inputBuscar.oninput = (e) => renderTabela(e.target.value);
+  // PESQUISA DE COLABORADORES
+if (inputBuscar) {
+  inputBuscar.addEventListener("input", () => {
+    const termos = inputBuscar.value.trim().toLowerCase();
+    renderTabela(termos);
+  });
+}
 
   // ---------------------------------
   // AÇÕES
