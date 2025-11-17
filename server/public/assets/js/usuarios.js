@@ -187,28 +187,29 @@ document.addEventListener("DOMContentLoaded", () => {
   // ---------------------------------
   // CARREGAR DADOS
   // ---------------------------------
-  let listaColaboradores = [];
-  let mapaTags = {};
-
   async function carregarDados() {
-    const [resColab, resTags] = await Promise.all([
-      fetch(`${API}/colaboradores`, { headers: { Authorization: `Bearer ${token}` } }),
-      fetch(`${API}/tags`, { headers: { Authorization: `Bearer ${token}` } }),
-    ]);
+  console.log("Carregando dados...");
 
-    listaColaboradores = await resColab.json();
-    const tags = await resTags.json();
+  const [resColab, resTags] = await Promise.all([
+    fetch(`${API}/colaboradores`, { headers: { Authorization: `Bearer ${token}` } }),
+    fetch(`${API}/tags`, { headers: { Authorization: `Bearer ${token}` } }),
+  ]);
 
-    mapaTags = {};
-    tags.forEach((t) => {
-      if (t.colaborador_id) mapaTags[t.colaborador_id] = t.uid;
-    });
+  listaColaboradores = await resColab.json();
+  const tags = await resTags.json();
 
-    document.getElementById("countColab").textContent = listaColaboradores.length;
+  console.log("Colaboradores recebidos:", listaColaboradores);
 
-    tabelaBody.innerHTML = ""; // tabela vazia ao entrar
+  mapaTags = {};
+  tags.forEach((t) => {
+    if (t.colaborador_id) mapaTags[t.colaborador_id] = t.uid;
+  });
 
-  }
+  document.getElementById("countColab").textContent = listaColaboradores.length;
+
+  tabelaBody.innerHTML = ""; // TABELA INICIAL VAZIA
+}
+
 
 function removerAcentos(txt) {
   return txt.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
