@@ -218,8 +218,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const termo = filtro.toLowerCase();
 
     const dadosFiltrados = listaColaboradores.filter((c) => {
-      const nome = c.nome.toLowerCase();
-      const cpf = (c.cpf || "").toString();
+      const nome = (c.nome || "").toLowerCase();
+      const cpf = (c.cpf || "").toString(); // sempre string
+
 
       const cpfSemMascara = cpf.replace(/\D/g, "");
       const termoSemMascara = termo.replace(/\D/g, "");
