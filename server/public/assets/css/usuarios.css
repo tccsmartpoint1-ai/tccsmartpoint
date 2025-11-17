@@ -335,3 +335,34 @@
   from { transform: scale(0.96); opacity: 0; }
   to   { transform: scale(1); opacity: 1; }
 }
+/* Container da área de ações (campo de busca + botão) */
+.lista-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Botão Mostrar Todos */
+#btnMostrarTodos {
+  background-color: #1976d2;
+  color: white;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+#btnMostrarTodos:hover {
+  background-color: #0d5cab;
+}
+
+#btnMostrarTodos:active {
+  background-color: #0b4a8a;
+}
+
+/* Deixa o input e o botão alinhados */
+.lista-actions input[type="text"] {
+  flex: 1;
+}

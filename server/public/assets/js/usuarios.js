@@ -285,12 +285,26 @@ function renderTabela(filtro = "") {
   });
 }
 
-  // PESQUISA DE COLABORADORES
+// PESQUISA DE COLABORADORES
 if (inputBuscar) {
   inputBuscar.addEventListener("input", () => {
     const termos = inputBuscar.value.trim().toLowerCase();
-    renderTabela(termos);
+
+    if (termos.length >= 1) {
+      renderTabela(termos);
+    } else {
+      tabelaBody.innerHTML = ""; // tabela vazia ao entrar na página
+    }
   });
+}
+
+// BOTÃO "MOSTRAR TODOS"
+const btnMostrarTodos = document.getElementById("btnMostrarTodos");
+if (btnMostrarTodos) {
+  btnMostrarTodos.onclick = () => {
+    inputBuscar.value = "";   // limpa busca
+    renderTabela("");         // mostra todos
+  };
 }
 
   // ---------------------------------
@@ -481,8 +495,8 @@ if (inputBuscar) {
     }
 
     fecharModal();
-    carregarDados();
+
+    await carregarDados();
   };
 
-  carregarDados();
 });
