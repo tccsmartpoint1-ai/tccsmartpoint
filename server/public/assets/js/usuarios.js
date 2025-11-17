@@ -213,17 +213,25 @@ document.addEventListener("DOMContentLoaded", () => {
   return txt.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 }
 
-  // ---------------------------------
+// ---------------------------------
 // RENDER TABELA
 // ---------------------------------
 function renderTabela(filtro = "") {
+
+  console.clear();
+  console.log("LISTA COMPLETA:", listaColaboradores);
+  console.log("FILTRO DIGITADO:", filtro);
+
   tabelaBody.innerHTML = "";
 
-  // REMOVE ACENTOS + deixa minúsculo
+  // REMOVE ACENTOS
   const termo = removerAcentos(filtro.trim().toLowerCase());
   const termoNumeros = termo.replace(/\D/g, "");
 
   const dadosFiltrados = listaColaboradores.filter((c) => {
+
+    console.log("NOME TESTADO:", c.nome);
+
     const nome = removerAcentos(String(c.nome || "").toLowerCase());
     const cpf = (c.cpf || "").toString();
     const cpfSemMascara = cpf.replace(/\D/g, "");
@@ -277,6 +285,7 @@ function renderTabela(filtro = "") {
     tabelaBody.appendChild(tr);
   });
 }
+
 
   // PESQUISA DE COLABORADORES
 if (inputBuscar) {
