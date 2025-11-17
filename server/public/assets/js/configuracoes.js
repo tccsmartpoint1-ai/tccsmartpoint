@@ -1,17 +1,15 @@
+// BASE DA API (igual às outras páginas)
+const API = "https://tccsmartpoint.onrender.com/api";
+// HOST sem /api para chamar /status
+const API_HOST = API.replace(/\/api\/?$/, "");
+
 // ---------------------------------
 // STATUS DO SISTEMA
 // ---------------------------------
-
-// se API tiver "/api" no final, remove para chamar /status
-const API_HOST =
-  typeof API === "string"
-    ? API.replace(/\/api\/?$/, "")
-    : "https://tccsmartpoint.onrender.com";
-
 async function verificarStatusAPI() {
-  const statusLinha   = document.getElementById("statusLinha");
-  const apiBaseEmUso  = document.getElementById("apiBaseEmUso");
-  const apiStatus     = document.getElementById("apiStatus");
+  const statusLinha  = document.getElementById("statusLinha");
+  const apiBaseEmUso = document.getElementById("apiBaseEmUso");
+  const apiStatus    = document.getElementById("apiStatus");
 
   try {
     const res = await fetch(`${API_HOST}/status`);
@@ -19,7 +17,7 @@ async function verificarStatusAPI() {
     if (!res.ok) throw new Error("Falha");
 
     statusLinha.querySelector("span").textContent = "API Base em uso";
-    apiBaseEmUso.textContent = API; // mostra a base /api usada no sistema
+    apiBaseEmUso.textContent = API; // mostra a URL base usada
 
     apiStatus.textContent = "Online";
     apiStatus.classList.remove("pill-off");
