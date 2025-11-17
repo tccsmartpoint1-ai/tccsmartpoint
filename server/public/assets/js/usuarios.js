@@ -206,7 +206,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.getElementById("countColab").textContent = listaColaboradores.length;
 
-    renderTabela();
+    tabelaBody.innerHTML = ""; // tabela vazia ao entrar
+
   }
 
 function removerAcentos(txt) {
@@ -293,7 +294,7 @@ if (inputBuscar) {
     if (termos.length >= 1) {
       renderTabela(termos);
     } else {
-      tabelaBody.innerHTML = ""; // tabela vazia ao entrar na página
+      tabelaBody.innerHTML = ""; // vazio quando o usuário apaga a busca
     }
   });
 }
