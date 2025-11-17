@@ -209,77 +209,74 @@ document.addEventListener("DOMContentLoaded", () => {
     renderTabela();
   }
 
+  function removerAcentos(txt) {
+  return txt.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
+
   // ---------------------------------
-  // RENDER TABELA
-  // ---------------------------------
-  function renderTabela(filtro = "") {
-    tabelaBody.innerHTML = "";
+// RENDER TABELA
+// ---------------------------------
+function renderTabela(filtro = "") {
+  tabelaBody.innerHTML = "";
 
-    const termo = filtro.toLowerCase();
+  // REMOVE ACENTOS + deixa minúsculo
+  const termo = removerAcentos(filtro.trim().toLowerCase());
+  const termoNumeros = termo.replace(/\D/g, "");
 
-    const dadosFiltrados = listaColaboradores.filter((c) => {
-      const nome = (c.nome || "").toLowerCase();
-      const cpf = (c.cpf || "").toString(); // sempre string
+  const dadosFiltrados = listaColaboradores.filter((c) => {
+    const nome = removerAcentos((c.nome || "").toLowerCase());
+    const cpf = (c.cpf || "").toString();
+    const cpfSemMascara = cpf.replace(/\D/g, "");
 
+    return (
+      nome.includes(termo) ||
+      cpfSemMascara.includes(termoNumeros)
+    );
+  });
 
-      const cpfSemMascara = cpf.replace(/\D/g, "");
-      const termoSemMascara = termo.replace(/\D/g, "");
-
-      const cpfFormatado =
-        cpf.length === 11
-          ? cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4")
-          : cpf;
-
-      return (
-        nome.includes(termo) ||
-        cpfSemMascara.includes(termoSemMascara) ||
-        cpfFormatado.includes(termo)
-      );
-    });
-
-    if (dadosFiltrados.length === 0) {
-      tabelaBody.innerHTML =
-        "<tr><td colspan='9'>Nenhum colaborador encontrado.</td></tr>";
-      return;
-    }
-
-    dadosFiltrados.forEach((c) => {
-      const tr = document.createElement("tr");
-
-      const fotoUrl =
-        c.foto_url && c.foto_url.startsWith("http")
-          ? c.foto_url
-          : "../assets/img/fotos/default.png";
-
-      tr.innerHTML = `
-        <td><img src="${fotoUrl}" class="tabela-foto"></td>
-
-        <td>
-          <div class="action-buttons">
-            <button class="action-edit" data-id="${c.id}">✎</button>
-            <button class="action-lock" data-id="${c.id}">🔒</button>
-            <button class="action-delete" data-id="${c.id}">✖</button>
-          </div>
-        </td>
-
-        <td>${c.nome}</td>
-        <td>${c.cpf}</td>
-        <td>${c.departamento || "-"}</td>
-        <td>${c.funcao || "-"}</td>
-        <td>${mapaTags[c.id] || "-"}</td>
-
-        <td>
-          <span class="badge ${c.ativo ? "badge-success" : "badge-muted"}">
-            ${c.ativo ? "Ativo" : "Inativo"}
-          </span>
-        </td>
-
-        <td>${c.data_admissao || "-"}</td>
-      `;
-
-      tabelaBody.appendChild(tr);
-    });
+  if (dadosFiltrados.length === 0) {
+    tabelaBody.innerHTML =
+      "<tr><td colspan='9'>Nenhum colaborador encontrado.</td></tr>";
+    return;
   }
+
+  dadosFiltrados.forEach((c) => {
+    const tr = document.createElement("tr");
+
+    const fotoUrl =
+      c.foto_url && c.foto_url.startsWith("http")
+        ? c.foto_url
+        : "../assets/img/fotos/default.png";
+
+    tr.innerHTML = `
+      <td><img src="${fotoUrl}" class="tabela-foto"></td>
+
+      <td>
+        <div class="action-buttons">
+          <button class="action-edit" data-id="${c.id}">✎</button>
+          <button class="action-lock" data-id="${c.id}">🔒</button>
+          <button class="action-delete" data-id="${c.id}">✖</button>
+        </div>
+      </td>
+
+      <td>${c.nome}</td>
+      <td>${c.cpf}</td>
+      <td>${c.departamento || "-"}</td>
+      <td>${c.funcao || "-"}</td>
+      <td>${mapaTags[c.id] || "-"}</td>
+
+      <td>
+        <span class="badge ${c.ativo ? "badge-success" : "badge-muted"}">
+          ${c.ativo ? "Ativo" : "Inativo"}
+        </span>
+      </td>
+
+      <td>${c.data_admissao || "-"}</td>
+    `;
+
+    tabelaBody.appendChild(tr);
+  });
+}
 
   // PESQUISA DE COLABORADORES
 if (inputBuscar) {
