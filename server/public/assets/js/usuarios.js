@@ -224,7 +224,7 @@ function renderTabela(filtro = "") {
   const termoNumeros = termo.replace(/\D/g, "");
 
   const dadosFiltrados = listaColaboradores.filter((c) => {
-    const nome = removerAcentos((c.nome || "").toLowerCase());
+    const nome = removerAcentos(String(c.nome || "").toLowerCase());
     const cpf = (c.cpf || "").toString();
     const cpfSemMascara = cpf.replace(/\D/g, "");
 
