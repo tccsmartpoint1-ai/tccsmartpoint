@@ -187,7 +187,10 @@ document.addEventListener("DOMContentLoaded", () => {
   // ---------------------------------
   // CARREGAR DADOS
   // ---------------------------------
-  async function carregarDados() {
+let listaColaboradores = [];  
+let mapaTags = {};
+
+async function carregarDados() {
   console.log("Carregando dados...");
 
   const [resColab, resTags] = await Promise.all([
