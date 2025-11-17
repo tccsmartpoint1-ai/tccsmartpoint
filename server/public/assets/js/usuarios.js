@@ -206,7 +206,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.getElementById("countColab").textContent = listaColaboradores.length;
 
-    renderTabela();
+    tabelaBody.innerHTML = "";
   }
 
 function removerAcentos(txt) {
