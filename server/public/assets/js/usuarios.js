@@ -209,7 +209,7 @@ document.addEventListener("DOMContentLoaded", () => {
     renderTabela();
   }
 
-  function removerAcentos(txt) {
+function removerAcentos(txt) {
   return txt.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 }
 
@@ -217,30 +217,29 @@ document.addEventListener("DOMContentLoaded", () => {
 // RENDER TABELA
 // ---------------------------------
 function renderTabela(filtro = "") {
-
-  console.clear();
-  console.log("LISTA COMPLETA:", listaColaboradores);
-  console.log("FILTRO DIGITADO:", filtro);
-
   tabelaBody.innerHTML = "";
 
-  // REMOVE ACENTOS
-  const termo = removerAcentos(filtro.trim().toLowerCase());
-  const termoNumeros = termo.replace(/\D/g, "");
+  const bruto = filtro.trim();
+  const termo = removerAcentos(bruto.toLowerCase());
+  const termoNumeros = bruto.replace(/\D/g, ""); // usa o texto original
 
-  const dadosFiltrados = listaColaboradores.filter((c) => {
+  let dadosFiltrados;
 
-    console.log("NOME TESTADO:", c.nome);
+  // se não digitou nada, mostra tudo
+  if (!termo && !termoNumeros) {
+    dadosFiltrados = listaColaboradores;
+  } else {
+    dadosFiltrados = listaColaboradores.filter((c) => {
+      const nome = removerAcentos(String(c.nome || "").toLowerCase());
+      const cpf = (c.cpf || "").toString();
+      const cpfSemMascara = cpf.replace(/\D/g, "");
 
-    const nome = removerAcentos(String(c.nome || "").toLowerCase());
-    const cpf = (c.cpf || "").toString();
-    const cpfSemMascara = cpf.replace(/\D/g, "");
+      const bateNome = termo && nome.includes(termo);
+      const bateCpf  = termoNumeros && cpfSemMascara.includes(termoNumeros);
 
-    return (
-      nome.includes(termo) ||
-      cpfSemMascara.includes(termoNumeros)
-    );
-  });
+      return bateNome || bateCpf;
+    });
+  }
 
   if (dadosFiltrados.length === 0) {
     tabelaBody.innerHTML =
@@ -285,7 +284,6 @@ function renderTabela(filtro = "") {
     tabelaBody.appendChild(tr);
   });
 }
-
 
   // PESQUISA DE COLABORADORES
 if (inputBuscar) {
