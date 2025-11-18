@@ -45,14 +45,12 @@ setInterval(verificarStatusAPI, 30000);
 
 
 // =======================================
-// CONFIGURAÇÕES DA API (CARD)
+// CONFIGURAÇÕES DA API
 // =======================================
 
-// Preenche o input com a base atual
 const campoApi = document.getElementById("apiBase");
 campoApi.value = API_BASE;
 
-// ----- SALVAR NOVA URL -----
 document.getElementById("formApi").onsubmit = (e) => {
   e.preventDefault();
 
@@ -62,18 +60,14 @@ document.getElementById("formApi").onsubmit = (e) => {
     return;
   }
 
-  // Salva nova base
   localStorage.setItem("API_BASE", novaURL);
   API_BASE = novaURL;
   window.API = novaURL;
 
   alert("URL da API salva com sucesso!");
-
   location.reload();
 };
 
-
-// ----- TESTAR CONEXÃO -----
 document.getElementById("btnTestarApi").onclick = async () => {
   const url = campoApi.value.trim();
   if (!url) {
@@ -93,18 +87,18 @@ document.getElementById("btnTestarApi").onclick = async () => {
   }
 };
 
+
 // =======================================
-// DISPOSITIVOS
+// DISPOSITIVOS — LISTAGEM
 // =======================================
 
 const btnRecarregarDispositivos = document.getElementById("btnRecarregarDispositivos");
 const tabelaDispositivos = document.querySelector("#tblDispositivos tbody");
 
-// Carregar dispositivos da API
 async function carregarDispositivos() {
   tabelaDispositivos.innerHTML = `
     <tr>
-      <td colspan="5" style="text-align:center;">Carregando...</td>
+      <td colspan="4" style="text-align:center;">Carregando...</td>
     </tr>
   `;
 
@@ -117,7 +111,7 @@ async function carregarDispositivos() {
     if (!Array.isArray(dispositivos) || dispositivos.length === 0) {
       tabelaDispositivos.innerHTML = `
         <tr>
-          <td colspan="5" style="text-align:center;">Nenhum dispositivo encontrado.</td>
+          <td colspan="4" style="text-align:center;">Nenhum dispositivo encontrado.</td>
         </tr>
       `;
       return;
@@ -131,16 +125,8 @@ async function carregarDispositivos() {
       tr.innerHTML = `
         <td>${d.id}</td>
         <td>${d.nome || "-"}</td>
-        <td>${d.ip || "-"}</td>
-        <td>${d.ativo ? "Ativo" : "Inativo"}</td>
-        <td>
-          <button 
-            class="btn-toggle-disp" 
-            data-id="${d.id}" 
-            data-ativo="${d.ativo}">
-            ${d.ativo ? "Desativar" : "Ativar"}
-          </button>
-        </td>
+        <td>${d.identificador || "-"}</td>
+        <td>${d.descricao || "-"}</td>
       `;
 
       tabelaDispositivos.appendChild(tr);
@@ -149,42 +135,73 @@ async function carregarDispositivos() {
   } catch (err) {
     tabelaDispositivos.innerHTML = `
       <tr>
-        <td colspan="5" style="text-align:center; color:red;">Erro ao carregar dispositivos</td>
+        <td colspan="4" style="text-align:center; color:red;">Erro ao carregar dispositivos</td>
       </tr>
     `;
   }
 }
 
-// Ação ativar/desativar
-tabelaDispositivos.addEventListener("click", async (e) => {
-  if (!e.target.classList.contains("btn-toggle-disp")) return;
+btnRecarregarDispositivos.onclick = carregarDispositivos;
+carregarDispositivos();
 
-  const id = e.target.dataset.id;
-  const ativoAtual = e.target.dataset.ativo === "true";
-  const novoStatus = !ativoAtual;
 
-  if (!confirm(`Confirma ${novoStatus ? "ATIVAR" : "DESATIVAR"} o dispositivo ${id}?`)) {
+// =======================================
+// MODAL — ADICIONAR DISPOSITIVO
+// =======================================
+
+const modalAddDispositivo = document.getElementById("modalAddDispositivo");
+const btnNovoDispositivo = document.getElementById("btnNovoDispositivo");
+const btnFecharModalDisp = document.getElementById("btnFecharModalDisp");
+
+const formAddDispositivo = document.getElementById("formAddDispositivo");
+const inpDispNome = document.getElementById("dispNome");
+const inpDispIdentificador = document.getElementById("dispIdentificador");
+const inpDispDescricao = document.getElementById("dispDescricao");
+
+btnNovoDispositivo.onclick = () => {
+  modalAddDispositivo.classList.remove("hidden");
+};
+
+btnFecharModalDisp.onclick = () => {
+  modalAddDispositivo.classList.add("hidden");
+  formAddDispositivo.reset();
+};
+
+formAddDispositivo.onsubmit = async (e) => {
+  e.preventDefault();
+
+  const payload = {
+    nome: inpDispNome.value.trim(),
+    identificador: inpDispIdentificador.value.trim(),
+    descricao: inpDispDescricao.value.trim()
+  };
+
+  if (!payload.nome || !payload.identificador) {
+    alert("Nome e identificador são obrigatórios.");
     return;
   }
 
   try {
-    const res = await fetch(`${API}/dispositivos/${id}`, {
-      method: "PATCH",
+    const res = await fetch(`${API}/dispositivos`, {
+      method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ativo: novoStatus })
+      body: JSON.stringify(payload)
     });
 
-    if (!res.ok) throw new Error();
+    if (!res.ok) {
+      const erro = await res.json();
+      alert("Erro: " + (erro.error || "Falha ao criar dispositivo."));
+      return;
+    }
 
-    carregarDispositivos(); // Atualiza tabela
+    alert("Dispositivo criado com sucesso!");
+
+    modalAddDispositivo.classList.add("hidden");
+    formAddDispositivo.reset();
+
+    carregarDispositivos();
 
   } catch (err) {
-    alert("Erro ao atualizar dispositivo");
+    alert("Erro ao conectar com a API.");
   }
-});
-
-// Botão recarregar lista
-btnRecarregarDispositivos.onclick = carregarDispositivos;
-
-// Carrega ao abrir página
-carregarDispositivos();
+};

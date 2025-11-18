@@ -95,29 +95,62 @@
     </section>
 
     <!-- ===== DISPOSITIVOS ===== -->
-    <section class="card">
-      <h3>Dispositivos</h3>
+<section class="card">
+  <h3>Dispositivos</h3>
+
+  <!-- Botões de ação -->
+  <div class="actions">
+    <button type="button" id="btnNovoDispositivo">Novo Dispositivo</button>
+    <button type="button" id="btnRecarregarDispositivos">Recarregar Lista</button>
+  </div>
+
+  <!-- Tabela -->
+  <div class="tabela-wrapper">
+    <table id="tblDispositivos">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nome</th>
+          <th>Identificador</th>
+          <th>Descrição</th>
+          <th>Ação</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Preenchido via JS -->
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ===== MODAL — ADICIONAR DISPOSITIVO ===== -->
+<div id="modalAddDispositivo" class="modal-overlay hidden">
+  <div class="modal">
+    <h3>Novo Dispositivo</h3>
+
+    <form id="formAddDispositivo">
+      <div class="form-row">
+        <label for="dispNome">Nome</label>
+        <input id="dispNome" type="text" required />
+      </div>
+
+      <div class="form-row">
+        <label for="dispIdentificador">Identificador</label>
+        <input id="dispIdentificador" type="text" required />
+      </div>
+
+      <div class="form-row">
+        <label for="dispDescricao">Descrição (opcional)</label>
+        <input id="dispDescricao" type="text" />
+      </div>
+
       <div class="actions">
-        <button type="button" id="btnRecarregarDispositivos">Recarregar Lista</button>
+        <button type="submit" class="btn-primary">Salvar</button>
+        <button type="button" id="btnFecharModalDisp" class="btn-secondary">Cancelar</button>
       </div>
-      <div class="tabela-wrapper">
-        <table id="tblDispositivos">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Nome</th>
-              <th>IP</th>
-              <th>Status</th>
-              <th>Ação</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- Preenchido via JS -->
-          </tbody>
-        </table>
-      </div>
-      <small class="hint">Ação “Ativar/Desativar” usa PATCH /dispositivos/:id com {"ativo": true|false}.</small>
-    </section>
+    </form>
+  </div>
+</div>
 
     <!-- ===== PARÂMETROS OPERACIONAIS ===== -->
     <section class="card">
