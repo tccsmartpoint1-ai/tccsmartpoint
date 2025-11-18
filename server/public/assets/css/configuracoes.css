@@ -386,3 +386,37 @@ body::-webkit-scrollbar-thumb {
     font-size: 13px;
   }
 }
+
+/* ===== MODAL ===== */
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 5000;
+}
+
+.hidden {
+  display: none;
+}
+
+.modal {
+  background: #fff;
+  padding: 25px;
+  width: 420px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+  animation: modalFade .25s ease-out;
+}
+
+/* Pequena animação de entrada */
+@keyframes modalFade {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
