@@ -447,3 +447,28 @@ body::-webkit-scrollbar-thumb {
 .hidden {
   display: none;
 }
+
+.pw-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.pw-box input {
+  width: 100%;
+  padding-right: 40px;
+}
+
+.togglePw {
+  position: absolute;
+  right: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  opacity: 0.6;
+}
+
+.togglePw:hover {
+  opacity: 1;
+}

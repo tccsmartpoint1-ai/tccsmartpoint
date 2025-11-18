@@ -281,3 +281,18 @@ formSenha.onsubmit = async (e) => {
     mostrarMensagemSenha("Falha ao conectar com a API.", "error");
   }
 };
+
+document.querySelectorAll(".togglePw").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const id = btn.dataset.target;
+    const input = document.getElementById(id);
+
+    if (input.type === "password") {
+      input.type = "text";
+      btn.textContent = "🙈";
+    } else {
+      input.type = "password";
+      btn.textContent = "👁";
+    }
+  });
+});
