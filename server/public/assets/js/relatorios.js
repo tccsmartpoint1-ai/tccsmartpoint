@@ -157,10 +157,12 @@ document.addEventListener("DOMContentLoaded", () => {
         return `
         <tr>
           <td>${fmtDataBR(d.data)}</td>
-          <td>${fmtHora(d.entrada)}</td>
-          <td>${fmtHora(d.saidaAlmoco)}</td>
-          <td>${fmtHora(d.retorno)}</td>
-          <td>${fmtHora(d.saidaFinal)}</td>
+          <td>${fmtHora(d.entrada1)}</td>
+          <td>${fmtHora(d.saida1)}</td>
+          <td>${fmtHora(d.entrada2)}</td>
+          <td>${fmtHora(d.saida2)}</td>
+          <td>${fmtHora(d.entrada3)}</td>
+          <td>${fmtHora(d.saida3)}</td>
           <td><strong>${fmtHora(d.totalHoras)}</strong></td>
           <td style="color: #ff9800; font-weight: 600;">${fmtHora(d.extras)}</td>
           <td><span class="status-badge ${statusClass}">${statusLabel}</span></td>

@@ -1,18 +1,26 @@
-// ===== PROTEÇÃO DE ACESSO =====
+// ===============================
+// PROTEÇÃO DE ACESSO
+// ===============================
 const token = localStorage.getItem("token");
 if (!token) window.location.replace("index.html");
 
-// ===== BLOQUEIO DE HISTÓRICO =====
+// ===============================
+// BLOQUEIO DE HISTÓRICO
+// ===============================
 window.history.pushState(null, null, window.location.href);
 window.onpopstate = () => window.history.pushState(null, null, window.location.href);
 
-// ===== LOGOUT =====
+// ===============================
+// LOGOUT
+// ===============================
 document.getElementById("logoutBtn").addEventListener("click", () => {
   localStorage.removeItem("token");
   window.location.replace("index.html");
 });
 
-// ===== CONTROLE DA SIDEBAR =====
+// ===============================
+// SIDEBAR
+// ===============================
 const sidebar = document.querySelector(".sidebar");
 const toggleBtn = document.getElementById("toggleSidebar");
 
@@ -24,23 +32,23 @@ toggleBtn.addEventListener("click", () => {
   );
 });
 
-// ===== MANTÉM ESTADO DA SIDEBAR =====
+// ===============================
+// MAIN (APENAS UM DOMContentLoaded)
+// ===============================
 document.addEventListener("DOMContentLoaded", () => {
+
   const savedState = localStorage.getItem("sidebarState");
   if (savedState === "collapsed") sidebar.classList.add("collapsed");
-});
-
-document.addEventListener("DOMContentLoaded", () => {
 
   const API_URL = "https://tccsmartpoint.onrender.com/api";
 
   const token = localStorage.getItem("token");
-  if (!token) return window.location.replace("index.html");
-
   const statusEl = document.getElementById("status");
   const tbody = document.getElementById("leiturasBody");
 
-  // ===== SOCKET CORRETO =====
+  // ===============================
+  // SOCKET.IO
+  // ===============================
   const socket = io("https://tccsmartpoint.onrender.com", {
     transports: ["websocket"],
   });
@@ -55,17 +63,17 @@ document.addEventListener("DOMContentLoaded", () => {
     statusEl.classList.remove("online");
   });
 
-  // ===== NOVAS LEITURAS EM TEMPO REAL =====
+  // ===============================
+  // NOVA LEITURA AO VIVO
+  // ===============================
   socket.on("novaLeitura", (payload) => {
-    const leitura =
-      payload && payload.leitura
-        ? payload.leitura
-        : payload;
-
+    const leitura = payload?.leitura ?? payload;
     adicionarLeitura(leitura);
   });
 
-  // ===== CARREGAR LEITURAS INICIAIS =====
+  // ===============================
+  // CARREGAR INICIAIS
+  // ===============================
   async function carregarLeiturasIniciais() {
     try {
       const res = await fetch(`${API_URL}/leituras?limit=20&sort=desc`, {
@@ -78,18 +86,22 @@ document.addEventListener("DOMContentLoaded", () => {
       const leituras = Array.isArray(json.data) ? json.data : [];
 
       tbody.innerHTML = "";
+
       if (leituras.length === 0) {
         tbody.innerHTML = "<tr><td colspan='7'>Nenhum registro encontrado.</td></tr>";
         return;
       }
 
       leituras.forEach((l) => adicionarLeitura(l));
+
     } catch (err) {
       tbody.innerHTML = "<tr><td colspan='7'>Erro ao carregar leituras.</td></tr>";
     }
   }
 
-  // ===== INSERE UMA NOVA LINHA NA TABELA =====
+  // ===============================
+  // INSERIR LINHA NA TABELA
+  // ===============================
   function adicionarLeitura(leitura) {
     if (!leitura) return;
 
@@ -98,7 +110,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const data = leitura.data || "-";
     const hora = leitura.hora || "--:--:--";
 
-    // ===== CORREÇÃO AQUI =====
     const colaborador = leitura.colaborador
       ? leitura.colaborador.nome
       : "-";
@@ -107,7 +118,9 @@ document.addEventListener("DOMContentLoaded", () => {
       ? leitura.dispositivo.nome
       : "-";
 
-    const mensagem = leitura.autorizado ? "Acesso permitido" : "Cartão não reconhecido";
+    const mensagem = leitura.autorizado
+      ? "Acesso permitido"
+      : "Cartão não reconhecido";
 
     tr.innerHTML = `
       <td>${data}</td>
@@ -121,10 +134,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     tr.classList.add(leitura.autorizado ? "permitido" : "negado");
 
+    // Insere no topo
     tbody.prepend(tr);
 
+    // Destaque ao vivo
     tr.classList.add("highlight");
     setTimeout(() => tr.classList.remove("highlight"), 2000);
+
+    // Limpador automático (mantém no máximo 100 linhas)
+    if (tbody.children.length > 100) {
+      tbody.removeChild(tbody.lastChild);
+    }
   }
 
   carregarLeiturasIniciais();
