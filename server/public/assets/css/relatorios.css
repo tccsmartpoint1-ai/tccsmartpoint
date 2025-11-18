@@ -533,9 +533,19 @@ body {
   color: #2e7d32;
 }
 
+.status-presente::before {
+  content: "✓ ";
+  font-weight: bold;
+}
+
 .status-falta {
   background: #ffebee;
   color: #c62828;
+}
+
+.status-falta::before {
+  content: "✗ ";
+  font-weight: bold;
 }
 
 .status-atraso {
@@ -543,14 +553,29 @@ body {
   color: #e65100;
 }
 
+.status-atraso::before {
+  content: "⚠ ";
+  font-weight: bold;
+}
+
 .status-ferias {
   background: #e0f2f1;
   color: #00695c;
 }
 
+.status-ferias::before {
+  content: "✈ ";
+  font-weight: bold;
+}
+
 .status-feriado {
   background: #f3e5f5;
   color: #6a1b9a;
+}
+
+.status-feriado::before {
+  content: "🎉 ";
+  font-weight: bold;
 }
 
 /* ===== RESUMO FINAL ===== */

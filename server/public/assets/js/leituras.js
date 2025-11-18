@@ -107,7 +107,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const tr = document.createElement("tr");
 
-    const data = leitura.data || "-";
+    cons = leitura.data || "-";
     const hora = leitura.hora || "--:--:--";
 
     const colaborador = leitura.colaborador
@@ -125,6 +125,7 @@ document.addEventListener("DOMContentLoaded", () => {
     tr.innerHTML = `
       <td>${data}</td>
       <td>${hora}</td>
+      <td>${leitura.tipo_batida || "-"}</td>
       <td>${colaborador}</td>
       <td>${dispositivo}</td>
       <td>${leitura.tag_uid || "-"}</td>

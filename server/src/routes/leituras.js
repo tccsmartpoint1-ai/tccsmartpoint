@@ -27,78 +27,105 @@ function buildWhere(query) {
 module.exports = (io) => {
 
   // === ROTA PÚBLICA PARA O ARDUINO ===
-  router.post('/arduino', async (req, res) => {
-    try {
-      const { rfid, nome, dispositivo, timestamp } = req.body;
+router.post('/arduino', async (req, res) => {
+  try {
+    const { rfid, nome, dispositivo, timestamp } = req.body;
 
-      if (!rfid) {
-        return res.status(400).json({ error: 'Campo rfid é obrigatório' });
-      }
+    if (!rfid) {
+      return res.status(400).json({ error: 'Campo rfid é obrigatório' });
+    }
 
-      const tag = await Tag.findOne({ where: { uid: rfid } });
-      const colaborador = tag ? await Colaborador.findByPk(tag.colaborador_id) : null;
+    const tag = await Tag.findOne({ where: { uid: rfid } });
+    const colaborador = tag ? await Colaborador.findByPk(tag.colaborador_id) : null;
 
-      let disp = await Dispositivo.findOne({ where: { nome: dispositivo } });
-      if (!disp) {
-        disp = await Dispositivo.create({
-          nome: dispositivo || 'Desconhecido',
-          identificador: dispositivo ? dispositivo.toLowerCase().replace(/\s+/g, '_') : 'sem_nome',
-          descricao: 'Criado automaticamente via Arduino'
-        });
-      }
-
-      const now = timestamp ? new Date(timestamp) : new Date();
-      if (isNaN(now.getTime())) {
-        return res.status(400).json({ error: 'timestamp inválido' });
-      }
-
-      const local = new Date(now.toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }));
-      const dataFormatada = local.toISOString().split('T')[0];
-      const horaFormatada = local.toTimeString().split(' ')[0];
-
-      const autorizado = !!colaborador;
-      const mensagem = autorizado
-        ? `Acesso permitido: ${colaborador.nome}`
-        : 'Cartão não reconhecido';
-
-      const leitura = await LeiturasReais.create({
-        tag_uid: rfid,
-        colaborador_id: colaborador ? colaborador.id : null,
-        dispositivo_id: disp ? disp.id : null,
-        autorizado,
-        tipo_batida: 'entrada',
-        data: dataFormatada,
-        hora: horaFormatada,
-        origem: 'arduino',
-        mensagem,
-        raw_payload: req.body,
-        ip: req.ip
-      });
-
-      const leituraCompleta = await LeiturasReais.findByPk(leitura.id, {
-        include: [
-          { model: Colaborador, as: 'colaborador' },
-          { model: Dispositivo, as: 'dispositivo' }
-        ]
-      });
-
-      io.emit('novaLeitura', leituraCompleta);
-
-      return res.status(200).json({
-        status: autorizado ? "ok" : "negado",
-        mensagem,
-        leitura: leituraCompleta
-      });
-
-    } catch (err) {
-      console.error('=== ERRO AO SALVAR LEITURA DO ARDUINO ===');
-      console.error(err);
-      res.status(500).json({
-        status: "erro",
-        mensagem: "Erro ao salvar leitura do Arduino"
+    let disp = await Dispositivo.findOne({ where: { nome: dispositivo } });
+    if (!disp) {
+      disp = await Dispositivo.create({
+        nome: dispositivo || 'Desconhecido',
+        identificador: dispositivo ? dispositivo.toLowerCase().replace(/\s+/g, '_') : 'sem_nome',
+        descricao: 'Criado automaticamente via Arduino'
       });
     }
-  });
+
+    const now = timestamp ? new Date(timestamp) : new Date();
+    if (isNaN(now.getTime())) {
+      return res.status(400).json({ error: 'timestamp inválido' });
+    }
+
+    const local = new Date(now.toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }));
+    const dataFormatada = local.toISOString().split('T')[0];
+    const horaFormatada = local.toTimeString().split(' ')[0];
+
+    const autorizado = !!colaborador;
+    const mensagem = autorizado
+      ? `Acesso permitido: ${colaborador.nome}`
+      : 'Cartão não reconhecido';
+
+    // ==========================================
+    //  NOVA LÓGICA — DEFINIR tipo_batida DINÂMICO
+    // ==========================================
+    let tipo_batida = "entrada1";
+
+    if (colaborador) {
+      const batidasHoje = await LeiturasReais.count({
+        where: {
+          colaborador_id: colaborador.id,
+          data: dataFormatada
+        }
+      });
+
+      const map = [
+        "entrada1",
+        "saida1",
+        "entrada2",
+        "saida2",
+        "entrada3",
+        "saida3"
+      ];
+
+      tipo_batida = map[batidasHoje] || "extra";
+    }
+
+    // Salvar leitura
+    const leitura = await LeiturasReais.create({
+      tag_uid: rfid,
+      colaborador_id: colaborador ? colaborador.id : null,
+      dispositivo_id: disp ? disp.id : null,
+      autorizado,
+      tipo_batida,
+      data: dataFormatada,
+      hora: horaFormatada,
+      origem: 'arduino',
+      mensagem,
+      raw_payload: req.body,
+      ip: req.ip
+    });
+
+    const leituraCompleta = await LeiturasReais.findByPk(leitura.id, {
+      include: [
+        { model: Colaborador, as: 'colaborador' },
+        { model: Dispositivo, as: 'dispositivo' }
+      ]
+    });
+
+    io.emit('novaLeitura', leituraCompleta);
+
+    return res.status(200).json({
+      status: autorizado ? "ok" : "negado",
+      mensagem,
+      leitura: leituraCompleta
+    });
+
+  } catch (err) {
+    console.error('=== ERRO AO SALVAR LEITURA DO ARDUINO ===');
+    console.error(err);
+    res.status(500).json({
+      status: "erro",
+      mensagem: "Erro ao salvar leitura do Arduino"
+    });
+  }
+});
+
 
   // === ROTA PROTEGIDA (LISTAGEM) ===
   router.get('/', auth, async (req, res) => {

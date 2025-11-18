@@ -132,7 +132,7 @@
       <div class="metric-card metric-card-purple">
         <div class="metric-header">
           <h4>Pontos Hoje</h4>
-          <span class="metric-icon">⏰</span>
+          <span class="metric-icon">🕐</span>
         </div>
         <p class="metric-value">452</p>
         <p class="metric-subtitle">Até 12h30</p>
@@ -141,7 +141,7 @@
       <div class="metric-card metric-card-orange">
         <div class="metric-header">
           <h4>Relatórios no Mês</h4>
-          <span class="metric-icon">📄</span>
+          <span class="metric-icon">📋</span>
         </div>
         <p class="metric-value">87</p>
         <p class="metric-subtitle">Meta: 100</p>
@@ -289,20 +289,123 @@
             </tr>
           </thead>
           <tbody id="tblBody">
-            <!-- preenchido via JS -->
+            <tr>
+              <td>11/11/2025</td>
+              <td>08:00</td>
+              <td>12:00</td>
+              <td>13:00</td>
+              <td>18:00</td>
+              <td><strong>09:00</strong></td>
+              <td style="color: #ff9800; font-weight: 600;">01:00</td>
+              <td><span class="status-badge status-presente">✓ Presente</span></td>
+              <td>+04:00</td>
+              <td>Hora extra aprovada</td>
+              <td class="no-print"><button class="btn-edit">✏️</button></td>
+            </tr>
+            <tr>
+              <td>12/11/2025</td>
+              <td>08:15</td>
+              <td>12:00</td>
+              <td>13:00</td>
+              <td>18:00</td>
+              <td><strong>08:45</strong></td>
+              <td style="color: #ff9800; font-weight: 600;">00:00</td>
+              <td><span class="status-badge status-atraso">⚠ Atraso</span></td>
+              <td>+03:55</td>
+              <td>Atraso de 15 minutos</td>
+              <td class="no-print"><button class="btn-edit">✏️</button></td>
+            </tr>
+            <tr>
+              <td>13/11/2025</td>
+              <td>08:00</td>
+              <td>12:00</td>
+              <td>13:00</td>
+              <td>19:00</td>
+              <td><strong>10:00</strong></td>
+              <td style="color: #ff9800; font-weight: 600;">02:00</td>
+              <td><span class="status-badge status-presente">✓ Presente</span></td>
+              <td>+05:55</td>
+              <td>Projeto urgente</td>
+              <td class="no-print"><button class="btn-edit">✏️</button></td>
+            </tr>
+            <tr>
+              <td>14/11/2025</td>
+              <td>08:00</td>
+              <td>12:00</td>
+              <td>13:00</td>
+              <td>18:00</td>
+              <td><strong>09:00</strong></td>
+              <td style="color: #ff9800; font-weight: 600;">01:00</td>
+              <td><span class="status-badge status-presente">✓ Presente</span></td>
+              <td>+06:55</td>
+              <td>-</td>
+              <td class="no-print"><button class="btn-edit">✏️</button></td>
+            </tr>
+            <tr>
+              <td>15/11/2025</td>
+              <td>08:00</td>
+              <td>12:00</td>
+              <td>13:00</td>
+              <td>18:00</td>
+              <td><strong>09:00</strong></td>
+              <td style="color: #ff9800; font-weight: 600;">01:00</td>
+              <td><span class="status-badge status-feriado">🎉 Feriado</span></td>
+              <td>+07:55</td>
+              <td>Proclamação da República</td>
+              <td class="no-print"><button class="btn-edit">✏️</button></td>
+            </tr>
+            <tr>
+              <td>18/11/2025</td>
+              <td>08:00</td>
+              <td>12:00</td>
+              <td>13:00</td>
+              <td>18:00</td>
+              <td><strong>09:00</strong></td>
+              <td style="color: #ff9800; font-weight: 600;">01:00</td>
+              <td><span class="status-badge status-presente">✓ Presente</span></td>
+              <td>+08:55</td>
+              <td>-</td>
+              <td class="no-print"><button class="btn-edit">✏️</button></td>
+            </tr>
+            <tr>
+              <td>19/11/2025</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td><strong>00:00</strong></td>
+              <td style="color: #ff9800; font-weight: 600;">00:00</td>
+              <td><span class="status-badge status-ferias">✈ Férias</span></td>
+              <td>+08:55</td>
+              <td>Férias programadas</td>
+              <td class="no-print"><button class="btn-edit">✏️</button></td>
+            </tr>
+            <tr>
+              <td>20/11/2025</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td><strong>00:00</strong></td>
+              <td style="color: #ff9800; font-weight: 600;">00:00</td>
+              <td><span class="status-badge status-feriado">🎉 Feriado</span></td>
+              <td>+08:55</td>
+              <td>Consciência Negra</td>
+              <td class="no-print"><button class="btn-edit">✏️</button></td>
+            </tr>
           </tbody>
         </table>
       </div>
 
       <!-- RESUMO FINAL -->
-      <div class="summary-section" id="summarySection" style="display: none;">
+      <div class="summary-section" id="summarySection">
         <div class="summary-item">
           <h4>Total de Horas</h4>
-          <p class="summary-value" id="totalHoras">0h</p>
+          <p class="summary-value" id="totalHoras">97h</p>
         </div>
         <div class="summary-item">
           <h4>Horas Extras</h4>
-          <p class="summary-value" id="totalExtras">0h</p>
+          <p class="summary-value" id="totalExtras">9h</p>
         </div>
         <div class="summary-item">
           <h4>Faltas</h4>
@@ -310,7 +413,7 @@
         </div>
         <div class="summary-item">
           <h4>Atrasos</h4>
-          <p class="summary-value" id="totalAtrasos">0</p>
+          <p class="summary-value" id="totalAtrasos">2</p>
         </div>
       </div>
     </section>
