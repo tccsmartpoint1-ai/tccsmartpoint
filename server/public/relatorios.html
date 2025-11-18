@@ -22,7 +22,8 @@
       #toggleSidebar,
       #logoutBtn,
       .btn-edit,
-      .btn-save {
+      .btn-save,
+      .metrics-container {
         display: none !important;
       }
 
@@ -110,10 +111,87 @@
   <!-- ===== CONTEÚDO ===== -->
   <main class="content">
 
-    <!-- FILTROS -->
-    <section class="filtros">
+    <!-- HEADER SEÇÃO -->
+    <section class="header-section">
       <h2>Relatórios Consolidados</h2>
       <p>Gere resumos analíticos das leituras armazenadas.</p>
+    </section>
+
+    <!-- CARDS DE MÉTRICAS -->
+    <section class="metrics-container" id="metricsContainer">
+      <div class="metric-card metric-card-blue">
+        <div class="metric-header">
+          <h4>Usuários Ativos</h4>
+          <span class="metric-icon">👥</span>
+        </div>
+        <p class="metric-value">1.240</p>
+        <p class="metric-subtitle">+3% vs semana passada</p>
+      </div>
+
+      <div class="metric-card metric-card-purple">
+        <div class="metric-header">
+          <h4>Pontos Hoje</h4>
+          <span class="metric-icon">⏰</span>
+        </div>
+        <p class="metric-value">452</p>
+        <p class="metric-subtitle">Até 12h30</p>
+      </div>
+
+      <div class="metric-card metric-card-orange">
+        <div class="metric-header">
+          <h4>Relatórios no Mês</h4>
+          <span class="metric-icon">📄</span>
+        </div>
+        <p class="metric-value">87</p>
+        <p class="metric-subtitle">Meta: 100</p>
+      </div>
+
+      <div class="metric-card metric-card-red">
+        <div class="metric-header">
+          <h4>Atrasos</h4>
+          <span class="metric-icon">⚠️</span>
+        </div>
+        <p class="metric-value">12</p>
+        <p class="metric-subtitle">Este mês</p>
+      </div>
+
+      <div class="metric-card metric-card-green">
+        <div class="metric-header">
+          <h4>Horas Extras</h4>
+          <span class="metric-icon">📈</span>
+        </div>
+        <p class="metric-value">156h</p>
+        <p class="metric-subtitle">+8% vs mês anterior</p>
+      </div>
+
+      <div class="metric-card metric-card-indigo">
+        <div class="metric-header">
+          <h4>Férias</h4>
+          <span class="metric-icon">✈️</span>
+        </div>
+        <p class="metric-value">5</p>
+        <p class="metric-subtitle">Dias no período</p>
+      </div>
+
+      <div class="metric-card metric-card-pink">
+        <div class="metric-header">
+          <h4>Feriados</h4>
+          <span class="metric-icon">🎉</span>
+        </div>
+        <p class="metric-value">3</p>
+        <p class="metric-subtitle">No mês</p>
+      </div>
+    </section>
+
+    <!-- FILTROS -->
+    <section class="filtros">
+      <h3>Filtros de Pesquisa</h3>
+      
+      <div class="quick-filters">
+        <button class="quick-filter-btn" data-days="0">📅 Hoje</button>
+        <button class="quick-filter-btn" data-days="7">📅 Esta Semana</button>
+        <button class="quick-filter-btn" data-days="30">📅 Este Mês</button>
+      </div>
 
       <form id="formRelatorios">
         <div class="grid-4">
@@ -139,10 +217,18 @@
         </div>
 
         <div class="botoes">
-          <button type="submit" id="btnGerar">Gerar Relatório</button>
-          <button type="button" id="btnAtualizar">Atualizar</button>
-          <button type="button" id="btnCsv">Exportar CSV</button>
-          <button type="button" id="btnPdf">Exportar PDF</button>
+          <button type="submit" id="btnGerar" class="btn-primary">
+            <span>🔍</span> Gerar Relatório
+          </button>
+          <button type="button" id="btnAtualizar" class="btn-secondary">
+            <span>🔄</span> Atualizar
+          </button>
+          <button type="button" id="btnCsv" class="btn-success">
+            <span>📊</span> Exportar CSV
+          </button>
+          <button type="button" id="btnPdf" class="btn-danger">
+            <span>📄</span> Exportar PDF
+          </button>
         </div>
       </form>
     </section>
@@ -155,11 +241,21 @@
 
       <!-- RESUMO DO COLABORADOR (VISUAL + PDF) -->
       <div id="resumoColaborador" class="resumo-colaborador">
-        <p><strong>Nome:</strong> <span id="resNome"></span></p>
-        <p><strong>CPF:</strong> <span id="resCpf"></span></p>
-        <p><strong>Cargo:</strong> <span id="resCargo"></span></p>
-        <p><strong>Setor:</strong> <span id="resSetor"></span></p>
-        <p><strong>Período:</strong> <span id="resPeriodo"></span></p>
+        <div class="resumo-item">
+          <strong>Nome:</strong> <span id="resNome"></span>
+        </div>
+        <div class="resumo-item">
+          <strong>CPF:</strong> <span id="resCpf"></span>
+        </div>
+        <div class="resumo-item">
+          <strong>Cargo:</strong> <span id="resCargo"></span>
+        </div>
+        <div class="resumo-item">
+          <strong>Setor:</strong> <span id="resSetor"></span>
+        </div>
+        <div class="resumo-item">
+          <strong>Período:</strong> <span id="resPeriodo"></span>
+        </div>
       </div>
 
       <div class="tabela-wrapper">
@@ -173,8 +269,7 @@
               <th>Saída Final</th>
               <th>Total</th>
               <th>Extras</th>
-              <th>Faltas</th>
-              <th>Atrasos</th>
+              <th>Status</th>
               <th>Banco de Horas</th>
               <th>Obs</th>
               <th class="no-print">Editar</th>
@@ -184,6 +279,26 @@
             <!-- preenchido via JS -->
           </tbody>
         </table>
+      </div>
+
+      <!-- RESUMO FINAL -->
+      <div class="summary-section" id="summarySection" style="display: none;">
+        <div class="summary-item">
+          <h4>Total de Horas</h4>
+          <p class="summary-value" id="totalHoras">0h</p>
+        </div>
+        <div class="summary-item">
+          <h4>Horas Extras</h4>
+          <p class="summary-value" id="totalExtras">0h</p>
+        </div>
+        <div class="summary-item">
+          <h4>Faltas</h4>
+          <p class="summary-value" id="totalFaltas">0</p>
+        </div>
+        <div class="summary-item">
+          <h4>Atrasos</h4>
+          <p class="summary-value" id="totalAtrasos">0</p>
+        </div>
       </div>
     </section>
   </main>
