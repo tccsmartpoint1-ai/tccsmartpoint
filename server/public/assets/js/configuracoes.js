@@ -218,3 +218,66 @@ formAddDispositivo.onsubmit = async (e) => {
     alert("Erro ao conectar com a API.");
   }
 };
+
+// =======================================
+// ALTERAÇÃO DE SENHA — FEEDBACK VISUAL
+// =======================================
+
+const formSenha = document.getElementById("formSenha");
+const msgSenha = document.getElementById("msgSenha");
+
+function mostrarMensagemSenha(texto, tipo) {
+  msgSenha.textContent = texto;
+  msgSenha.className = "msg"; // limpa classes
+  msgSenha.classList.add(tipo === "success" ? "msg-success" : "msg-error");
+  msgSenha.classList.remove("hidden");
+
+  setTimeout(() => {
+    msgSenha.classList.add("hidden");
+  }, 4000);
+}
+
+formSenha.onsubmit = async (e) => {
+  e.preventDefault();
+
+  const senhaAtual = document.getElementById("senhaAtual").value.trim();
+  const novaSenha = document.getElementById("novaSenha").value.trim();
+  const confirma = document.getElementById("confirmaSenha").value.trim();
+
+  if (!senhaAtual || !novaSenha || !confirma) {
+    mostrarMensagemSenha("Preencha todos os campos.", "error");
+    return;
+  }
+
+  if (novaSenha !== confirma) {
+    mostrarMensagemSenha("A nova senha e a confirmação não coincidem.", "error");
+    return;
+  }
+
+  const token = localStorage.getItem("token");
+
+  try {
+    const res = await fetch(`${API}/auth/senha`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify({ senhaAtual, novaSenha })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      mostrarMensagemSenha(data.error || "Erro ao alterar senha.", "error");
+      return;
+    }
+
+    mostrarMensagemSenha("Senha alterada com sucesso!", "success");
+
+    formSenha.reset();
+
+  } catch {
+    mostrarMensagemSenha("Falha ao conectar com a API.", "error");
+  }
+};

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -12,13 +13,16 @@
   <header class="topbar">
     <div class="left-controls">
       <button id="toggleSidebar" aria-label="Alternar menu lateral">☰</button>
-      <h1>Smart Point</h1>
+
+      <img src="../assets/img/logo.png" alt="Smart Point" class="logo-topbar">
     </div>
+
     <div class="user-area">
       <img src="../assets/img/icons/usuario.png" alt="Perfil" class="profile-icon" />
       <button id="logoutBtn" class="logout-btn">Sair</button>
     </div>
   </header>
+
 
   <!-- ===== MENU LATERAL ===== -->
   <aside class="sidebar expanded" id="sidebar">
@@ -121,7 +125,9 @@
             </tr>
           </thead>
           <tbody id="ultimasLeituras">
-            <tr><td colspan="3">Carregando...</td></tr>
+            <tr>
+              <td colspan="3">Carregando...</td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -140,7 +146,9 @@
             </tr>
           </thead>
           <tbody id="colaboradoresAtivos">
-            <tr><td colspan="3">Carregando...</td></tr>
+            <tr>
+              <td colspan="3">Carregando...</td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -161,32 +169,9 @@
     <div id="loader" class="loader">Carregando dados...</div>
   </main>
 
-  <!-- ===== CONTROLE DE LOGIN / LOGOUT / HISTÓRICO ===== -->
-  <script>
-    // Proteção de acesso
-    const token = localStorage.getItem("token");
-    if (!token) window.location.href = "index.html";
 
-    // Bloqueio de histórico (não permite voltar após logout)
-    window.history.pushState(null, null, window.location.href);
-    window.onpopstate = () => {
-      window.history.pushState(null, null, window.location.href);
-    };
-
-    // Logout seguro
-    document.getElementById("logoutBtn").addEventListener("click", () => {
-      localStorage.removeItem("token");
-      window.location.replace("index.html");
-    });
-
-    // Controle da sidebar (corrigido)
-    const sidebar = document.getElementById("sidebar");
-    const toggleSidebar = document.getElementById("toggleSidebar");
-    toggleSidebar.addEventListener("click", () => {
-      sidebar.classList.toggle("collapsed");
-    });
-  </script>
 
   <script src="../assets/js/dashboard.js"></script>
 </body>
+
 </html>

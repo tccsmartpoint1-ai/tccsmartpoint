@@ -119,36 +119,10 @@
       </div>
     </section>
 
-    <!-- ===== PARÂMETROS OPERACIONAIS ===== -->
-    <section class="card">
-      <h3>Parâmetros Operacionais</h3>
-      <form id="formParams">
-        <div class="grid-3">
-          <div class="form-row">
-            <label for="intervaloAtualizacao">Atualização automática (s)</label>
-            <input id="intervaloAtualizacao" type="number" min="0" step="1" placeholder="Ex.: 60" />
-          </div>
-          <div class="form-row">
-            <label for="tempoMinimoLeitura">Tempo mínimo entre leituras (s)</label>
-            <input id="tempoMinimoLeitura" type="number" min="0" step="1" placeholder="Ex.: 2" />
-          </div>
-          <div class="form-row">
-            <label for="modoOperacao">Modo de operação</label>
-            <select id="modoOperacao">
-              <option value="tempo_real">Tempo real</option>
-              <option value="buffer">Buffer</option>
-            </select>
-          </div>
-        </div>
-        <div class="actions">
-          <button type="submit" id="btnSalvarParams">Salvar Parâmetros</button>
-        </div>
-      </form>
-    </section>
-
     <!-- ===== SEGURANÇA E MANUTENÇÃO ===== -->
     <section class="card">
       <h3>Segurança e Manutenção</h3>
+      <div id="msgSenha" class="msg hidden"></div>
       <form id="formSenha">
         <div class="grid-3">
           <div class="form-row">
@@ -171,10 +145,9 @@
 
       <div class="actions mt-8">
         <button type="button" id="btnExportarCSV">Exportar Leituras (CSV)</button>
-        <button type="button" id="btnResetar" class="btn-danger">Resetar Sistema (desativado)</button>
         <button type="button" id="btnLogout" class="btn-outline">Sair</button>
       </div>
-      <small class="hint">Reset está desativado nesta etapa. Nenhuma chamada DELETE será enviada.</small>
+       
     </section>
   </main>
 

@@ -59,5 +59,39 @@ router.post('/login', async (req, res) => {
     admin: { id: admin.id, nome: admin.nome, cpf: admin.cpf, email: admin.email }
   });
 });
+ 
+// Alterar senha (ADMIN)
+router.patch('/senha', require('../middleware/auth'), async (req, res) => {
+  try {
+    const { senhaAtual, novaSenha } = req.body;
+
+    if (!senhaAtual || !novaSenha) {
+      return res.status(400).json({ error: 'senhaAtual e novaSenha são obrigatórias' });
+    }
+
+    // CORREÇÃO AQUI
+    const adminId = req.adminId;
+
+    const admin = await Admin.findByPk(adminId);
+    if (!admin) return res.status(404).json({ error: 'Admin não encontrado' });
+
+    const confere = await bcrypt.compare(senhaAtual, admin.senha_hash);
+    if (!confere) {
+      return res.status(401).json({ error: 'Senha atual incorreta' });
+    }
+
+    const novoHash = await bcrypt.hash(novaSenha, 10);
+
+    admin.senha_hash = novoHash;
+    await admin.save();
+
+    return res.json({ message: 'Senha alterada com sucesso!' });
+
+  } catch (err) {
+    console.error("Erro ao alterar senha:", err);
+    return res.status(500).json({ error: 'Erro ao alterar senha' });
+  }
+});
+
 
 module.exports = router;

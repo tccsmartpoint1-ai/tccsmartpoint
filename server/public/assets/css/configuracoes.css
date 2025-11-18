@@ -420,3 +420,30 @@ body::-webkit-scrollbar-thumb {
   from { opacity: 0; transform: translateY(-10px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+
+.msg {
+  padding: 12px 18px;
+  margin-bottom: 12px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 14px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.msg-success {
+  background: #d2f5d2;
+  color: #1a7e1a;
+  border: 1px solid #1a7e1a;
+}
+
+.msg-error {
+  background: #ffd4d4;
+  color: #a30000;
+  border: 1px solid #a30000;
+}
+
+.hidden {
+  display: none;
+}

@@ -7,7 +7,7 @@ if (!process.env.JWT_SECRET) {
 
 module.exports = function (req, res, next) {
 
-  // ✔ LOG CORRETO
+  //  LOG CORRETO
   console.log(">>> AUTH EXECUTADO:", req.headers.authorization);
 
   const header = req.headers['authorization'];

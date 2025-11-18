@@ -3,47 +3,47 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Segoe UI", Arial, sans-serif;
 }
 
+/* ===== BASE ===== */
 body {
+  font-family: "Segoe UI", Arial, sans-serif;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background: #f4f6f8;
+  background: #f5f7fa;
+  /* tom mais neutro e moderno */
   color: #333;
   overflow-x: hidden;
 }
 
-/* ===== TOPO (TOPBAR) ===== */
+
+/* ===== TOPBAR ===== */
 .topbar {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   height: 60px;
-  background: linear-gradient(90deg, #1976d2, #2196f3);
+  background: #1976d2;
+  /* cor sólida, mais limpa e moderna */
   color: #fff;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 20px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
   z-index: 1000;
 }
 
+/* Área esquerda: botão + logo */
 .left-controls {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
-.topbar h1 {
-  font-size: 20px;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-}
-
+/* Ícone do botão do menu */
 .topbar button {
   background: none;
   border: none;
@@ -54,18 +54,37 @@ body {
 }
 
 .topbar button:hover {
-  transform: scale(1.1);
+  transform: scale(1.08);
 }
 
+/* LOGO na topbar (substitui o título) */
+.logo-topbar {
+  height: 34px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+}
+
+/* Área do usuário */
 .user-area {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
+.profile-icon {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  background: white;
+  object-fit: cover;
+  border: 2px solid #bbdefb;
+  /* azul suave */
+}
+
 .user-area button {
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.22);
   border-radius: 8px;
   padding: 6px 12px;
   color: #fff;
@@ -78,14 +97,6 @@ body {
   background: rgba(255, 255, 255, 0.25);
 }
 
-.profile-icon {
-  width: 35px;
-  height: 35px;
-  border-radius: 50%;
-  background: white;
-  object-fit: cover;
-  border: 2px solid #90caf9;
-}
 
 /* ===== SIDEBAR ===== */
 .sidebar {
@@ -94,12 +105,15 @@ body {
   left: 0;
   width: 220px;
   height: calc(100vh - 60px);
-  background: #1565c0;
+  background: #0d47a1;
+  /* azul mais escuro: base sólida */
   color: #fff;
   padding-top: 20px;
   transition: all 0.3s ease;
   z-index: 900;
   overflow: hidden;
+  box-shadow: 2px 0 6px rgba(0, 0, 0, 0.12);
+  /* leve profundidade */
 }
 
 .sidebar nav ul {
@@ -107,9 +121,10 @@ body {
 }
 
 .sidebar nav ul li {
-  margin: 10px 0;
+  margin: 6px 0;
 }
 
+/* LINKS */
 .sidebar nav ul li a {
   display: flex;
   align-items: center;
@@ -117,20 +132,32 @@ body {
   padding: 12px 20px;
   color: white;
   text-decoration: none;
-  transition: background 0.2s, transform 0.2s;
+  transition: background 0.20s ease, padding-left 0.20s ease;
   border-left: 4px solid transparent;
+  font-size: 15px;
 }
 
+/* HOVER */
 .sidebar nav ul li a:hover {
-  background: #1e88e5;
-  transform: translateX(2px);
-  border-left: 4px solid #90caf9;
+  background: rgba(255, 255, 255, 0.12);
+  padding-left: 26px;
+  border-left: 4px solid #42a5f5;
+  /* azul claro suave */
 }
 
+/* ÍCONES */
 .sidebar nav ul li a img {
   width: 22px;
   height: 22px;
   filter: brightness(0) invert(1);
+}
+
+/* ITEM ATIVO (PÁGINA ATUAL) */
+.sidebar nav ul li a.active {
+  background: rgba(255, 255, 255, 0.18);
+  border-left: 4px solid #90caf9;
+  padding-left: 26px;
+  font-weight: 600;
 }
 
 /* ===== SIDEBAR COLAPSADA ===== */
@@ -138,80 +165,114 @@ body {
   width: 80px;
 }
 
-.sidebar.collapsed nav ul li a span {
-  display: none;
-}
-
 .sidebar.collapsed nav ul li a {
   justify-content: center;
   padding: 12px 0;
 }
 
+.sidebar.collapsed nav ul li a span {
+  display: none;
+}
+
+.sidebar.collapsed nav ul li a.active {
+  padding-left: 0;
+}
+
 /* ===== CONTEÚDO ===== */
 .content {
   margin-top: 60px;
+  /* topbar fixa */
   margin-left: 220px;
+  /* sidebar aberta */
   padding: 30px;
+  /* espaçamento interno padrão */
   transition: margin-left 0.3s ease;
 }
 
-.sidebar.collapsed ~ .content {
+/* Sidebar colapsada no desktop */
+.sidebar.collapsed~.content {
   margin-left: 80px;
 }
+
 
 /* ===== GRID DE WIDGETS ===== */
 .widgets {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 20px;
   margin-top: 20px;
 }
 
-.sidebar.collapsed ~ .content .widgets {
-  grid-template-columns: repeat(6, 1fr);
+/* Sidebar colapsada – grid mais fluido */
+.sidebar.collapsed~.content .widgets {
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 }
 
 /* ===== WIDGETS ===== */
 .widget {
   background: #ffffff;
   border-radius: 12px;
-  padding: 20px;
+  padding: 18px 20px;
   display: flex;
   align-items: center;
-  gap: 15px;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease, box-shadow 0.3s ease;
+  gap: 16px;
   border: 1px solid #e3e7eb;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 .widget:hover {
   transform: translateY(-3px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.10);
 }
 
+/* Ícone */
 .widget-icon {
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   object-fit: contain;
+  opacity: 0.92;
+  /* mais elegante, reduz ruído visual */
 }
 
+/* Título do widget */
 .widget .info h3 {
   font-size: 15px;
   font-weight: 600;
-  color: #1565c0;
+  color: #212121;
+  /* neutro para remover excesso de azul */
   margin-bottom: 4px;
 }
 
+/* Valor principal do widget */
 .widget .info p {
-  font-size: 17px;
+  font-size: 18px;
   font-weight: bold;
-  color: #0d47a1;
+  color: #1976d2;
+  /* único azul padrão do sistema */
 }
+
+/* ===== ESTADOS DINÂMICOS ===== */
+/* Sucesso / OK */
+.widget.ok .info p {
+  color: #2e7d32;
+}
+
+/* Aviso - verificando, instável */
+.widget.warning .info p {
+  color: #f9a825;
+}
+
+/* Erro / offline */
+.widget.error .info p {
+  color: #c62828;
+}
+
 
 /* ===== PAINÉIS DE PRÉ-VISUALIZAÇÃO ===== */
 .previews {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 24px;
   margin-top: 40px;
 }
@@ -219,15 +280,17 @@ body {
 .preview-card {
   background: #ffffff;
   border-radius: 12px;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
-  border: 1px solid #e3e7eb;
+  border: 1px solid #e2e6ea;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
   overflow: hidden;
   display: flex;
   flex-direction: column;
 }
 
+/* Cabeçalho do card */
 .preview-header {
-  background: #1976d2;
+  background: #1565c0;
+  /* azul único da nova paleta */
   color: white;
   padding: 12px 16px;
   display: flex;
@@ -236,22 +299,26 @@ body {
 }
 
 .preview-header h3 {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
 }
 
+/* Botão/link do cabeçalho */
 .btn-link {
-  color: #fff;
+  color: #e3f2fd;
   font-size: 13px;
-  text-decoration: underline;
-  transition: opacity 0.2s ease;
+  font-weight: 500;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: 0.2s ease;
 }
 
 .btn-link:hover {
-  opacity: 0.8;
+  border-bottom: 1px solid #fff;
+  opacity: 0.9;
 }
 
-/* Tabelas de pré-visualização */
+/* ===== TABELAS ===== */
 .preview-card table {
   width: 100%;
   border-collapse: collapse;
@@ -259,22 +326,25 @@ body {
 }
 
 .preview-card thead {
-  background: #e3f2fd;
-  color: #1565c0;
+  background: #f5f7fa;
+  /* neutro, reduz azul */
+  color: #333;
+  font-weight: 600;
 }
 
 .preview-card th,
 .preview-card td {
   padding: 8px 12px;
   text-align: left;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #e8e8e8;
 }
 
 .preview-card tbody tr:hover {
-  background: #f1f7ff;
+  background: #f0f4f8;
+  /* cinza-azulado neutro */
 }
 
-/* Lista de status */
+/* ===== LISTA DE STATUS ===== */
 .status-list {
   list-style: none;
   padding: 12px 16px;
@@ -287,34 +357,20 @@ body {
 
 .status-indicador {
   font-weight: 600;
-  color: #1565c0;
-}
-
-/* ===== LOADER ===== */
-#loader {
-  text-align: center;
-  margin-top: 40px;
-  font-size: 16px;
-  color: #555;
-}
-
-/* ===== ROLAGEM ===== */
-body::-webkit-scrollbar {
-  width: 8px;
-}
-
-body::-webkit-scrollbar-thumb {
-  background: #90caf9;
-  border-radius: 10px;
+  color: #1976d2;
+  /* único azul padrão */
 }
 
 /* ===== RESPONSIVIDADE ===== */
-@media (max-width: 768px) {
+@media (max-width: 992px) {
+
+  /* Conteúdo ganha mais espaço */
   .content {
     margin-left: 0;
-    padding: 20px;
+    padding: 24px 18px;
   }
 
+  /* Sidebar retrátil */
   .sidebar {
     transform: translateX(-100%);
   }
@@ -323,11 +379,73 @@ body::-webkit-scrollbar-thumb {
     transform: translateX(0);
   }
 
+  /* Widgets mais flexíveis */
   .widgets {
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
   }
 
+  /* Painéis em coluna única */
   .previews {
     grid-template-columns: 1fr;
+    gap: 18px;
+  }
+}
+
+@media (max-width: 768px) {
+
+  /* Widgets ainda menores */
+  .widgets {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  }
+
+  /* Painéis ocupam 100% */
+  .preview-card {
+    border-radius: 10px;
+  }
+
+  /* Scroll horizontal para tabelas */
+  .preview-card table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  /* Remover hover inútil em mobile */
+  .preview-card tbody tr:hover {
+    background: transparent;
+  }
+}
+
+@media (max-width: 480px) {
+
+  /* Layout mais confortável em telas pequenas */
+  .content {
+    padding: 18px 12px;
+  }
+
+  /* Widgets ocupam coluna única */
+  .widgets {
+    grid-template-columns: 1fr;
+  }
+
+  /* Ícones menores */
+  .widget-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  /* Fontes mais ajustadas */
+  .widget .info h3 {
+    font-size: 14px;
+  }
+
+  .widget .info p {
+    font-size: 16px;
+  }
+
+  /* Botões dos cards menores */
+  .btn-link {
+    font-size: 12px;
   }
 }
