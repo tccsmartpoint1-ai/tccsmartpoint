@@ -92,3 +92,99 @@ document.getElementById("btnTestarApi").onclick = async () => {
     alert("Falha ao conectar. Verifique a URL.");
   }
 };
+
+// =======================================
+// DISPOSITIVOS
+// =======================================
+
+const btnRecarregarDispositivos = document.getElementById("btnRecarregarDispositivos");
+const tabelaDispositivos = document.querySelector("#tblDispositivos tbody");
+
+// Carregar dispositivos da API
+async function carregarDispositivos() {
+  tabelaDispositivos.innerHTML = `
+    <tr>
+      <td colspan="5" style="text-align:center;">Carregando...</td>
+    </tr>
+  `;
+
+  try {
+    const res = await fetch(`${API}/dispositivos`);
+    if (!res.ok) throw new Error();
+
+    const dispositivos = await res.json();
+
+    if (!Array.isArray(dispositivos) || dispositivos.length === 0) {
+      tabelaDispositivos.innerHTML = `
+        <tr>
+          <td colspan="5" style="text-align:center;">Nenhum dispositivo encontrado.</td>
+        </tr>
+      `;
+      return;
+    }
+
+    tabelaDispositivos.innerHTML = "";
+
+    dispositivos.forEach((d) => {
+      const tr = document.createElement("tr");
+
+      tr.innerHTML = `
+        <td>${d.id}</td>
+        <td>${d.nome || "-"}</td>
+        <td>${d.ip || "-"}</td>
+        <td>${d.ativo ? "Ativo" : "Inativo"}</td>
+        <td>
+          <button 
+            class="btn-toggle-disp" 
+            data-id="${d.id}" 
+            data-ativo="${d.ativo}">
+            ${d.ativo ? "Desativar" : "Ativar"}
+          </button>
+        </td>
+      `;
+
+      tabelaDispositivos.appendChild(tr);
+    });
+
+  } catch (err) {
+    tabelaDispositivos.innerHTML = `
+      <tr>
+        <td colspan="5" style="text-align:center; color:red;">Erro ao carregar dispositivos</td>
+      </tr>
+    `;
+  }
+}
+
+// Ação ativar/desativar
+tabelaDispositivos.addEventListener("click", async (e) => {
+  if (!e.target.classList.contains("btn-toggle-disp")) return;
+
+  const id = e.target.dataset.id;
+  const ativoAtual = e.target.dataset.ativo === "true";
+  const novoStatus = !ativoAtual;
+
+  if (!confirm(`Confirma ${novoStatus ? "ATIVAR" : "DESATIVAR"} o dispositivo ${id}?`)) {
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API}/dispositivos/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ativo: novoStatus })
+    });
+
+    if (!res.ok) throw new Error();
+
+    carregarDispositivos(); // Atualiza tabela
+
+  } catch (err) {
+    alert("Erro ao atualizar dispositivo");
+  }
+});
+
+// Botão recarregar lista
+btnRecarregarDispositivos.onclick = carregarDispositivos;
+
+// Carrega ao abrir página
+carregarDispositivos();
