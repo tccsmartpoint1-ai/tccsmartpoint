@@ -44,6 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnAtualizar = document.getElementById("btnAtualizar");
   const btnCsv = document.getElementById("btnCsv");
   const btnPdf = document.getElementById("btnPdf");
+  const quickFilterBtns = document.querySelectorAll(".quick-filter-btn");
 
   const tblBody = document.getElementById("tblBody");
 
@@ -53,6 +54,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const rSetor = document.getElementById("resSetor");
   const rPeriodo = document.getElementById("resPeriodo");
 
+  const summarySection = document.getElementById("summarySection");
+  const totalHoras = document.getElementById("totalHoras");
+  const totalExtras = document.getElementById("totalExtras");
+  const totalFaltas = document.getElementById("totalFaltas");
+  const totalAtrasos = document.getElementById("totalAtrasos");
+
   function limparFolha() {
     tblBody.innerHTML = "";
     rNome.textContent = "";
@@ -60,6 +67,7 @@ document.addEventListener("DOMContentLoaded", () => {
     rCargo.textContent = "";
     rSetor.textContent = "";
     rPeriodo.textContent = "";
+    summarySection.style.display = "none";
   }
 
   function fmtHora(valor) {
@@ -72,11 +80,60 @@ document.addEventListener("DOMContentLoaded", () => {
     return isNaN(d.getTime()) ? "-" : d.toLocaleDateString("pt-BR");
   }
 
+  function getStatusClass(status) {
+    const statusMap = {
+      "presente": "status-presente",
+      "falta": "status-falta",
+      "atraso": "status-atraso",
+      "ferias": "status-ferias",
+      "feriado": "status-feriado"
+    };
+    return statusMap[status] || "status-presente";
+  }
+
+  function getStatusLabel(status) {
+    const statusMap = {
+      "presente": "✓ Presente",
+      "falta": "✗ Falta",
+      "atraso": "⚠ Atraso",
+      "ferias": "✈ Férias",
+      "feriado": "🎉 Feriado"
+    };
+    return statusMap[status] || "Presente";
+  }
+
   async function buscarFolha(filtros = {}) {
     const query = new URLSearchParams(filtros).toString();
     const res = await fetch(`${API}/folha?${query}`);
     if (!res.ok) throw new Error("Erro ao buscar folha");
     return res.json();
+  }
+
+  function calcularResumo(dados) {
+    let totalH = 0, totalE = 0, totalF = 0, totalA = 0;
+
+    dados.dias.forEach(d => {
+      // Calcular horas totais
+      if (d.totalHoras) {
+        const [h] = d.totalHoras.split(":").map(Number);
+        totalH += h || 0;
+      }
+      // Calcular extras
+      if (d.extras) {
+        const [h] = d.extras.split(":").map(Number);
+        totalE += h || 0;
+      }
+      // Contar faltas
+      if (d.status === "falta") totalF += 1;
+      // Contar atrasos
+      if (d.status === "atraso") totalA += 1;
+    });
+
+    totalHoras.textContent = `${totalH}h`;
+    totalExtras.textContent = `${totalE}h`;
+    totalFaltas.textContent = totalF;
+    totalAtrasos.textContent = totalA;
+    summarySection.style.display = "grid";
   }
 
   function montarFolha(dados, filtros) {
@@ -93,27 +150,52 @@ document.addEventListener("DOMContentLoaded", () => {
       `${fmtDataBR(filtros.inicio)} até ${fmtDataBR(filtros.fim)}`;
 
     tblBody.innerHTML = dados.dias
-      .map(d => `
-      <tr>
-        <td>${fmtDataBR(d.data)}</td>
-        <td>${fmtHora(d.entrada)}</td>
-        <td>${fmtHora(d.saidaAlmoco)}</td>
-        <td>${fmtHora(d.retorno)}</td>
-        <td>${fmtHora(d.saidaFinal)}</td>
-        <td>${fmtHora(d.totalHoras)}</td>
-        <td>${fmtHora(d.extras)}</td>
-        <td>${fmtHora(d.faltas)}</td>
-        <td>${fmtHora(d.atrasos)}</td>
-        <td>${fmtHora(d.bancoHoras)}</td>
-        <td>${d.obs || "-"}</td>
-        <td class="no-print">
-          <button class="btn-edit">&#9998;</button>
-          <button class="btn-save" style="display:none;">💾</button>
-        </td>
-      </tr>
-      `)
+      .map(d => {
+        const statusClass = getStatusClass(d.status || "presente");
+        const statusLabel = getStatusLabel(d.status || "presente");
+        
+        return `
+        <tr>
+          <td>${fmtDataBR(d.data)}</td>
+          <td>${fmtHora(d.entrada)}</td>
+          <td>${fmtHora(d.saidaAlmoco)}</td>
+          <td>${fmtHora(d.retorno)}</td>
+          <td>${fmtHora(d.saidaFinal)}</td>
+          <td><strong>${fmtHora(d.totalHoras)}</strong></td>
+          <td style="color: #ff9800; font-weight: 600;">${fmtHora(d.extras)}</td>
+          <td><span class="status-badge ${statusClass}">${statusLabel}</span></td>
+          <td>${fmtHora(d.bancoHoras)}</td>
+          <td>${d.obs || "-"}</td>
+          <td class="no-print">
+            <button class="btn-edit">✏️</button>
+            <button class="btn-save" style="display:none;">💾</button>
+          </td>
+        </tr>
+        `;
+      })
       .join("");
+
+    calcularResumo(dados);
   }
+
+  // ===============================
+  // FILTROS RÁPIDOS
+  // ===============================
+  quickFilterBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      const days = parseInt(btn.dataset.days);
+      const today = new Date();
+      const startDate = new Date(today);
+      startDate.setDate(startDate.getDate() - days);
+
+      const formatDate = (date) => date.toISOString().split("T")[0];
+
+      document.getElementById("relInicio").value = formatDate(startDate);
+      document.getElementById("relFim").value = formatDate(today);
+
+      form.dispatchEvent(new Event("submit"));
+    });
+  });
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
