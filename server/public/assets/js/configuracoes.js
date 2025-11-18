@@ -96,6 +96,9 @@ const btnRecarregarDispositivos = document.getElementById("btnRecarregarDisposit
 const tabelaDispositivos = document.querySelector("#tblDispositivos tbody");
 
 async function carregarDispositivos() {
+
+  const token = localStorage.getItem("token"); // TOKEN
+
   tabelaDispositivos.innerHTML = `
     <tr>
       <td colspan="4" style="text-align:center;">Carregando...</td>
@@ -103,7 +106,12 @@ async function carregarDispositivos() {
   `;
 
   try {
-    const res = await fetch(`${API}/dispositivos`);
+    const res = await fetch(`${API}/dispositivos`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
     if (!res.ok) throw new Error();
 
     const dispositivos = await res.json();
@@ -170,6 +178,8 @@ btnFecharModalDisp.onclick = () => {
 formAddDispositivo.onsubmit = async (e) => {
   e.preventDefault();
 
+  const token = localStorage.getItem("token"); // TOKEN
+
   const payload = {
     nome: inpDispNome.value.trim(),
     identificador: inpDispIdentificador.value.trim(),
@@ -184,7 +194,10 @@ formAddDispositivo.onsubmit = async (e) => {
   try {
     const res = await fetch(`${API}/dispositivos`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { 
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}` // TOKEN
+      },
       body: JSON.stringify(payload)
     });
 
