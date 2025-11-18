@@ -117,8 +117,9 @@
       <p>Gere resumos analíticos das leituras armazenadas.</p>
     </section>
 
-    <!-- CARDS DE MÉTRICAS -->
-    <section class="metrics-container" id="metricsContainer">
+    <!-- CARDS DE MÉTRICAS - GRID 4x2 -->
+    <section class="metrics-container">
+      <!-- LINHA 1 - 4 CARDS -->
       <div class="metric-card metric-card-blue">
         <div class="metric-header">
           <h4>Usuários Ativos</h4>
@@ -155,6 +156,7 @@
         <p class="metric-subtitle">Este mês</p>
       </div>
 
+      <!-- LINHA 2 - 4 CARDS -->
       <div class="metric-card metric-card-green">
         <div class="metric-header">
           <h4>Horas Extras</h4>
@@ -165,6 +167,15 @@
       </div>
 
       <div class="metric-card metric-card-indigo">
+        <div class="metric-header">
+          <h4>Dias Trabalhados</h4>
+          <span class="metric-icon">📅</span>
+        </div>
+        <p class="metric-value">18/23</p>
+        <p class="metric-subtitle">Pendentes: 5</p>
+      </div>
+
+      <div class="metric-card metric-card-teal">
         <div class="metric-header">
           <h4>Férias</h4>
           <span class="metric-icon">✈️</span>
@@ -274,7 +285,7 @@
               <th>Status</th>
               <th>Banco de Horas</th>
               <th>Obs</th>
-              <th class="no-print">Editar</th>
+              <th class="no-print">Ações</th>
             </tr>
           </thead>
           <tbody id="tblBody">

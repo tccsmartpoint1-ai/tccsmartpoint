@@ -316,5 +316,5 @@ window.addEventListener("load", () => {
       linha.style.background = "#e8f5e9";
       setTimeout(() => (linha.style.background = ""), 1200);
     }
-  });
+  });gigit
 });
