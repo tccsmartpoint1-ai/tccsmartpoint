@@ -4,6 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="assets/img/favicon.png">
   <title>Smart Point — Configurações</title>
   <link rel="stylesheet" href="assets/css/dashboard.css" />
   <link rel="stylesheet" href="assets/css/configuracoes.css" />
@@ -120,52 +121,52 @@
     </section>
 
     <!-- ===== SEGURANÇA E MANUTENÇÃO ===== -->
-<section class="card">
-  <h3>Segurança e Manutenção</h3>
-  <div id="msgSenha" class="msg hidden"></div>
+    <section class="card">
+      <h3>Segurança e Manutenção</h3>
+      <div id="msgSenha" class="msg hidden"></div>
 
-  <form id="formSenha">
-    <div class="grid-3">
+      <form id="formSenha">
+        <div class="grid-3">
 
-      <!-- SENHA ATUAL -->
-      <div class="form-row">
-        <label for="senhaAtual">Senha atual</label>
-        <div class="pw-box">
-          <input id="senhaAtual" type="password" autocomplete="current-password" />
-          <button type="button" class="togglePw" data-target="senhaAtual">👁</button>
+          <!-- SENHA ATUAL -->
+          <div class="form-row">
+            <label for="senhaAtual">Senha atual</label>
+            <div class="pw-box">
+              <input id="senhaAtual" type="password" autocomplete="current-password" />
+              <button type="button" class="togglePw" data-target="senhaAtual">👁</button>
+            </div>
+          </div>
+
+          <!-- NOVA SENHA -->
+          <div class="form-row">
+            <label for="novaSenha">Nova senha</label>
+            <div class="pw-box">
+              <input id="novaSenha" type="password" autocomplete="new-password" />
+              <button type="button" class="togglePw" data-target="novaSenha">👁</button>
+            </div>
+          </div>
+
+          <!-- CONFIRMAR NOVA SENHA -->
+          <div class="form-row">
+            <label for="confirmaSenha">Confirmar nova senha</label>
+            <div class="pw-box">
+              <input id="confirmaSenha" type="password" autocomplete="new-password" />
+              <button type="button" class="togglePw" data-target="confirmaSenha">👁</button>
+            </div>
+          </div>
+
         </div>
-      </div>
 
-      <!-- NOVA SENHA -->
-      <div class="form-row">
-        <label for="novaSenha">Nova senha</label>
-        <div class="pw-box">
-          <input id="novaSenha" type="password" autocomplete="new-password" />
-          <button type="button" class="togglePw" data-target="novaSenha">👁</button>
+        <div class="actions">
+          <button type="submit" id="btnAlterarSenha">Alterar Senha</button>
         </div>
+      </form>
+
+      <div class="actions mt-8">
+        <button type="button" id="btnExportarCSV">Exportar Leituras (CSV)</button>
+        <button type="button" id="btnLogout" class="btn-outline">Sair</button>
       </div>
-
-      <!-- CONFIRMAR NOVA SENHA -->
-      <div class="form-row">
-        <label for="confirmaSenha">Confirmar nova senha</label>
-        <div class="pw-box">
-          <input id="confirmaSenha" type="password" autocomplete="new-password" />
-          <button type="button" class="togglePw" data-target="confirmaSenha">👁</button>
-        </div>
-      </div>
-
-    </div>
-
-    <div class="actions">
-      <button type="submit" id="btnAlterarSenha">Alterar Senha</button>
-    </div>
-  </form>
-
-  <div class="actions mt-8">
-    <button type="button" id="btnExportarCSV">Exportar Leituras (CSV)</button>
-    <button type="button" id="btnLogout" class="btn-outline">Sair</button>
-  </div>
-</section>
+    </section>
   </main>
 
   <!-- ===== MODAL — ADICIONAR DISPOSITIVO ===== -->

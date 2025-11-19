@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/png" href="assets/img/favicon.png">
   <title>Smart Point — Login</title>
 
   <!-- Estilos padronizados -->
@@ -24,34 +26,17 @@
       <form id="loginForm" novalidate>
         <div class="field">
           <label for="cpf">CPF</label>
-          <input
-            id="cpf"
-            name="cpf"
-            type="text"
-            inputmode="numeric"
-            maxlength="14"
-            placeholder="000.000.000-00"
-            required
-          />
+          <input id="cpf" name="cpf" type="text" inputmode="numeric" maxlength="14" placeholder="000.000.000-00"
+            required />
           <small class="error" id="cpfError"></small>
         </div>
 
         <div class="field">
           <label for="password">Senha</label>
           <div class="password-wrap">
-            <input
-              id="password"
-              name="password"
-              type="password"
-              placeholder="Mínimo 6 caracteres e 1 especial"
-              required
-            />
-            <button
-              id="togglePwd"
-              class="toggle-pwd"
-              type="button"
-              aria-label="Mostrar/ocultar senha"
-            >
+            <input id="password" name="password" type="password" placeholder="Mínimo 6 caracteres e 1 especial"
+              required />
+            <button id="togglePwd" class="toggle-pwd" type="button" aria-label="Mostrar/ocultar senha">
               <svg class="icon-eye" viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z" />
                 <circle cx="12" cy="12" r="3" />
@@ -86,4 +71,5 @@
 
   <script src="assets/js/login.js" defer></script>
 </body>
+
 </html>

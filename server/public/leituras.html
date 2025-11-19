@@ -4,6 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="assets/img/favicon.png">
   <title>Smart Point — Leituras</title>
 
   <!-- CSS da página -->
@@ -69,53 +70,49 @@
   </aside>
 
   <main class="content">
-  <section class="leituras-section">
+    <section class="leituras-section">
 
-    <!-- STATUS DA CONEXÃO -->
-    <div class="status" id="status">Desconectado</div>
+      <!-- STATUS DA CONEXÃO -->
+      <div class="status" id="status">Desconectado</div>
 
-    <!-- BARRA DE BUSCA + FILTROS -->
-    <div class="controls">
-      <input 
-        type="text" 
-        id="search" 
-        placeholder="Buscar colaborador, CPF ou tag..."
-      />
+      <!-- BARRA DE BUSCA + FILTROS -->
+      <div class="controls">
+        <input type="text" id="search" placeholder="Buscar colaborador, CPF ou tag..." />
 
-      <div class="filters">
-        <select id="filterTipo">
-          <option value="">Todos os tipos</option>
-          <option value="entrada">Entrada</option>
-          <option value="saida">Saída</option>
-          <option value="almoco">Almoço</option>
-          <option value="retorno">Retorno</option>
-        </select>
+        <div class="filters">
+          <select id="filterTipo">
+            <option value="">Todos os tipos</option>
+            <option value="entrada">Entrada</option>
+            <option value="saida">Saída</option>
+            <option value="almoco">Almoço</option>
+            <option value="retorno">Retorno</option>
+          </select>
 
-        <input type="date" id="filterData" />
+          <input type="date" id="filterData" />
+        </div>
       </div>
-    </div>
 
-    <!-- TABELA -->
-    <div class="tabela-wrapper">
-      <table id="tabelaLeituras">
-        <thead>
-          <tr>
-            <th>Data</th>
-            <th>Hora</th>
-            <th>Tipo</th>
-            <th>Colaborador</th>
-            <th>Dispositivo</th>
-            <th>Tag RFID</th>
-            <th>Autorizado</th>
-            <th>Mensagem</th>
-          </tr>
-        </thead>
-        <tbody id="leiturasBody"></tbody>
-      </table>
-    </div>
+      <!-- TABELA -->
+      <div class="tabela-wrapper">
+        <table id="tabelaLeituras">
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Hora</th>
+              <th>Tipo</th>
+              <th>Colaborador</th>
+              <th>Dispositivo</th>
+              <th>Tag RFID</th>
+              <th>Autorizado</th>
+              <th>Mensagem</th>
+            </tr>
+          </thead>
+          <tbody id="leiturasBody"></tbody>
+        </table>
+      </div>
 
-  </section>
-</main>
+    </section>
+  </main>
 
   <!-- Caminho CORRETO do script -->
   <script src="../assets/js/leituras.js"></script>
