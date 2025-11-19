@@ -1,21 +1,30 @@
- tr.negado { background-color: #ffe5e5; }
-tr.permitido { background-color: #e9ffe9; }
-/* ===== RESET ===== */
+/* ===========================
+   RESET
+=========================== */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Segoe UI", Arial, sans-serif;
 }
 
+/* ===========================
+   BASE
+=========================== */
 body {
-  background: #f4f6f8;
-  color: #333;
+  font-family: "Segoe UI", Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
+  background: #f5f7fa;
+  color: #333;
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* ===== TOPO (PADRÃO GLOBAL) ===== */
+/* ===========================
+   TOPBAR
+=========================== */
 .topbar {
   position: fixed;
   top: 0;
@@ -32,16 +41,16 @@ body {
   z-index: 1000;
 }
 
-.topbar h1 {
-  font-size: 20px;
-  font-weight: 600;
-  letter-spacing: 0.5px;
+.left-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 #toggleSidebar {
   background: none;
   border: none;
-  color: white;
+  color: #fff;
   font-size: 22px;
   cursor: pointer;
   transition: transform 0.2s ease;
@@ -49,6 +58,11 @@ body {
 
 #toggleSidebar:hover {
   transform: scale(1.1);
+}
+
+.logo-topbar {
+  height: 34px;
+  object-fit: contain;
 }
 
 .user-area {
@@ -61,12 +75,12 @@ body {
   width: 35px;
   height: 35px;
   border-radius: 50%;
-  background: white;
+  background: #fff;
   object-fit: cover;
-  border: 2px solid #90caf9;
+  border: 2px solid #bbdefb;
 }
 
-#logoutBtn {
+.logout-btn {
   background: rgba(255, 255, 255, 0.15);
   border: 1px solid rgba(255, 255, 255, 0.25);
   border-radius: 8px;
@@ -77,23 +91,25 @@ body {
   transition: background 0.2s ease;
 }
 
-#logoutBtn:hover {
+.logout-btn:hover {
   background: rgba(255, 255, 255, 0.25);
 }
 
-/* ===== SIDEBAR ===== */
+/* ===========================
+   SIDEBAR
+=========================== */
 .sidebar {
   position: fixed;
   top: 60px;
   left: 0;
   width: 220px;
   height: calc(100vh - 60px);
-  background: #1565c0;
+  background: #0d47a1;
   color: #fff;
   padding-top: 20px;
   transition: all 0.3s ease;
-  z-index: 900;
   overflow: hidden;
+  box-shadow: 2px 0 6px rgba(0, 0, 0, 0.12);
 }
 
 .sidebar nav ul {
@@ -101,7 +117,7 @@ body {
 }
 
 .sidebar nav ul li {
-  margin: 10px 0;
+  margin: 6px 0;
 }
 
 .sidebar nav ul li a {
@@ -111,14 +127,14 @@ body {
   padding: 12px 20px;
   color: #fff;
   text-decoration: none;
-  transition: background 0.2s, transform 0.2s;
+  font-size: 15px;
   border-left: 4px solid transparent;
+  transition: background 0.20s ease, padding-left 0.20s ease;
 }
 
-.sidebar nav ul li a:hover,
-.sidebar nav ul li a.active {
-  background: #1e88e5;
-  transform: translateX(2px);
+.sidebar nav ul li a:hover {
+  background: rgba(255, 255, 255, 0.12);
+  padding-left: 26px;
   border-left: 4px solid #90caf9;
 }
 
@@ -128,13 +144,16 @@ body {
   filter: brightness(0) invert(1);
 }
 
-/* ===== SIDEBAR COLAPSADA ===== */
-.sidebar.collapsed {
-  width: 80px;
+.sidebar nav ul li a.active {
+  background: rgba(255, 255, 255, 0.18);
+  border-left: 4px solid #90caf9;
+  padding-left: 26px;
+  font-weight: 600;
 }
 
-.sidebar.collapsed nav ul li a span {
-  display: none;
+/* Sidebar colapsada */
+.sidebar.collapsed {
+  width: 80px;
 }
 
 .sidebar.collapsed nav ul li a {
@@ -142,122 +161,239 @@ body {
   padding: 12px 0;
 }
 
-/* ===== CONTEÚDO ===== */
+.sidebar.collapsed nav ul li a span {
+  display: none;
+}
+
+.sidebar.collapsed ~ .content {
+  margin-left: 80px;
+}
+
+/* ===========================
+   CONTENT
+=========================== */
 .content {
   margin-top: 60px;
   margin-left: 220px;
   padding: 30px;
   transition: margin-left 0.3s ease;
+  min-height: calc(100vh - 60px);
 }
 
-.sidebar.collapsed~.content {
-  margin-left: 80px;
+@media (max-width: 992px) {
+  .content {
+    margin-left: 0;
+    padding: 24px 18px;
+  }
 }
 
-/* ===== STATUS ===== */
+@media (max-width: 480px) {
+  .content {
+    padding: 18px 12px;
+  }
+}
+
+/* ===========================
+   STATUS
+=========================== */
 .status {
   display: inline-block;
-  padding: 8px 14px;
-  border-radius: 8px;
+  padding: 10px 16px;
+  border-radius: 10px;
   font-weight: 600;
-  background: #e53935;
-  color: #fff;
+  font-size: 14px;
   margin-bottom: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e3e7eb;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+  background: #c62828;
+  color: #fff;
 }
 
 .status.online {
-  background: #43a047;
+  background: #2e7d32;
 }
 
-/* ===== CONTROLES ===== */
+.status.warning {
+  background: #f9a825;
+}
+
+.status.error {
+  background: #b71c1c;
+}
+
+/* ===========================
+   CONTROLES
+=========================== */
 .controls {
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 20px;
+  gap: 16px;
+  margin-bottom: 22px;
 }
 
 .controls input,
 .controls select {
-  padding: 8px 10px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  font-size: 14px;
-  transition: border 0.2s ease;
+  background: #ffffff;
+  border: 1px solid #e3e7eb;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 15px;
+  color: #333;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .controls input:focus,
 .controls select:focus {
-  border-color: #2196f3;
+  border-color: #1976d2;
+  box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.25);
   outline: none;
 }
 
-/* ===== TABELA ===== */
+.filters {
+  display: flex;
+  gap: 12px;
+}
+
+/* Responsividade controles */
+@media (max-width: 992px) {
+  .controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+  }
+}
+
+@media (max-width: 768px) {
+  .controls input,
+  .controls select {
+    font-size: 13px;
+    padding: 8px 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .controls input,
+  .controls select {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+}
+
+/* ===========================
+   TABELA
+=========================== */
 .tabela-wrapper {
   overflow-x: auto;
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+  background: #ffffff;
+  border-radius: 12px;
   border: 1px solid #e3e7eb;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
   font-size: 14px;
+  color: #333;
 }
 
 thead {
-  background: #1976d2;
+  background: #1565c0;
   color: #fff;
 }
 
-th,
-td {
-  text-align: left;
+th {
   padding: 10px 14px;
-  border-bottom: 1px solid #e0e0e0;
+  font-weight: 600;
+  border-bottom: 1px solid #e2e6ea;
+}
+
+td {
+  padding: 10px 14px;
+  border-bottom: 1px solid #e8e8e8;
 }
 
 tbody tr:nth-child(even) {
-  background: #f7f9fb;
+  background: #f5f7fa;
 }
 
 tbody tr:hover {
-  background: #e3f2fd;
+  background: #f0f4f8;
 }
 
 tbody tr.highlight {
   background: #c8e6c9;
-  transition: background 1s ease;
 }
 
-/* ===== TIPOS DE LEITURA ===== */
+tr.negado {
+  background-color: #ffe5e5;
+}
+
+tr.permitido {
+  background-color: #e9ffe9;
+}
+
+@media (max-width: 768px) {
+  table {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  th,
+  td {
+    font-size: 12px;
+    padding: 8px 10px;
+  }
+}
+
+/* ===========================
+   TIPOS DE LEITURA
+=========================== */
 .tipo {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 10px;
+  font-size: 13px;
   font-weight: 600;
   text-transform: capitalize;
+  min-width: 80px;
+  text-align: center;
+  border: 1px solid #e3e7eb;
+  background: #ffffff;
+  color: #1976d2;
 }
 
 .tipo.entrada {
-  color: #43a047;
+  background: #e8f5e9;
+  border-color: #c8e6c9;
+  color: #2e7d32;
 }
 
 .tipo.saida {
-  color: #e53935;
+  background: #ffebee;
+  border-color: #ffcdd2;
+  color: #c62828;
 }
 
 .tipo.almoco {
-  color: #fbc02d;
+  background: #fff8e1;
+  border-color: #ffe082;
+  color: #f9a825;
 }
 
 .tipo.retorno {
-  color: #1e88e5;
+  background: #e3f2fd;
+  border-color: #bbdefb;
+  color: #1565c0;
 }
 
-/* ===== SCROLLBAR ===== */
+/* ===========================
+   SCROLLBAR
+=========================== */
 body::-webkit-scrollbar {
   width: 8px;
 }
@@ -265,30 +401,4 @@ body::-webkit-scrollbar {
 body::-webkit-scrollbar-thumb {
   background: #90caf9;
   border-radius: 10px;
-}
-
-/* ===== RESPONSIVIDADE ===== */
-@media (max-width: 768px) {
-  .content {
-    margin-left: 0;
-    padding: 20px;
-  }
-
-  .sidebar {
-    transform: translateX(-100%);
-  }
-
-  .sidebar.active {
-    transform: translateX(0);
-  }
-
-  th,
-  td {
-    font-size: 13px;
-  }
-
-  .controls {
-    flex-direction: column;
-    align-items: stretch;
-  }
 }

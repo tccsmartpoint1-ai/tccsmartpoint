@@ -6,22 +6,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Smart Point — Leituras</title>
 
-  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
-
+  <!-- CSS da página -->
   <link rel="stylesheet" href="../assets/css/leituras.css" />
+
+  <!-- Socket.IO -->
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 </head>
 
 <body>
   <header class="topbar">
-    <button id="toggleSidebar" aria-label="Alternar menu lateral">☰</button>
-    <h1>Smart Point</h1>
+    <div class="left-controls">
+      <button id="toggleSidebar" aria-label="Alternar menu lateral">☰</button>
+
+      <img src="../assets/img/logow.png" alt="Smart Point" class="logo-topbar">
+    </div>
+
     <div class="user-area">
       <img src="../assets/img/icons/usuario.png" alt="Perfil" class="profile-icon">
-      <button id="logoutBtn">Sair</button>
+      <button id="logoutBtn" class="logout-btn">Sair</button>
     </div>
   </header>
 
-  <aside class="sidebar expanded">
+  <aside class="sidebar expanded" id="sidebar">
     <nav>
       <ul>
         <li>
@@ -30,24 +36,28 @@
             <span>Dashboard</span>
           </a>
         </li>
+
         <li>
           <a href="leituras.html" class="active">
             <img src="../assets/img/icons/leitura.png" alt="Leituras" />
             <span>Leituras</span>
           </a>
         </li>
+
         <li>
           <a href="usuarios.html">
             <img src="../assets/img/icons/usuario.png" alt="Usuários" />
             <span>Usuários</span>
           </a>
         </li>
+
         <li>
           <a href="relatorios.html">
             <img src="../assets/img/icons/relatorio.png" alt="Relatórios" />
             <span>Relatórios</span>
           </a>
         </li>
+
         <li>
           <a href="configuracoes.html">
             <img src="../assets/img/icons/cnfg.png" alt="Configurações" />
@@ -59,45 +69,57 @@
   </aside>
 
   <main class="content">
-    <section class="leituras-section">
-      <div class="status" id="status">Desconectado</div>
+  <section class="leituras-section">
 
-      <div class="controls">
-        <input type="text" id="search" placeholder="Buscar colaborador, CPF ou tag..." />
-        <div class="filters">
-          <select id="filterTipo">
-            <option value="">Todos os tipos</option>
-            <option value="entrada">Entrada</option>
-            <option value="saida">Saída</option>
-            <option value="almoco">Almoço</option>
-            <option value="retorno">Retorno</option>
-          </select>
-          <input type="date" id="filterData" />
-        </div>
-      </div>
+    <!-- STATUS DA CONEXÃO -->
+    <div class="status" id="status">Desconectado</div>
 
-      <div class="tabela-wrapper">
-        <table id="tabelaLeituras">
-          <thead>
-            <tr>
-              <th>Data</th>
-              <th>Hora</th>
-              <th>Tipo>
-              <th>Colaborador</th>
-              <th>Dispositivo</th>
-              <th>Tag RFID</th>
-              <th>Autorizado</th>
-              <th>Mensagem</th>
-            </tr>
-          </thead>
-          <tbody id="leiturasBody"></tbody>
-        </table>
+    <!-- BARRA DE BUSCA + FILTROS -->
+    <div class="controls">
+      <input 
+        type="text" 
+        id="search" 
+        placeholder="Buscar colaborador, CPF ou tag..."
+      />
+
+      <div class="filters">
+        <select id="filterTipo">
+          <option value="">Todos os tipos</option>
+          <option value="entrada">Entrada</option>
+          <option value="saida">Saída</option>
+          <option value="almoco">Almoço</option>
+          <option value="retorno">Retorno</option>
+        </select>
+
+        <input type="date" id="filterData" />
       </div>
-    </section>
-  </main>
+    </div>
+
+    <!-- TABELA -->
+    <div class="tabela-wrapper">
+      <table id="tabelaLeituras">
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Hora</th>
+            <th>Tipo</th>
+            <th>Colaborador</th>
+            <th>Dispositivo</th>
+            <th>Tag RFID</th>
+            <th>Autorizado</th>
+            <th>Mensagem</th>
+          </tr>
+        </thead>
+        <tbody id="leiturasBody"></tbody>
+      </table>
+    </div>
+
+  </section>
+</main>
 
   <!-- Caminho CORRETO do script -->
   <script src="../assets/js/leituras.js"></script>
 
 </body>
+
 </html>

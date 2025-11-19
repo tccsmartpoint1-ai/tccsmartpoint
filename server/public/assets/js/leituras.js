@@ -33,7 +33,7 @@ toggleBtn.addEventListener("click", () => {
 });
 
 // ===============================
-// MAIN (APENAS UM DOMContentLoaded)
+// MAIN
 // ===============================
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -64,7 +64,22 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // ===============================
-  // NOVA LEITURA AO VIVO
+  // FORMATADORES
+  // ===============================
+  function formatarDataISO(iso) {
+    if (!iso) return "-";
+    const d = new Date(iso);
+    return d.toLocaleDateString("pt-BR");
+  }
+
+  function formatarHoraISO(iso) {
+    if (!iso) return "--:--:--";
+    const d = new Date(iso);
+    return d.toLocaleTimeString("pt-BR");
+  }
+
+  // ===============================
+  // LEITURA AO VIVO
   // ===============================
   socket.on("novaLeitura", (payload) => {
     const leitura = payload?.leitura ?? payload;
@@ -88,27 +103,25 @@ document.addEventListener("DOMContentLoaded", () => {
       tbody.innerHTML = "";
 
       if (leituras.length === 0) {
-        tbody.innerHTML = "<tr><td colspan='7'>Nenhum registro encontrado.</td></tr>";
+        tbody.innerHTML = "<tr><td colspan='8'>Nenhum registro encontrado.</td></tr>";
         return;
       }
 
       leituras.forEach((l) => adicionarLeitura(l));
 
     } catch (err) {
-      tbody.innerHTML = "<tr><td colspan='7'>Erro ao carregar leituras.</td></tr>";
+      tbody.innerHTML = "<tr><td colspan='8'>Erro ao carregar leituras.</td></tr>";
     }
   }
 
   // ===============================
-  // INSERIR LINHA NA TABELA
+  // ADICIONAR LINHA NA TABELA
   // ===============================
   function adicionarLeitura(leitura) {
     if (!leitura) return;
 
-    const tr = document.createElement("tr");
-
-    cons = leitura.data || "-";
-    const hora = leitura.hora || "--:--:--";
+    const dataFormatada = formatarDataISO(leitura.data);
+    const horaFormatada = formatarHoraISO(leitura.data);
 
     const colaborador = leitura.colaborador
       ? leitura.colaborador.nome
@@ -118,35 +131,36 @@ document.addEventListener("DOMContentLoaded", () => {
       ? leitura.dispositivo.nome
       : "-";
 
-    const mensagem = leitura.autorizado
+    const tipo = leitura.tipo_batida || "-";
+    const autorizado = leitura.autorizado ? "Sim" : "Não";
+
+    const msg = leitura.autorizado
       ? "Acesso permitido"
       : "Cartão não reconhecido";
 
+    const tr = document.createElement("tr");
+    tr.classList.add(leitura.autorizado ? "permitido" : "negado");
+
     tr.innerHTML = `
-      <td>${data}</td>
-      <td>${hora}</td>
-      <td>${leitura.tipo_batida || "-"}</td>
+      <td>${dataFormatada}</td>
+      <td>${horaFormatada}</td>
+      <td><span class="tipo ${tipo}">${tipo}</span></td>
       <td>${colaborador}</td>
       <td>${dispositivo}</td>
       <td>${leitura.tag_uid || "-"}</td>
-      <td>${leitura.autorizado ? "Sim" : "Não"}</td>
-      <td>${mensagem}</td>
+      <td>${autorizado}</td>
+      <td>${msg}</td>
     `;
 
-    tr.classList.add(leitura.autorizado ? "permitido" : "negado");
-
-    // Insere no topo
     tbody.prepend(tr);
 
-    // Destaque ao vivo
     tr.classList.add("highlight");
     setTimeout(() => tr.classList.remove("highlight"), 2000);
 
-    // Limpador automático (mantém no máximo 100 linhas)
     if (tbody.children.length > 100) {
       tbody.removeChild(tbody.lastChild);
     }
   }
 
-  carregarLeiturasIniciais();
+  carregarLeitrasIniciais();
 });
